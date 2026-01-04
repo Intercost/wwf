@@ -1,0 +1,2993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Willy's Wing Farm</title>
+    
+    <!-- Tailwind CSS for Dark Aesthetic and Layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        farm: {
+                            dark: '#0f172a',    // Deep dark blue/black
+                            card: '#1e293b',    // Lighter dark for cards
+                            accent: '#d97706',  // Amber/Gold for "Premium Farm" feel
+                            green: '#15803d',   // Organic Green
+                            text: '#f1f5f9'     // Off-white text
+                        }
+                    },
+                    fontFamily: {
+                        header: ['"Playfair Display"', 'serif'],
+                        body: ['"Roboto"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f1f5f9;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        h1, h2, h3, h4, h5 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Smooth Section Transitions */
+        .section-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d97706; 
+        }
+
+        /* Nav Link Hover Effect */
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #d97706;
+            transition: width 0.3s;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="bg-farm-card border-b border-gray-800 sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 cursor-pointer" onclick="showSection('home')">
+                    <span class="text-2xl font-bold text-farm-accent">
+                        <i class="fa-solid fa-feather-pointed mr-2"></i>Willy's Wing Farm
+                    </span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <button onclick="showSection('home')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Home</button>
+                        <button onclick="showSection('poultry')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">View Poultry</button>
+                        <button onclick="showSection('services')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Services & Events</button>
+                        <button onclick="showSection('equipments')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Equipment</button>
+                        <button onclick="showSection('vet')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Vet Support</button>
+                        <button onclick="showSection('knowledge')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent text-yellow-200"><i class="fa-solid fa-star mr-1"></i>Premium</button>
+                        <button onclick="showSection('contact')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Contact</button>
+                        <button onclick="showSection('admin')" class="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md text-sm font-medium ml-4"><i class="fa-solid fa-lock mr-1"></i>Admin</button>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="-mr-2 flex md:hidden">
+                    <button onclick="toggleMobileMenu()" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-farm-card pb-4">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <button onclick="showSection('home')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Home</button>
+                <button onclick="showSection('poultry')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">View Poultry</button>
+                <button onclick="showSection('services')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Services</button>
+                <button onclick="showSection('equipments')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Equipment</button>
+                <button onclick="showSection('vet')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Vet Support</button>
+                <button onclick="showSection('knowledge')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 text-yellow-200">Premium</button>
+                <button onclick="showSection('admin')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Admin</button>
+                <button onclick="showSection('contact')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Contact</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT AREAS -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <!-- 1. HOME SECTION -->
+        <div id="home" class="section-content active">
+            <div class="text-center py-16 lg:py-24">
+                <h1 class="text-4xl tracking-tight font-extrabold text-white sm:text-5xl md:text-6xl mb-6">
+                    <span class="block">Welcome to Willy's Wing Farm</span>
+                    <span class="block text-farm-accent">Heritage . Health . Farm</span>
+                    
+                </h1>
+                <p class="mt-3 max-w-md mx-auto text-base text-gray-300 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                    Located in Makhonge, Bungoma County. We specialize in high-quality poultry raised with organic feed. From fresh eggs to structure development, we are your one-stop poultry solution.
+                </p>
+                <div class="mt-10 max-w-sm mx-auto sm:max-w-none sm:flex sm:justify-center">
+                    <div class="space-y-4 sm:space-y-0 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5">
+                        <button onclick="showSection('poultry')" class="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-farm-accent bg-farm-card hover:bg-gray-700 md:py-4 md:text-lg md:px-10">
+                            View Our Poultry
+                        </button>
+                        <button onclick="showSection('client-login')" class="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-farm-accent hover:bg-yellow-600 md:py-4 md:text-lg md:px-10">
+                            Client Login
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                <div class="bg-farm-card p-6 rounded-lg shadow-lg border border-gray-800 text-center">
+                    <i class="fa-solid fa-leaf text-4xl text-green-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Organic Feed</h3>
+                    <p class="text-gray-400">All our birds are raised using strict organic feeding methods for the healthiest produce.</p>
+                </div>
+                <div class="bg-farm-card p-6 rounded-lg shadow-lg border border-gray-800 text-center">
+                    <i class="fa-solid fa-truck-fast text-4xl text-blue-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Delivery Services</h3>
+                    <p class="text-gray-400">We deliver across the region. 50% discount on any egg cracked during transport.</p>
+                </div>
+                <div class="bg-farm-card p-6 rounded-lg shadow-lg border border-gray-800 text-center">
+                    <i class="fa-solid fa-user-doctor text-4xl text-red-500 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Expert Care</h3>
+                    <p class="text-gray-400">From veterinary support to educational programs, we share our expertise with you.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. VIEW POULTRY SECTION -->
+        <div id="poultry" class="section-content">
+            <h2 class="text-3xl font-bold mb-8 border-b border-gray-700 pb-2">Our Poultry Selection</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="poultry-grid">
+                <!-- Javascript will inject poultry cards here -->
+            </div>
+        </div>
+
+        <!-- 3. SERVICES & EVENTS SECTION -->
+        <div id="services" class="section-content">
+            <h2 class="text-3xl font-bold mb-8 border-b border-gray-700 pb-2">Services & Events</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
+                    <div class="h-32 bg-gray-700 flex items-center justify-center">
+                        <i class="fa-solid fa-map-location-dot text-5xl text-gray-500"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-farm-accent mb-2">Farm Tours</h3>
+                        <p class="text-gray-400 text-sm">Visit Makhonge to see how we operate. Educational tours available for schools and aspiring farmers.</p>
+                    </div>
+                </div>
+
+                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
+                    <div class="h-32 bg-gray-700 flex items-center justify-center">
+                        <i class="fa-solid fa-laptop-file text-5xl text-gray-500"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-farm-accent mb-2">Online Courses</h3>
+                        <p class="text-gray-400 text-sm">Learn poultry farming from the comfort of your home. We offer modules on organic feeding, disease control, and more.</p>
+                    </div>
+                </div>
+
+                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
+                    <div class="h-32 bg-gray-700 flex items-center justify-center">
+                        <i class="fa-solid fa-hammer text-5xl text-gray-500"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-farm-accent mb-2">Structure Development</h3>
+                        <p class="text-gray-400 text-sm">We design and build portable and permanent poultry structures tailored to your land size.</p>
+                    </div>
+                </div>
+
+                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
+                    <div class="h-32 bg-gray-700 flex items-center justify-center">
+                        <i class="fa-solid fa-temperature-three-quarters text-5xl text-red-500"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-farm-accent mb-2">Hatching Services</h3>
+                        <p class="text-gray-400 text-sm">Professional hatching using high-capacity, reliable incubators. Ensure a high yield for your fertile eggs.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
+                    <div class="h-32 bg-gray-700 flex items-center justify-center">
+                        <i class="fa-solid fa-sack-dollar text-5xl text-green-500"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-farm-accent mb-2">Organic Feed Supply</h3>
+                        <p class="text-gray-400 text-sm">Supply of all feed stages: Starters, Growers, Finishers, and Layers. High-quality organic formulation.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
+                    <div class="h-32 bg-gray-700 flex items-center justify-center">
+                        <i class="fa-solid fa-chalkboard-user text-5xl text-blue-500"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-farm-accent mb-2">Training Workshops</h3>
+                        <p class="text-gray-400 text-sm">Hands-on, intensive training sessions during hosted farm events and community meetups.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
+                    <div class="h-32 bg-gray-700 flex items-center justify-center">
+                        <i class="fa-solid fa-comments text-5xl text-purple-500"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-farm-accent mb-2">Poultry Farm Consultations</h3>
+                        <p class="text-gray-400 text-sm">Expert advice on farm setup, operational efficiency, disease prevention, and organic certification.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
+                    <div class="h-32 bg-gray-700 flex items-center justify-center">
+                        <i class="fa-solid fa-drumstick-bite text-5xl text-red-600"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-farm-accent mb-2">Slaughtering & Packaging</h3>
+                        <p class="text-gray-400 text-sm">Hygienic slaughtering and professional packaging services for market-ready poultry products.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
+                    <div class="h-32 bg-gray-700 flex items-center justify-center">
+                        <i class="fa-solid fa-truck-moving text-5xl text-orange-500"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-farm-accent mb-2">Product Delivery</h3>
+                        <p class="text-gray-400 text-sm">Reliable and prompt delivery services for eggs, live birds, feed, and packaged meat products.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. EQUIPMENT SECTION -->
+        <div id="equipments" class="section-content">
+            <h2 class="text-3xl font-bold mb-8 border-b border-gray-700 pb-2">Poultry Equipment</h2>
+            <p class="text-gray-400 mb-6">High-quality tools to ensure your farm runs smoothly.</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Equipment Item -->
+                <div class="bg-farm-card p-4 rounded text-center hover:bg-gray-800 transition">
+                    <i class="fa-solid fa-bottle-water text-4xl text-blue-400 mb-3"></i>
+                    <h4 class="font-bold">Automatic Drinkers</h4>
+                </div>
+                <!-- Equipment Item -->
+                <div class="bg-farm-card p-4 rounded text-center hover:bg-gray-800 transition">
+                    <i class="fa-solid fa-bowl-rice text-4xl text-yellow-600 mb-3"></i>
+                    <h4 class="font-bold">Feeders</h4>
+                </div>
+                <!-- Equipment Item -->
+                <div class="bg-farm-card p-4 rounded text-center hover:bg-gray-800 transition">
+                    <i class="fa-solid fa-temperature-arrow-up text-4xl text-red-400 mb-3"></i>
+                    <h4 class="font-bold">Brooders</h4>
+                </div>
+                <!-- Equipment Item -->
+                <div class="bg-farm-card p-4 rounded text-center hover:bg-gray-800 transition">
+                    <i class="fa-solid fa-sack-dollar text-4xl text-green-400 mb-3"></i>
+                    <h4 class="font-bold">Fertilizer Bags</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. VET SUPPORT -->
+        <div id="vet" class="section-content">
+            <div class="bg-farm-card p-8 rounded-lg border-l-4 border-red-600">
+                <h2 class="text-3xl font-bold mb-4">Veterinary Support & Medicine</h2>
+                <p class="text-lg text-gray-300 mb-6">
+                    Healthy birds are profitable birds. We supply essential poultry medicines and offer consultation for disease management.
+                </p>
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Vaccination Schedules</li>
+                    <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Disease Diagnosis</li>
+                    <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Vitamins & Supplements</li>
+                </ul>
+                <button onclick="showSection('contact')" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded">
+                    Request Vet Visit
+                </button>
+            </div>
+        </div>
+
+        <!-- 5.5. DISEASE & MANAGEMENT SECTION (NEW PAGE) -->
+        <div id="diseases-management" class="section-content">
+            <h2 class="text-3xl font-bold mb-8 border-b border-gray-700 pb-2">Poultry Disease & Management</h2>
+            <p class="text-gray-400 mb-6">Access valuable resources for identifying, preventing, and treating common poultry diseases.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="pdf-library-display">
+                <!-- PDFs will be rendered here by JavaScript -->
+            </div>
+        </div>
+
+        <!-- 6. PREMIUM KNOWLEDGE -->
+        <div id="knowledge" class="section-content">
+            <div class="text-center py-12">
+                <i class="fa-solid fa-crown text-6xl text-yellow-400 mb-6"></i>
+                <h2 class="text-3xl font-bold text-white mb-4">Premium Knowledge Base</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto mb-8">
+                    Access detailed guides on bird characteristics, care instructions, breeding secrets, and weight optimization for Chickens, Ducks, Turkeys, and Geese.
+                </p>
+                <div class="bg-gray-800 p-6 rounded-lg inline-block max-w-md">
+                    <h3 class="text-xl font-bold mb-2">Subscribe to Access</h3>
+                    <p class="text-sm text-gray-500 mb-4">Detailed care guides are available for subscribed members only.</p>
+                    <button class="bg-farm-accent hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded w-full" onclick="payForService('membership', 'Premium Membership Subscription', 250)">
+                        Login / Subscribe
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. CONTACT US -->
+        <div id="contact" class="section-content">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div>
+                    <h2 class="text-3xl font-bold mb-6">Get in Touch</h2>
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <i class="fa-solid fa-location-dot text-farm-accent text-2xl mr-4 mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-lg">Address</h4>
+                                <p class="text-gray-400">Makhonge, Tongaren Constituency,<br>Bungoma County</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fa-solid fa-phone text-farm-accent text-2xl mr-4 mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-lg">Phone</h4>
+                                <p class="text-gray-400">+254 706 809 000</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fa-solid fa-clock text-farm-accent text-2xl mr-4 mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-lg">Hours</h4>
+                                <p class="text-gray-400">Mon - Sat: 8:00 AM - 4:00 PM</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fa-brands fa-whatsapp text-farm-accent text-2xl mr-4 mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-lg">Community</h4>
+                                <a href="https://chat.whatsapp.com/KUDjHkQxhkvIkbwFOzKZZp?mode=hqrc" target="_blank" class="text-green-400 hover:text-green-300 underline">Join our WhatsApp Group</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simple Contact Form -->
+                <div class="bg-farm-card p-8 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-bold mb-4">Send us a Message</h3>
+                    <form onsubmit="event.preventDefault(); alert('Message sent! We will contact you shortly.');">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Name</label>
+                            <input type="text" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-farm-accent">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Email</label>
+                            <input type="email" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-farm-accent">
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Message</label>
+                            <textarea rows="4" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-farm-accent"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded transition">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. Client LOGIN -->
+        <div id="client-login" class="section-content">
+            <div class="flex justify-center items-center h-96">
+                <div class="bg-farm-card p-8 rounded-lg shadow-lg w-full max-w-md border border-gray-700">
+                    
+                    <div id="login-form-container">
+                        <h2 class="text-2xl font-bold mb-6 text-center"><i class="fa-solid fa-user-lock text-farm-accent mr-2"></i>Client Portal Access</h2>
+                        <p class="text-sm text-gray-400 mb-6 text-center">Login to access exclusive farm updates, images, and track your orders.</p>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm text-gray-400 mb-1">Email Address</label>
+                            <input type="email" id="client-email" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2" required>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-sm text-gray-400 mb-1">Password</label>
+                            <input type="password" id="client-password" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2" required>
+                        </div>
+                        
+                        <button id="client-login-btn" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-2 rounded">Login</button>
+                        
+                        <p id="client-login-error" class="text-red-500 text-sm mt-3 text-center hidden">
+                            Invalid email or password. Don't have an account? 
+                            <a href="#" id="show-register-link" class="text-farm-accent hover:text-yellow-400 font-semibold">Create new account.</a>
+                        </p>
+                        <p class="text-center text-sm mt-4 text-gray-500" id="forgot-password-link">
+                            <a href="#" class="text-gray-400 hover:text-farm-accent">Forgot Password?</a>
+                        </p>
+                    </div>
+                    
+                    <div id="register-form-container" class="hidden">
+                        <h2 class="text-2xl font-bold mb-6 text-center"><i class="fa-solid fa-user-plus text-farm-accent mr-2"></i>Create New Account</h2>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm text-gray-400 mb-1">Full Name</label>
+                            <input type="text" id="reg-full-name" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm text-gray-400 mb-1">Email Address</label>
+                            <input type="email" id="reg-email" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2" required>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-sm text-gray-400 mb-1">Password</label>
+                            <input type="password" id="reg-password" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2" required>
+                        </div>
+                        
+                        <button id="client-register-btn" class="w-full bg-green-700 hover:bg-green-600 text-white font-bold py-2 rounded">Register Account</button>
+                        
+                        <p id="registration-success" class="text-green-500 text-sm mt-3 text-center hidden">Account created successfully! Please log in.</p>
+                        <p id="registration-error" class="text-red-500 text-sm mt-3 text-center hidden">Error creating account. Please try again.</p>
+                        
+                        <p class="text-center text-sm mt-4 text-gray-500">
+                            Already have an account? 
+                            <a href="#" id="show-login-link" class="text-farm-accent hover:text-yellow-400 font-semibold">Login here.</a>
+                        </p>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <!-- . CLIENT PORTAL -->
+        <div id="client-portal" class="section-content">
+    
+            <div class="flex justify-between items-center border-b border-gray-700 pb-4 mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold"><i class="fa-solid fa-camera-retro text-farm-accent mr-2"></i>Willy's Farm Portal</h2>
+                    <p class="text-sm text-gray-400 mt-1">Welcome back! Manage your farm orders and view the gallery.</p>
+                </div>
+                <button onclick="openClientMessages()" class="relative p-2 text-gray-300 hover:text-white transition">
+                    <i class="fa-solid fa-envelope text-2xl"></i>
+                    <span id="msg-notification-dot" class="hidden absolute top-0 right-0 block h-3 w-3 rounded-full ring-2 ring-gray-900 bg-red-600"></span>
+                </button>
+
+                <button id="client-logout-btn" class="bg-red-700 hover:bg-red-600 text-white px-4 py-2 rounded text-sm font-medium transition shadow-md">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i>Logout
+                </button>
+            </div>
+
+            <div class="border-t border-gray-700 pt-8">
+                <h3 class="text-xl font-bold mb-6 text-white border-l-4 border-farm-accent pl-3">
+                    <i class="fa-solid fa-store mr-2 text-farm-accent"></i>Client Dashboard & Shop
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-12">
+
+                    <div onclick="handleServiceClick('buy_poultry')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
+                                <i class="fa-solid fa-crow text-farm-accent group-hover:text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Buy Poultry</h4>
+                        </div>
+                        <p class="text-xs text-gray-400">Order high-quality layers, Kienyeji, ducks, and turkeys for your farm.</p>
+                    </div>
+
+                    <div onclick="handleServiceClick('buy_eggs')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
+                                <i class="fa-solid fa-egg text-farm-accent group-hover:text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Buy Eggs</h4>
+                        </div>
+                        <p class="text-xs text-gray-400">Fresh organic table eggs or fertile eggs for hatching purposes.</p>
+                    </div>
+
+                    <div onclick="handleServiceClick('hatching')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
+                                <i class="fa-solid fa-temperature-three-quarters text-farm-accent group-hover:text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Hatching Services</h4>
+                        </div>
+                        <p class="text-xs text-gray-400">Book incubator space. High hatch-rate guarantee for fertile eggs.</p>
+                    </div>
+
+                    <div onclick="handleServiceClick('buy_feed')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
+                                <i class="fa-solid fa-bowl-rice text-farm-accent group-hover:text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Buy Poultry Feed</h4>
+                        </div>
+                        <p class="text-xs text-gray-400">Organic Starters, Growers, Layers mash, and supplements.</p>
+                    </div>
+
+                    <div onclick="handleServiceClick('buy_fertilizer')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
+                                <i class="fa-solid fa-leaf text-farm-accent group-hover:text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Organic Fertilizer</h4>
+                        </div>
+                        <p class="text-xs text-gray-400">Nutrient-rich poultry manure bags for crop farming.</p>
+                    </div>
+
+                    <div onclick="handleServiceClick('slaughtering')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
+                                <i class="fa-solid fa-utensils text-farm-accent group-hover:text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Slaughtering</h4>
+                        </div>
+                        <p class="text-xs text-gray-400">Hygienic processing, dressing, and packaging services.</p>
+                    </div>
+
+                    <div onclick="handleServiceClick('vet_support')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
+                                <i class="fa-solid fa-user-doctor text-farm-accent group-hover:text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Vet Support</h4>
+                        </div>
+                        <p class="text-xs text-gray-400">Vaccination schedules, medicine supply, and onsite diagnosis.</p>
+                    </div>
+
+                    <div onclick="handleServiceClick('structures')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
+                                <i class="fa-solid fa-house-chimney text-farm-accent group-hover:text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Buy Structures</h4>
+                        </div>
+                        <p class="text-xs text-gray-400">Portable coops or request permanent structure construction.</p>
+                    </div>
+
+                    <div onclick="handleServiceClick('advisory')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
+                                <i class="fa-solid fa-phone-volume text-farm-accent group-hover:text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Advisory Calls</h4>
+                        </div>
+                        <p class="text-xs text-gray-400">Expert phone consultation for immediate farming challenges.</p>
+                    </div>
+
+                    <div onclick="handleServiceClick('courses')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
+                                <i class="fa-solid fa-laptop-code text-farm-accent group-hover:text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Online Courses</h4>
+                        </div>
+                        <p class="text-xs text-gray-400">Access modules on rearing, feeding, and business management.</p>
+                    </div>
+
+                    <div onclick="handleServiceClick('diseases')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
+                                <i class="fa-solid fa-kit-medical text-farm-accent group-hover:text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Diseases & Treatment</h4>
+                        </div>
+                        <p class="text-xs text-gray-400">Detailed guides on identifying and treating common poultry ailments.</p>
+                    </div>
+
+                    <div onclick="handleServiceClick('farm_tour')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
+                                <i class="fa-solid fa-map-location-dot text-farm-accent group-hover:text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Book Farm Tour</h4>
+                        </div>
+                        <p class="text-xs text-gray-400">Schedule a physical visit to learn from our daily operations.</p>
+                    </div>
+
+                    <div onclick="handleServiceClick('equipment')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
+                                <i class="fa-solid fa-wrench text-farm-accent group-hover:text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Buy Equipment</h4>
+                        </div>
+                        <p class="text-xs text-gray-400">Drinkers, feeders, brooders, and other essential tools.</p>
+                    </div>
+
+                    <div onclick="handleServiceClick('membership')" class="bg-gray-800 p-5 rounded-lg border-2 border-yellow-500 hover:bg-gray-700 cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-yellow-500 text-black text-xs font-bold px-2 py-1">PREMIUM</div>
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center mr-3">
+                                <i class="fa-solid fa-crown text-yellow-500"></i>
+                            </div>
+                            <h4 class="font-bold text-yellow-500">Membership</h4>
+                        </div>
+                        <p class="text-xs text-gray-300">Enjoy weekly eggs booking, advance chick booking, reserved hatching slots, and priority vet visits.</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="mb-12">
+                <h3 class="text-xl font-bold mb-4 text-white border-l-4 border-farm-accent pl-3">Live Farm Gallery</h3>
+                <p class="text-sm text-gray-400 mb-6">See what's happening on the farm right now.</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="farm-gallery">
+                    </div>
+            </div>
+
+        </div>
+
+        <!-- 9. ADMIN LOGIN -->
+        <div id="admin" class="section-content">
+            <div class="flex justify-center items-center h-96">
+                <div class="bg-farm-card p-8 rounded-lg shadow-lg w-full max-w-md border border-gray-700">
+                    <h2 class="text-2xl font-bold mb-6 text-center"><i class="fa-solid fa-lock text-farm-accent mr-2"></i>Admin Login</h2>
+                    <div class="mb-4">
+                        <label class="block text-sm text-gray-400 mb-1">Email Address</label>
+                        <input type="email" id="admin-email" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2" required>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm text-gray-400 mb-1">Password</label>
+                        <input type="password" id="admin-password" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2" required>
+                    </div>
+                    <button id="admin-login-btn" class="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 rounded">Login</button>
+                    <p id="login-error" class="text-red-500 text-sm mt-3 text-center hidden">Invalid email or password.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="dashboard" class="section-content">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-4 mb-8">
+                <h2 class="text-3xl font-bold"><i class="fa-solid fa-chart-line text-farm-accent mr-2"></i>Admin Dashboard</h2>
+                <button id="admin-logout-btn" class="bg-red-700 hover:bg-red-600 text-white px-4 py-2 rounded text-sm font-medium">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i>Logout
+                </button>
+            </div>
+
+            <h3 class="text-2xl font-semibold mb-6">Poultry Population Overview</h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="poultry-tracking-grid">
+                </div>
+            
+            <div class="mt-12 p-6 bg-farm-card rounded-lg border border-gray-700">
+                <h3 class="text-xl font-bold mb-4">Add/Update Inventory</h3>
+                <p class="text-gray-400">This area will be connected to the backend to manage inventory, sales, and expenses.</p>
+                <button class="mt-4 bg-farm-accent hover:bg-yellow-600 text-white px-4 py-2 rounded">
+                    Manage Data (Backend Placeholder)
+                </button>
+            </div>
+
+            <div class="mt-8 mb-12">
+                <h3 class="text-2xl font-bold mb-4 border-l-4 border-blue-500 pl-3">Incoming Orders</h3>
+                <div id="admin-orders-list" class="grid grid-cols-1 gap-4">
+                    <p class="text-gray-500 bg-gray-800 p-4 rounded">No pending orders.</p>
+                </div>
+            </div>
+
+            <div class="mt-12 p-6 bg-farm-card rounded-lg border border-gray-700">
+                <h3 class="text-xl font-bold mb-4 flex items-center"><i class="fa-solid fa-camera mr-2 text-farm-accent"></i>Gallery Image Management</h3>
+                
+                <div class="bg-gray-800 p-4 rounded-md mb-6">
+                    <h4 class="font-semibold mb-3 text-white">Add New Gallery Photo</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input type="text" id="new-photo-url" placeholder="Image URL (Placeholder URL)" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
+                        <select id="new-photo-product" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
+                            <option value="">Select Poultry/Product</option>
+                            <option value="Chicken">Chicken</option>
+                            <option value="Duck">Duck</option>
+                            <option value="Goose">Goose</option>
+                            <option value="Feed">Feed</option>
+                            <option value="Eggs">Eggs</option>
+                        </select>
+                        <input type="text" id="new-photo-description" placeholder="Brief Description" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
+                    </div>
+                    <button onclick="addGalleryPhoto()" class="mt-4 bg-farm-accent hover:bg-yellow-600 text-white px-4 py-2 rounded w-full">
+                        <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Upload & Post to Client Portal
+                    </button>
+                </div>
+
+                <h4 class="font-semibold mb-3 text-white">Current Client Portal Gallery</h4>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="admin-gallery-view">
+                    </div>
+            </div>
+
+            <!-- Admin PDF Management Section (Moved here from disease-management-page for admin visibility) -->
+            <div class="mt-12 p-6 bg-farm-card rounded-lg border border-gray-700">
+                <h3 class="text-xl font-bold mb-4 flex items-center"><i class="fa-solid fa-file-pdf mr-2 text-farm-accent"></i>PDF Resource Management</h3>
+                <p class="text-gray-500 mb-4">Manage downloadable PDF guides for the 'Diseases & Treatment' section.</p>
+                <div class="bg-gray-800 p-4 rounded-md mb-6">
+                    <h4 class="font-semibold mb-3 text-white">Add New PDF Resource</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" id="pdf-admin-title" placeholder="PDF Title" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
+                        <input type="text" id="pdf-admin-url" placeholder="Direct PDF URL" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
+                        <div class="col-span-1 md:col-span-2">
+                            <textarea id="pdf-admin-description" rows="2" placeholder="Brief Description" class="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm"></textarea>
+                        </div>
+                        <div class="col-span-1 md:col-span-2 flex items-center space-x-4">
+                            <label class="flex items-center text-gray-400">
+                                <input type="checkbox" id="pdf-admin-free" class="form-checkbox text-farm-accent mr-2">
+                                <span>Mark as Free (No payment required)</span>
+                            </label>
+                        </div>
+                    </div>
+                    <button onclick="addPdfResource()" class="mt-4 bg-farm-accent hover:bg-yellow-600 text-white px-4 py-2 rounded w-full">
+                        <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Upload PDF to Library
+                    </button>
+                </div>
+                <h4 class="font-semibold mb-3 text-white">Current PDF Library</h4>
+                <div id="admin-uploaded-pdf-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <p class="col-span-4 text-center text-gray-500 py-4">No uploaded PDFs.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800 py-8 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-gray-500">&copy; 2025 Willy's Wing Farm. All rights reserved.</p>
+            <p class="text-gray-600 text-sm mt-2">Makhonge, Bungoma County | +254 706 809 000</p>
+        </div>
+    </footer>
+
+    <!-- WWF AI Chat Bubble (Visual Placeholder for now) -->
+    <div id="ai-chat-container" class="fixed bottom-6 right-6 z-50">
+    
+        <button id="chat-toggle-btn" class="bg-farm-accent hover:bg-yellow-500 text-white rounded-full p-4 shadow-lg flex items-center justify-center w-16 h-16 transition hover:scale-110">
+            <i class="fa-solid fa-robot text-2xl"></i>
+        </button>
+
+        <div id="chat-window" class="hidden absolute bottom-20 right-0 w-80 h-96 bg-farm-card rounded-lg shadow-2xl border border-gray-700 flex flex-col overflow-hidden">
+            
+            <div class="bg-gray-800 p-3 flex justify-between items-center border-b border-gray-700">
+                <h3 class="text-white font-bold text-lg"><i class="fa-solid fa-robot mr-2 text-farm-accent"></i>WWF AI Agent</h3>
+                <button onclick="document.getElementById('chat-window').classList.add('hidden')" class="text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <div id="chat-body" class="flex-grow p-3 space-y-3 overflow-y-auto custom-scrollbar">
+                <div class="flex justify-start">
+                    <div class="bg-gray-700 text-white p-3 rounded-xl rounded-tl-none max-w-[85%] text-sm shadow-md">
+                        Welcome! I'm the WWF AI. How can I assist you with your poultry needs today?
+                    </div>
+                </div>
+                </div>
+
+            <div class="p-3 border-t border-gray-700">
+                <div class="flex space-x-2">
+                    <input type="text" id="chat-input" placeholder="Type your message..." class="flex-grow bg-gray-800 text-white border border-gray-600 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-farm-accent">
+                    <button id="chat-send-btn" class="bg-farm-accent hover:bg-yellow-600 text-white rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="slaughtering-services-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-[60] flex items-center justify-center backdrop-blur-sm overflow-y-auto">
+        <div class="bg-farm-card p-8 rounded-lg shadow-2xl w-full max-w-lg border border-gray-700 m-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h3 class="text-2xl font-bold text-white"><i class="fa-solid fa-cutlery text-farm-accent mr-2"></i>Order Slaughtering Services</h3>
+                <button onclick="closeModal('slaughtering-services-modal')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); submitSlaughterOrder();" class="space-y-4">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-gray-400 text-sm mb-1">Your Name</label>
+                        <input type="text" id="slaughter-order-name" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                    <div><label class="block text-gray-400 text-sm mb-1">Phone Number</label>
+                        <input type="tel" id="slaughter-order-phone" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+                
+                <div><label class="block text-gray-400 text-sm mb-1">Email Address</label>
+                    <input type="email" id="slaughter-order-email" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+                
+                <div><label class="block text-gray-400 text-sm mb-1">Location / Pickup Address</label>
+                    <input type="text" id="slaughter-order-location" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Type of Poultry Meat</label>
+                        <select id="slaughter-meat-type" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white focus:border-farm-accent">
+                            <option value="Chicken Meat">Chicken Meat</option>
+                            <option value="Turkey Meat">Turkey Meat</option>
+                            <option value="Duck Meat">Duck Meat</option>
+                            <option value="Guinea Fowl Meat">Guinea Fowl Meat</option>
+                            <option value="Goose Meat">Goose Meat</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Desired Weight (in Kilograms - KG)</label>
+                        <input type="number" id="slaughter-meat-weight" min="1" placeholder="E.g., 5 for a family order" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Specific Cutting Instructions / Notes</label>
+                    <textarea id="slaughter-order-desc" rows="2" placeholder="E.g., Please dice the meat and package it in 1kg portions." class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Final Product Delivery Method</label>
+                    <div class="flex space-x-4 mt-1">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="slaughter-delivery" value="Pickup" class="form-radio text-farm-accent" checked>
+                            <span class="text-gray-300">Self Pickup</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="slaughter-delivery" value="Delivery" class="form-radio text-farm-accent">
+                            <span class="text-gray-300">Farm Delivery</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-3 rounded mt-4">Order Slaughtering Service</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="buy-manure-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-[60] flex items-center justify-center backdrop-blur-sm overflow-y-auto">
+        <div class="bg-farm-card p-8 rounded-lg shadow-2xl w-full max-w-lg border border-gray-700 m-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h3 class="text-2xl font-bold text-white"><i class="fa-solid fa-leaf text-farm-accent mr-2"></i>Order Organic Fertiliser</h3>
+                <button onclick="closeModal('buy-manure-modal')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); submitManureOrder();" class="space-y-4">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-gray-400 text-sm mb-1">Your Name</label>
+                        <input type="text" id="manure-order-name" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                    <div><label class="block text-gray-400 text-sm mb-1">Phone Number</label>
+                        <input type="tel" id="manure-order-phone" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+                
+                <div><label class="block text-gray-400 text-sm mb-1">Email Address</label>
+                    <input type="email" id="manure-order-email" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+                
+                <div><label class="block text-gray-400 text-sm mb-1">Location / Delivery Address</label>
+                    <input type="text" id="manure-order-location" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Type of Fertiliser</label>
+                        <select id="manure-order-type" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white focus:border-farm-accent">
+                            <option value="Poultry Manure (Standard)">Poultry Manure (Standard)</option>
+                            <option value="Composted Fertiliser">Composted Fertiliser (Premium)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Weight (in Kilograms - KG)</label>
+                        <input type="number" id="manure-order-weight" min="1" placeholder="E.g., 500 for a large order" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Description / Notes</label>
+                    <textarea id="manure-order-desc" rows="2" placeholder="E.g., Please ensure delivery is early morning." class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Delivery Method</label>
+                    <div class="flex space-x-4 mt-1">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="manure-delivery" value="Pickup" class="form-radio text-farm-accent" checked>
+                            <span class="text-gray-300">Self Pickup</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="manure-delivery" value="Delivery" class="form-radio text-farm-accent">
+                            <span class="text-gray-300">Farm Delivery</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-3 rounded mt-4">Order Fertiliser Now</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="buy-feed-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-[60] flex items-center justify-center backdrop-blur-sm overflow-y-auto">
+        <div class="bg-farm-card p-8 rounded-lg shadow-2xl w-full max-w-lg border border-gray-700 m-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h3 class="text-2xl font-bold text-white"><i class="fa-solid fa-wheat-awn text-farm-accent mr-2"></i>Order Poultry Feed</h3>
+                <button onclick="closeModal('buy-feed-modal')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); submitFeedOrder();" class="space-y-4">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-gray-400 text-sm mb-1">Your Name</label>
+                        <input type="text" id="feed-order-name" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                    <div><label class="block text-gray-400 text-sm mb-1">Phone Number</label>
+                        <input type="tel" id="feed-order-phone" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+                
+                <div><label class="block text-gray-400 text-sm mb-1">Email Address</label>
+                    <input type="email" id="feed-order-email" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+                
+                <div><label class="block text-gray-400 text-sm mb-1">Location / Delivery Address</label>
+                    <input type="text" id="feed-order-location" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Type of Feed</label>
+                        <select id="feed-order-type" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white focus:border-farm-accent">
+                            <option value="Chick Mash">Chick Mash</option>
+                            <option value="Growers Mash">Growers Mash (Starters)</option>
+                            <option value="Layers Mash">Layers Mash</option>
+                            <option value="Finisher Pellets">Finisher Pellets</option>
+                            <option value="Broiler Starter">Broiler Starter</option>
+                            <option value="Other/Custom Mix">Other/Custom Mix</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Weight (in Kilograms - KG)</label>
+                        <input type="number" id="feed-order-weight" min="1" placeholder="E.g., 50 for a bag" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Description / Notes</label>
+                    <textarea id="feed-order-desc" rows="2" placeholder="E.g., Require 10 bags of 50kg Layers Mash." class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Delivery Method</label>
+                    <div class="flex space-x-4 mt-1">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="feed-delivery" value="Pickup" class="form-radio text-farm-accent" checked>
+                            <span class="text-gray-300">Self Pickup</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="feed-delivery" value="Delivery" class="form-radio text-farm-accent">
+                            <span class="text-gray-300">Farm Delivery</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-3 rounded mt-4">Order Feed Now</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="hatching-services-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-[60] flex items-center justify-center backdrop-blur-sm overflow-y-auto">
+        <div class="bg-farm-card p-8 rounded-lg shadow-2xl w-full max-w-lg border border-gray-700 m-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h3 class="text-2xl font-bold text-white"><i class="fa-solid fa-egg text-farm-accent mr-2"></i>Order Hatching Services</h3>
+                <button onclick="closeModal('hatching-services-modal')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); submitHatchOrder();" class="space-y-4">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-gray-400 text-sm mb-1">Your Name</label>
+                        <input type="text" id="hatch-order-name" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                    <div><label class="block text-gray-400 text-sm mb-1">Phone Number</label>
+                        <input type="tel" id="hatch-order-phone" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+                
+                <div><label class="block text-gray-400 text-sm mb-1">Email Address</label>
+                    <input type="email" id="hatch-order-email" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+                
+                <div><label class="block text-gray-400 text-sm mb-1">Location / Address</label>
+                    <input type="text" id="hatch-order-location" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Egg Type for Hatching</label>
+                        <select id="hatch-egg-type" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white focus:border-farm-accent">
+                            <option value="Chicken">Chicken</option>
+                            <option value="Duck">Duck</option>
+                            <option value="Turkey">Turkey</option>
+                            <option value="Goose">Goose</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Number of Eggs (Qty)</label>
+                        <input type="number" id="hatch-egg-qty" min="1" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Start Incubation Date</label>
+                        <input type="date" id="hatch-start-date" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Egg Ownership</label>
+                        <select id="hatch-ownership" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white focus:border-farm-accent">
+                            <option value="Client's Eggs (Drop-off)">Client's Eggs (Drop-off)</option>
+                            <option value="Farm's Eggs (Purchased)">Farm's Eggs (Purchased)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="flex items-center space-x-3 cursor-pointer p-3 bg-gray-800 rounded border border-gray-700 hover:border-farm-accent">
+                        <input type="checkbox" id="hatch-strict-monitoring" class="form-checkbox h-5 w-5 text-farm-accent rounded focus:ring-farm-accent">
+                        <span class="text-gray-300 text-sm">Enable **Strict Monitoring** (Higher Yield Guarantee, additional cost applies)</span>
+                    </label>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Notes / Instructions</label>
+                    <textarea id="hatch-notes" rows="2" placeholder="E.g., Require daily photo updates on incubation progress." class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-3 rounded mt-4">Order Hatching Service</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="buy-eggs-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-[60] flex items-center justify-center backdrop-blur-sm overflow-y-auto">
+        <div class="bg-farm-card p-8 rounded-lg shadow-2xl w-full max-w-lg border border-gray-700 m-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h3 class="text-2xl font-bold text-white"><i class="fa-solid fa-basket-shopping text-farm-accent mr-2"></i>Order Farm Fresh Eggs</h3>
+                <button onclick="closeModal('buy-eggs-modal')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); submitEggOrder();" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-gray-400 text-sm mb-1">Your Name</label>
+                        <input type="text" id="egg-order-name" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                    <div><label class="block text-gray-400 text-sm mb-1">Phone Number</label>
+                        <input type="tel" id="egg-order-phone" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+                
+                <div><label class="block text-gray-400 text-sm mb-1">Email Address</label>
+                    <input type="email" id="egg-order-email" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+                
+                <div><label class="block text-gray-400 text-sm mb-1">Location / Delivery Address</label>
+                    <input type="text" id="egg-order-location" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="col-span-1">
+                        <label class="block text-gray-400 text-sm mb-1">Egg Type</label>
+                        <select id="egg-order-type" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white focus:border-farm-accent">
+                            <option value="Chicken Eggs">Chicken Eggs</option>
+                            <option value="Duck Eggs">Duck Eggs</option>
+                            <option value="Turkey Eggs">Turkey Eggs</option>
+                            <option value="Guinea Fowl Eggs">Guinea Fowl Eggs</option>
+                            <option value="Goose Eggs">Goose Eggs</option>
+                            <option value="Dove Eggs">Dove Eggs</option>
+                        </select>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-gray-400 text-sm mb-1">Unit Type</label>
+                        <select id="egg-order-unit" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white focus:border-farm-accent">
+                            <option value="Dozens">Dozens</option>
+                            <option value="Trays (30)">Trays (30)</option>
+                        </select>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-gray-400 text-sm mb-1">Quantity</label>
+                        <input type="number" id="egg-order-qty" min="1" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Description / Notes</label>
+                    <textarea id="egg-order-desc" rows="2" placeholder="E.g., Need them delivered by tomorrow afternoon." class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Delivery Method</label>
+                    <div class="flex space-x-4 mt-1">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="egg-delivery" value="Pickup" class="form-radio text-farm-accent" checked>
+                            <span class="text-gray-300">Self Pickup</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="egg-delivery" value="Delivery" class="form-radio text-farm-accent">
+                            <span class="text-gray-300">Farm Delivery</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-3 rounded mt-4">Order Now</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="buy-poultry-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-[60] flex items-center justify-center backdrop-blur-sm overflow-y-auto">
+        <div class="bg-farm-card p-8 rounded-lg shadow-2xl w-full max-w-lg border border-gray-700 m-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h3 class="text-2xl font-bold text-white"><i class="fa-solid fa-crow text-farm-accent mr-2"></i>Order Poultry</h3>
+                <button onclick="closeModal('buy-poultry-modal')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); submitPoultryOrder();" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Your Name</label>
+                        <input type="text" id="order-name" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Phone Number</label>
+                        <input type="tel" id="order-phone" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Email Address</label>
+                    <input type="email" id="order-email" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Location / Delivery Address</label>
+                    <input type="text" id="order-location" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Poultry Type</label>
+                        <select id="order-type" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white focus:border-farm-accent">
+                            <option value="Chicken">Chicken</option>
+                            <option value="Duck">Duck</option>
+                            <option value="Turkey">Turkey</option>
+                            <option value="Guinea Fowl">Guinea Fowl</option>
+                            <option value="Goose">Goose</option>
+                            <option value="Doves">Doves</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Quantity</label>
+                        <input type="number" id="order-qty" min="1" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Description / Specifications</label>
+                    <textarea id="order-desc" rows="2" placeholder="E.g., I need 2-month-old layers..." class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Delivery Method</label>
+                    <div class="flex space-x-4 mt-1">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="delivery" value="Pickup" class="form-radio text-farm-accent" checked>
+                            <span class="text-gray-300">Self Pickup</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="delivery" value="Delivery" class="form-radio text-farm-accent">
+                            <span class="text-gray-300">Farm Delivery</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-3 rounded mt-4">Order Now</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="advisory-call-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-[60] flex items-center justify-center backdrop-blur-sm overflow-y-auto">
+        <div class="bg-farm-card p-8 rounded-lg shadow-2xl w-full max-w-lg border border-gray-700 m-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h3 class="text-2xl font-bold text-white"><i class="fa-solid fa-phone-volume text-farm-accent mr-2"></i>Advisory Calls & Support</h3>
+                <button onclick="closeModal('advisory-call-modal')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            
+            <div class="space-y-4 text-center">
+                <p class="text-lg text-gray-300">For expert advice and immediate support, you can reach us via:</p>
+                <div class="flex items-center justify-center space-x-4 text-left">
+                    <i class="fa-solid fa-phone text-farm-accent text-3xl"></i>
+                    <div>
+                        <p class="text-white font-bold text-xl">Phone: +254 706 809 000</p>
+                        <p class="text-gray-400 text-sm">Mon - Sat: 8:00 AM - 4:00 PM</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center space-x-4 text-left">
+                    <i class="fa-brands fa-whatsapp text-green-500 text-3xl"></i>
+                    <div>
+                        <p class="text-white font-bold text-xl">WhatsApp: +254 706 809 000</p>
+                        <p class="text-gray-400 text-sm">Same hours, quicker response for messages.</p>
+                    </div>
+                </div>
+                <p class="text-md text-gray-300 mt-6 pt-4 border-t border-gray-700">
+                    For even quicker assistance, talk to our <strong class="text-farm-accent">WWF AI Assistant</strong> by clicking the chat bubble at the bottom right of the page.
+                </p>
+            </div>
+            
+            <button onclick="closeModal('advisory-call-modal')" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-3 rounded mt-6">Got It!</button>
+        </div>
+    </div>
+
+    <div id="farm-tour-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-[60] flex items-center justify-center backdrop-blur-sm overflow-y-auto">
+        <div class="bg-farm-card p-8 rounded-lg shadow-2xl w-full max-w-lg border border-gray-700 m-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h3 class="text-2xl font-bold text-white"><i class="fa-solid fa-map-location-dot text-farm-accent mr-2"></i>Book Farm Tour</h3>
+                <button onclick="closeModal('farm-tour-modal')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); submitFarmTourRequest();" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-gray-400 text-sm mb-1">Your Name</label>
+                        <input type="text" id="tour-name" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                    <div><label class="block text-gray-400 text-sm mb-1">Phone Number</label>
+                        <input type="tel" id="tour-phone" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+                
+                <div><label class="block text-gray-400 text-sm mb-1">Email Address</label>
+                    <input type="email" id="tour-email" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Desired Tour Date</label>
+                        <input type="date" id="tour-date" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Approx. Duration (Hours)</label>
+                        <input type="number" id="tour-duration" min="1" max="8" placeholder="e.g. 2" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Number of People</label>
+                    <input type="number" id="tour-people" min="1" placeholder="e.g. 5 (adults and children)" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Specific Interests / Notes</label>
+                    <textarea id="tour-notes" rows="3" placeholder="e.g. We are a school group interested in organic feed production." class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-3 rounded mt-4">Send Tour Request</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="structure-request-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-[60] flex items-center justify-center backdrop-blur-sm overflow-y-auto">
+        <div class="bg-farm-card p-8 rounded-lg shadow-2xl w-full max-w-lg border border-gray-700 m-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h3 class="text-2xl font-bold text-white"><i class="fa-solid fa-house-chimney text-farm-accent mr-2"></i>Request Poultry Structure</h3>
+                <button onclick="closeModal('structure-request-modal')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); submitStructureRequest();" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-gray-400 text-sm mb-1">Your Name</label>
+                        <input type="text" id="structure-name" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                    <div><label class="block text-gray-400 text-sm mb-1">Phone Number</label>
+                        <input type="tel" id="structure-phone" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+                
+                <div><label class="block text-gray-400 text-sm mb-1">Email Address</label>
+                    <input type="email" id="structure-email" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+                
+                <div><label class="block text-gray-400 text-sm mb-1">Farm/Site Location</label>
+                    <input type="text" id="structure-location" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Structure Type</label>
+                        <select id="structure-type" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white focus:border-farm-accent">
+                            <option value="Portable Coop">Portable Coop</option>
+                            <option value="Permanent Shed">Permanent Shed</option>
+                            <option value="Brooder House">Brooder House</option>
+                            <option value="Layer Cage System">Layer Cage System</option>
+                            <option value="Other">Other (Specify below)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Number of Birds to Accommodate</label>
+                        <input type="number" id="structure-birds-qty" min="1" placeholder="e.g. 100" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Specific Details / Requirements</label>
+                    <textarea id="structure-details" rows="3" placeholder="e.g. Needs good ventilation, durable materials, and space for 100 layers. Site visit required." class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-3 rounded mt-4">Send Structure Request</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="equipment-order-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-[60] flex items-center justify-center backdrop-blur-sm overflow-y-auto">
+        <div class="bg-farm-card p-8 rounded-lg shadow-2xl w-full max-w-lg border border-gray-700 m-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h3 class="text-2xl font-bold text-white"><i class="fa-solid fa-wrench text-farm-accent mr-2"></i>Order Farm Equipment</h3>
+                <button onclick="closeModal('equipment-order-modal')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); submitEquipmentRequest();" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-gray-400 text-sm mb-1">Your Name</label>
+                        <input type="text" id="equipment-name" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                    <div><label class="block text-gray-400 text-sm mb-1">Phone Number</label>
+                        <input type="tel" id="equipment-phone" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+                
+                <div><label class="block text-gray-400 text-sm mb-1">Email Address</label>
+                    <input type="email" id="equipment-email" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+                
+                <div><label class="block text-gray-400 text-sm mb-1">Location / Delivery Address</label>
+                    <input type="text" id="equipment-location" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Equipment Type</label>
+                        <select id="equipment-type" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white focus:border-farm-accent">
+                            <option value="Automatic Drinker">Automatic Drinker</option>
+                            <option value="Feeder">Feeder</option>
+                            <option value="Brooder">Brooder</option>
+                            <option value="Incubator">Incubator</option>
+                            <option value="Nesting Box">Nesting Box</option>
+                            <option value="Cage Unit">Cage Unit</option>
+                            <option value="Other">Other (Specify below)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">Quantity</label>
+                        <input type="number" id="equipment-qty" min="1" placeholder="e.g. 5" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Specific Details / Notes</label>
+                    <textarea id="equipment-details" rows="3" placeholder="e.g. Require heavy-duty feeders for outdoor use. Delivery by next week." class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Delivery Method</label>
+                    <div class="flex space-x-4 mt-1">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="equipment-delivery" value="Pickup" class="form-radio text-farm-accent" checked>
+                            <span class="text-gray-300">Self Pickup</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="equipment-delivery" value="Delivery" class="form-radio text-farm-accent">
+                            <span class="text-gray-300">Farm Delivery</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-3 rounded mt-4">Order Equipment</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="admin-action-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-[60] flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-farm-card p-8 rounded-lg shadow-2xl w-full max-w-lg border border-gray-700 m-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h3 id="admin-modal-title" class="text-2xl font-bold text-white">Order Action</h3>
+                <button onclick="closeModal('admin-action-modal')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            
+            <form id="admin-action-form" onsubmit="event.preventDefault(); handleAdminFormSubmit();" class="space-y-4">
+                
+                <div id="admin-price-section" class="hidden">
+                    <label class="block text-gray-400 text-sm mb-1">Total Price (KES)</label>
+                    <input type="number" id="admin-order-price" min="1" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                    
+                    <div class="flex space-x-4 mt-3">
+                        <label class="flex items-center space-x-2 cursor-pointer text-gray-300">
+                            <input type="radio" name="price-type" value="Fixed" class="form-radio text-green-500" checked>
+                            <span>Fixed Price</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer text-gray-300">
+                            <input type="radio" name="price-type" value="Negotiable" class="form-radio text-yellow-500">
+                            <span>Negotiable</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="admin-reason-section" class="hidden">
+                    <label id="admin-reason-label" class="block text-gray-400 text-sm mb-1">Message to Client (e.g., Reason for Dismissal)</label>
+                    <textarea id="admin-order-reason" rows="3" placeholder="Enter your message here..." class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required></textarea>
+                </div>
+                
+                <input type="hidden" id="admin-current-order-id">
+                <input type="hidden" id="admin-current-action-type">
+
+                <button id="admin-submit-btn" type="submit" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-3 rounded mt-4">Send Update</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="order-success-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 z-[70] flex items-center justify-center px-4">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-2xl max-w-md text-center border-2 border-green-600">
+            <div class="mb-4">
+                <i class="fa-solid fa-circle-check text-6xl text-green-500"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Order Received!</h3>
+            <p class="text-gray-300 mb-6">
+                Thank you. We will attend to your order within <strong>24 hours</strong> to confirm availability and total price.
+                <br><br>
+                Please keep an eye on your <strong class="text-farm-accent"><i class="fa-solid fa-envelope"></i> Portal Messages</strong> for updates.
+            </p>
+            
+            <div class="bg-gray-900 p-4 rounded mb-6 border border-gray-700">
+                <p class="text-sm text-gray-400 mb-2">Join our WhatsApp Community for instant updates:</p>
+                <a href="https://chat.whatsapp.com/KUDjHkQxhkvIkbwFOzKZZp?mode=hqrc" target="_blank" class="flex items-center justify-center bg-green-600 hover:bg-green-500 text-white py-2 px-4 rounded transition">
+                    <i class="fa-brands fa-whatsapp text-xl mr-2"></i> Join WhatsApp Group
+                </a>
+            </div>
+
+            <button onclick="closeModal('order-success-modal')" class="bg-gray-600 hover:bg-gray-500 text-white py-2 px-6 rounded">Close</button>
+        </div>
+    </div>
+
+    <div id="client-messages-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-[60] flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-farm-card p-6 rounded-lg shadow-2xl w-full max-w-2xl border border-gray-700 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
+                <h3 class="text-xl font-bold text-white"><i class="fa-solid fa-envelope-open-text text-farm-accent mr-2"></i>My Messages</h3>
+                <button onclick="closeModal('client-messages-modal')" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            <div id="messages-list" class="flex-grow overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+                <p class="text-gray-500 text-center mt-10">No messages yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="mpesa-checkout-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 z-[80] flex items-center justify-center px-4">
+        <div class="bg-farm-card p-8 rounded-lg shadow-2xl w-full max-w-sm border border-green-600 relative">
+            <button onclick="closeModal('mpesa-checkout-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            <div class="text-center mb-6">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/1200px-M-PESA_LOGO-01.svg.png" alt="Mpesa" class="h-12 mx-auto bg-white p-1 rounded">
+                <h3 class="text-xl font-bold text-white mt-4">Secure Checkout</h3>
+            </div>
+            <form onsubmit="event.preventDefault(); initiateMpesaPayment();" class="space-y-4">
+                <div>
+                    <label class="block text-gray-400 text-xs mb-1">Payment For</label>
+                    <input type="text" id="pay-item" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-gray-300 text-sm" readonly>
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-xs mb-1">Amount to Pay (KES)</label>
+                    <input type="text" id="pay-amount" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white font-bold text-lg" readonly>
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-xs mb-1">M-Pesa Phone Number</label>
+                    <input type="tel" placeholder="07XXXXXXXX" class="w-full bg-gray-800 border border-green-500 rounded p-2 text-white" required>
+                </div>
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded mt-2">
+                    Pay Now
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- NEW: Membership Subscription Modal -->
+    <div id="membership-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-[60] flex items-center justify-center backdrop-blur-sm overflow-y-auto">
+        <div class="bg-farm-card p-8 rounded-lg shadow-2xl w-full max-w-sm border border-farm-accent m-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h3 class="text-2xl font-bold text-white"><i class="fa-solid fa-crown text-farm-accent mr-2"></i>Premium Membership</h3>
+                <button onclick="closeModal('membership-modal')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            <p class="text-lg text-gray-300 mb-4 text-center">Unlock exclusive benefits and priority services!</p>
+            <p class="text-4xl font-bold text-farm-accent mb-6 text-center">KES 250</p>
+            <p class="text-sm text-gray-400 mb-6">
+                One-time fee for lifetime membership benefits including:
+                <ul class="list-disc list-inside text-gray-400 text-sm mt-2 space-y-1">
+                    <li>Weekly egg booking</li>
+                    <li>Advance chick booking</li>
+                    <li>Reserved hatching slots</li>
+                    <li>Priority vet visits</li>
+                    <li>Access to Premium Knowledge Base</li>
+                </ul>
+            </p>
+            <button onclick="payForService('membership', 'Premium Membership Subscription', 250)" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-3 rounded mt-4">
+                <i class="fa-solid fa-money-bill-wave mr-2"></i> Pay Now
+            </button>
+            <p class="text-xs text-gray-500 mt-3 text-center">Your details will be saved for membership activation.</p>
+        </div>
+    </div>
+
+    <!-- NEW: Online Course Modal -->
+    <div id="online-course-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-[60] flex items-center justify-center backdrop-blur-sm overflow-y-auto">
+        <div class="bg-farm-card p-8 rounded-lg shadow-2xl w-full max-w-sm border border-farm-accent m-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h3 class="text-2xl font-bold text-white"><i class="fa-solid fa-laptop-code text-farm-accent mr-2"></i>Online Course Enrollment</h3>
+                <button onclick="closeModal('online-course-modal')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            <p class="text-lg text-gray-300 mb-4 text-center">Join our live online class for a week!</p>
+            <p class="text-4xl font-bold text-farm-accent mb-6 text-center">KES 150</p>
+            <div class="text-gray-400 text-sm mb-6 space-y-2">
+                <p><i class="fa-solid fa-calendar-week mr-2 text-farm-accent"></i> <strong>Duration:</strong> 1 Week</p>
+                <p><i class="fa-solid fa-calendar-day mr-2 text-farm-accent"></i> <strong>Schedule:</strong> Wednesdays, 2:00 PM - 2:30 PM</p>
+                <p><i class="fa-solid fa-clock mr-2 text-farm-accent"></i> <strong>Length:</strong> 30 Minutes per session</p>
+                <p><i class="fa-solid fa-chalkboard-user mr-2 text-farm-accent"></i> <strong>Topics:</strong> Introduction to Organic Poultry Farming (Basic)</p>
+            </div>
+            <button onclick="payForService('online_course', 'Online Course (1 week)', 150)" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-3 rounded mt-4">
+                <i class="fa-solid fa-money-bill-wave mr-2"></i> Enroll Now
+            </button>
+            <p class="text-xs text-gray-500 mt-3 text-center">Upon successful payment, you will be redirected to the admin's WhatsApp for class link.</p>
+        </div>
+    </div>
+
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Data structure for the client gallery (Simulated database entries)
+        let galleryData = [
+            { id: 1, url: 'https://via.placeholder.com/400x300/1e293b/d97706?text=New+Chicks', product: 'Chicken', description: 'Fresh batch of Kienyeji chicks thriving on organic feed.', date: new Date().toLocaleDateString() },
+            { id: 2, url: 'https://via.placeholder.com/400x300/1e293b/d97706?text=Turkey+Stock', product: 'Turkey', description: 'Our mature turkey stock ready for the breeding season.', date: new Date().toLocaleDateString() },
+            { id: 3, url: 'https://via.placeholder.com/400x300/1e293b/d97706?text=Duck+Eggs', product: 'Duck', description: 'High-quality duck eggs harvested this morning.', date: new Date().toLocaleDateString() },
+        ];
+        let nextGalleryId = 4; // Used to assign unique IDs
+
+        // Data Source for Poultry
+        const poultryData = [
+            {
+                type: 'Chicken',
+                varieties: 'Layers, Improved Kienyeji, Cocks',
+                price_egg: 'KES 180 / dozen',
+                icon: 'fa-crow',
+                desc: 'High-quality layers and hardy improved Kienyeji breeds suited for organic rearing.'
+            },
+            {
+                type: 'Turkey',
+                varieties: 'Broad Breasted, Heritage',
+                price_egg: 'KES 2,400 / dozen',
+                icon: 'fa-feather',
+                desc: 'Magnificent birds for meat and festive occasions. Eggs available upon order.'
+            },
+            {
+                type: 'Guinea Fowl',
+                varieties: 'Standard',
+                price_egg: 'KES 1,200 / dozen',
+                icon: 'fa-dove',
+                desc: 'Known for their lean meat and beautiful plumage. Excellent foragers.'
+            },
+            {
+                type: 'Duck',
+                varieties: 'Pekin, Muscovy',
+                price_egg: 'KES 600 / dozen',
+                icon: 'fa-water',
+                desc: 'Hardy waterfowls raised on organic feed. Great for eggs and meat.'
+            },
+            {
+                type: 'Goose',
+                varieties: 'White Embden, Toulouse',
+                price_egg: 'KES 200 / piece',
+                icon: 'fa-feather-pointed',
+                desc: 'Large birds excellent for security and meat. Eggs sold per piece.'
+            },
+            {
+                type: 'Doves',
+                varieties: 'Ornamental',
+                price_egg: 'Contact for price',
+                icon: 'fa-dove',
+                desc: 'Beautiful birds for aviaries and gentle company.'
+            }
+        ];
+
+        // **NEW:** Client Credentials for Front-End Check 
+        const CLIENT_EMAIL = 'client@wwf.com';
+        const CLIENT_PASSWORD = '5316wwf';
+        let clientIsLoggedIn = false;
+
+        // **NEW:** Variable to store registered accounts (will be replaced by backend)
+        const registeredClients = new Map([
+            // Keep the default client for testing
+            [CLIENT_EMAIL, CLIENT_PASSWORD] 
+        ]);
+
+        // **NEW:** Admin Credentials for Front-End Check (Replace with secure backend validation later)
+        const ADMIN_EMAIL = 'wwf@gmail.com';
+        const ADMIN_PASSWORD = '5316wwf';
+        let isLoggedIn = false; // Tracking state
+        
+        // STORED DATA (Arrays to act as database)
+        // Orders Array
+        let orders = [];
+        let nextOrderId = 1001;
+
+        // Messages Array
+        let messages = []; 
+        // Example structure: { to: 'email', from: 'Admin', subject: 'Order #1001', body: 'text', action: 'pay', price: 500, item: '...', date: '...' }
+
+        let currentUserEmail = ''; // Tracks who is logged in
+
+        // For Mpesa payment tracking
+        let currentMpesaService = ''; // To track which service is being paid for (e.g., 'membership', 'online_course', 'pdf_id')
+        let currentMpesaAmount = 0; // To track the amount for mpesa
+
+        // PDF Library (for Diseases & Management section)
+        let pdfLibrary = [
+            { id: 1, title: 'Common Poultry Diseases', description: 'A basic guide to identifying symptoms and first aid for common ailments.', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', isFree: true },
+            { id: 2, title: 'Organic Disease Prevention', description: 'Strategies for maintaining a healthy flock without synthetic chemicals.', url: 'https://www.africau.edu/images/default/sample.pdf', isFree: true },
+            { id: 3, title: 'Basic Vaccination Schedule', description: 'An easy-to-follow guide for essential poultry vaccinations.', url: 'https://www.orimi.com/pdf-test.pdf', isFree: true },
+            { id: 4, title: 'Advanced Biosecurity Protocols', description: 'In-depth strategies for farm biosecurity and disease outbreak management.', url: 'https://pdf.thriveglobal.com/thrive/1-Minute-Mindfulness-Meditations-for-Parents_ThriveGlobal.pdf', isFree: false },
+            { id: 5, title: 'Detailed Treatment Plans', description: 'Specific medication dosages and treatment durations for various diseases.', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', isFree: false },
+            { id: 6, title: 'Post-Mortem Analysis Guide', description: 'Visual guide to conducting basic post-mortem exams to determine cause of death.', url: 'https://www.africau.edu/images/default/sample.pdf', isFree: false }
+        ];
+        let nextPdfId = 7;
+
+        // --- UTILITY FUNCTIONS ---
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        
+        // Function to switch tabs/sections (Modified for mobile menu auto-close)
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section-content').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show target section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Close mobile menu if open AND if it's currently visible
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+            
+            // Special rendering for specific sections
+            if (sectionId === 'diseases-management') {
+                renderPdfLibrary('pdf-library-display');
+            }
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Toggle Mobile Menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Function to render the client gallery. It takes the target element ID and a flag 
+        // to decide if admin controls (delete button) should be visible.
+        function renderClientGallery(targetElementId, isAdminView = false) {
+            const galleryGrid = document.getElementById(targetElementId);
+            if (!galleryGrid) return; 
+            
+            galleryGrid.innerHTML = ''; // Clear existing content
+
+            if (galleryData.length === 0) {
+                galleryGrid.innerHTML = `<p class="col-span-4 text-center text-gray-500 py-10">No images available in the gallery yet.</p>`;
+                return;
+            }
+
+            galleryData.forEach(photo => {
+                const card = document.createElement('div');
+                card.className = 'bg-gray-800 rounded-lg overflow-hidden shadow-md';
+                
+                let adminControls = '';
+                if (isAdminView) {
+                    // Admin control button for deleting the image (ONLY SHOWN WHEN isAdminView is true)
+                    adminControls = `
+                        <button onclick="deleteGalleryPhoto(${photo.id})" class="absolute top-2 right-2 bg-red-600 hover:bg-red-500 text-white p-1 rounded-full text-xs transition z-10">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
+                    `;
+                }
+                
+                card.innerHTML = `
+                    <div class="relative">
+                        <img src="${photo.url}" alt="${photo.description}" class="w-full h-48 object-cover">
+                        ${adminControls}
+                    </div>
+                    <div class="p-3">
+                        <h4 class="text-white font-semibold">${photo.product}</h4>
+                        <p class="text-gray-400 text-sm mb-1">${photo.description}</p>
+                        <p class="text-xs text-gray-500">Posted: ${photo.date}</p>
+                    </div>
+                `;
+                galleryGrid.appendChild(card);
+            });
+        }
+
+        // Function to handle adding a new photo (called from Admin Dashboard)
+        function addGalleryPhoto() {
+            const url = document.getElementById('new-photo-url').value.trim();
+            const product = document.getElementById('new-photo-product').value.trim();
+            const description = document.getElementById('new-photo-description').value.trim();
+
+            if (url && product && description) {
+                // ... (existing logic to add photo to galleryData) ...
+                const newPhoto = {
+                    id: nextGalleryId++,
+                    url: url,
+                    product: product,
+                    description: description,
+                    date: new Date().toLocaleDateString()
+                };
+                
+                galleryData.unshift(newPhoto); // Add to the start
+                
+                // Clear form
+                document.getElementById('new-photo-url').value = '';
+                document.getElementById('new-photo-product').value = '';
+                document.getElementById('new-photo-description').value = '';
+
+                // 1. Re-render the Admin management view (with delete buttons)
+                renderClientGallery('admin-gallery-view', true); 
+                
+                // 2. NEW: Check if the Client Portal is currently visible and update it
+                if (document.getElementById('client-portal').classList.contains('active')) {
+                    renderClientGallery('farm-gallery', false);
+                }
+                
+                alert('Photo added successfully! Client Portal has been updated.');
+            } else {
+                alert('Please fill out all fields.');
+            }
+        }
+
+        // Function to handle deleting a photo (called from Admin Dashboard)
+        function deleteGalleryPhoto(id) {
+            if (confirm('Are you sure you want to delete this photo?')) {
+                galleryData = galleryData.filter(photo => photo.id !== id);
+                
+                // Re-render the Admin management view only (with delete buttons)
+                renderClientGallery('admin-gallery-view', true); 
+            }
+        }
+
+        // Render Poultry Cards Dynamically
+        function renderPoultry() {
+            const grid = document.getElementById('poultry-grid');
+            grid.innerHTML = ''; // Clear existing
+
+            poultryData.forEach(bird => {
+                const card = document.createElement('div');
+                card.className = 'bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800 transform hover:scale-105 transition duration-300';
+                card.innerHTML = `
+                    <div class="h-48 bg-gray-700 flex items-center justify-center relative group">
+                        <!-- Placeholder for Image -->
+                        <i class="fa-solid ${bird.icon} text-6xl text-gray-500 group-hover:text-white transition"></i>
+                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                            <span class="text-white font-bold border border-white px-4 py-2 rounded">View Gallery</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <h3 class="text-2xl font-bold text-white">${bird.type}</h3>
+                        </div>
+                        <p class="text-farm-accent font-semibold mb-2">${bird.varieties}</p>
+                        <p class="text-gray-400 text-sm mb-4 h-12">${bird.desc}</p>
+                        <div class="border-t border-gray-700 pt-4">
+                            <p class="text-sm text-gray-500">Egg Price</p>
+                            <p class="text-xl font-bold text-white">${bird.price_egg}</p>
+                        </div>
+                        <button class="mt-4 w-full bg-green-700 hover:bg-green-600 text-white py-2 rounded transition" onclick="showSection('contact')">
+                            Order Now
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+        
+        // Function to handle client login attempt (UPDATED)
+        function handleClientLogin() {
+            const emailInput = document.getElementById('client-email');
+            const passwordInput = document.getElementById('client-password');
+            const errorMsg = document.getElementById('client-login-error');
+            const forgotPwdLink = document.getElementById('forgot-password-link');
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            // Check against the registeredClients Map (FRONT-END VALIDATION CHECK)
+            if (registeredClients.has(email) && registeredClients.get(email) === password) {
+                currentUserEmail = email;
+                clientIsLoggedIn = true;
+                errorMsg.classList.add('hidden');
+                forgotPwdLink.classList.remove('hidden'); // Hide the combined error/register link
+                emailInput.value = '';
+                passwordInput.value = '';
+                
+                // Hide Login and Show Portal
+                document.getElementById('client-login').classList.remove('active');
+                document.getElementById('client-portal').classList.add('active');
+                window.scrollTo(0, 0);
+
+                // ADDED DELAY: Ensure the portal element is fully rendered before rendering content
+                setTimeout(() => {
+                    renderClientGallery('farm-gallery', false); // Render client gallery
+                }, 100);
+
+                const unread = messages.filter(m => m.to === email && !m.read).length;
+                if(unread > 0) {
+                    document.getElementById('msg-notification-dot').classList.remove('hidden');
+                }
+
+            } else {
+                // Show the error message, which now includes the 'Create new account' link
+                errorMsg.classList.remove('hidden');
+                forgotPwdLink.classList.add('hidden'); // Hide forgot password to focus on the error
+            }
+        }
+
+        // Function to handle client logout
+        function handleClientLogout() {
+            clientIsLoggedIn = false;
+            currentUserEmail = '';
+            document.getElementById('client-portal').classList.remove('active');
+            document.getElementById('client-login').classList.add('active'); // Back to login screen
+        }
+
+        // Function to toggle between Login and Registration forms
+        function toggleForms(showLogin) {
+            const loginContainer = document.getElementById('login-form-container');
+            const registerContainer = document.getElementById('register-form-container');
+            
+            if (showLogin) {
+                loginContainer.classList.remove('hidden');
+                registerContainer.classList.add('hidden');
+                document.getElementById('client-login-error').classList.add('hidden'); // Clear error
+            } else {
+                loginContainer.classList.add('hidden');
+                registerContainer.classList.remove('hidden');
+            }
+        }
+
+        // **NEW:** Function to handle client registration
+        function handleClientRegistration() {
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value.trim();
+            const name = document.getElementById('reg-full-name').value.trim();
+            const successMsg = document.getElementById('registration-success');
+            const errorMsg = document.getElementById('registration-error');
+
+            // Simple front-end validation
+            if (name === '' || email === '' || password.length < 6) {
+                errorMsg.textContent = "Please ensure all fields are filled and password is at least 6 characters.";
+                errorMsg.classList.remove('hidden');
+                successMsg.classList.add('hidden');
+                return;
+            }
+
+            // Check if account already exists
+            if (registeredClients.has(email)) {
+                errorMsg.textContent = "This email is already registered. Please log in.";
+                errorMsg.classList.remove('hidden');
+                successMsg.classList.add('hidden');
+                return;
+            }
+
+            // --- **TODO: BACKEND INTEGRATION POINT** ---
+            // For now, store in the front-end map
+            registeredClients.set(email, password);
+            // In a real application, you'd send an API request here.
+            
+            // Display success and switch back to login
+            successMsg.classList.remove('hidden');
+            errorMsg.classList.add('hidden');
+            
+            // Clear registration fields
+            document.getElementById('reg-full-name').value = '';
+            document.getElementById('reg-email').value = '';
+            document.getElementById('reg-password').value = '';
+            
+            // Automatically switch back to the login form after a short delay
+            setTimeout(() => {
+                toggleForms(true); 
+                successMsg.classList.add('hidden'); // Hide success message
+            }, 2000);
+        }
+
+        // Function to render the poultry tracking cards
+        function renderPoultryTracking() {
+            const grid = document.getElementById('poultry-tracking-grid');
+            grid.innerHTML = ''; // Clear existing
+
+            // Initial dummy data for the dashboard population
+            const trackingData = [
+                { type: 'Chicken', total: 450, icon: 'fa-crow', color: 'text-yellow-500' },
+                { type: 'Duck', total: 85, icon: 'fa-water', color: 'text-blue-500' },
+                { type: 'Turkey', total: 30, icon: 'fa-feather', color: 'text-red-500' },
+                { type: 'Goose', total: 15, icon: 'fa-feather-pointed', color: 'text-green-500' },
+            ];
+            
+            trackingData.forEach(bird => {
+                const card = document.createElement('div');
+                card.className = 'bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-farm-accent';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <i class="fa-solid ${bird.icon} ${bird.color} text-4xl"></i>
+                        <div>
+                            <p class="text-gray-400 text-sm uppercase">${bird.type} Population</p>
+                            <p class="text-3xl font-bold text-white">${bird.total}</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Last updated: ${new Date().toLocaleTimeString()}</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Function to handle admin login attempt
+        function handleAdminLogin() {
+            const emailInput = document.getElementById('admin-email');
+            const passwordInput = document.getElementById('admin-password');
+            const errorMsg = document.getElementById('login-error');
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            // FRONT-END VALIDATION CHECK
+            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+                isLoggedIn = true;
+                errorMsg.classList.add('hidden');
+                emailInput.value = '';
+                passwordInput.value = '';
+                
+                // Hide Admin Login and Show Dashboard
+                document.getElementById('admin').classList.remove('active');
+                document.getElementById('dashboard').classList.add('active');
+                
+                // Render the dashboard content
+                renderPoultryTracking();
+                renderAdminOrders();
+                renderClientGallery('admin-gallery-view', true); // Admin view of gallery
+                renderPdfLibrary('admin-uploaded-pdf-list', true); // Render admin's PDF library
+                window.scrollTo(0, 0);
+
+                // Update Nav Menu to show Logout (Optional but good UX)
+                // You can add logic here to update the 'Admin' button to a 'Dashboard' button.
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        // Function to handle admin logout
+        function handleAdminLogout() {
+            isLoggedIn = false;
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('admin').classList.add('active'); // Back to login screen
+        }
+
+        // --- ORDER LOGIC ---
+
+        // 1. Trigger the Modal (Modified to include new service types)
+        function handleServiceClick(serviceType) {
+            if (serviceType === 'buy_poultry') {
+                // Pre-fill email if logged in
+                if(currentUserEmail) document.getElementById('order-email').value = currentUserEmail;
+                openModal('buy-poultry-modal');
+
+            } else if (serviceType === 'buy_eggs') { 
+                if(currentUserEmail) {
+                    document.getElementById('egg-order-email').value = currentUserEmail;
+                }
+                openModal('buy-eggs-modal');
+
+            } else if (serviceType === 'hatching') { 
+                if(currentUserEmail) {
+                    document.getElementById('hatch-order-email').value = currentUserEmail;
+                }
+                openModal('hatching-services-modal');
+
+            } else if (serviceType === 'buy_feed') { 
+                if(currentUserEmail) {
+                    document.getElementById('feed-order-email').value = currentUserEmail;
+                }
+                openModal('buy-feed-modal');
+
+            } else if (serviceType === 'buy_fertilizer') { 
+                if(currentUserEmail) {
+                    document.getElementById('manure-order-email').value = currentUserEmail;
+                }
+                openModal('buy-manure-modal');
+
+            } else if (serviceType === 'slaughtering') { 
+                if(currentUserEmail) {
+                    document.getElementById('slaughter-order-email').value = currentUserEmail;
+                }
+                openModal('slaughtering-services-modal');
+
+            } else if (serviceType === 'advisory') { 
+                openModal('advisory-call-modal');
+            
+            } else if (serviceType === 'farm_tour') { 
+                if(currentUserEmail) document.getElementById('tour-email').value = currentUserEmail;
+                openModal('farm-tour-modal');
+            
+            } else if (serviceType === 'structures') { 
+                if(currentUserEmail) document.getElementById('structure-email').value = currentUserEmail;
+                openModal('structure-request-modal');
+            
+            } else if (serviceType === 'equipment') { 
+                if(currentUserEmail) document.getElementById('equipment-email').value = currentUserEmail;
+                openModal('equipment-order-modal');
+            
+            } else if (serviceType === 'vet_support') { 
+                showSection('vet');
+            
+            } else if (serviceType === 'membership') { // NEW: Membership
+                openModal('membership-modal');
+            } else if (serviceType === 'courses') { // NEW: Online Course
+                openModal('online-course-modal');
+            } else if (serviceType === 'diseases') { // NEW: Diseases & Treatment page
+                showSection('diseases-management');
+            } else {
+                alert("This feature (" + serviceType.replace('_', ' ') + ") is coming in the next update!");
+            }
+        }
+
+        // a. Submit the Order (Client Side)
+        function submitPoultryOrder() {
+            const name = document.getElementById('order-name').value;
+            const phone = document.getElementById('order-phone').value;
+            const email = document.getElementById('order-email').value;
+            const location = document.getElementById('order-location').value;
+            const type = document.getElementById('order-type').value;
+            const qty = document.getElementById('order-qty').value;
+            const desc = document.getElementById('order-desc').value;
+            const delivery = document.querySelector('input[name="delivery"]:checked').value;
+
+            // Create Order Object
+            const newOrder = {
+                id: nextOrderId++,
+                clientName: name,
+                clientEmail: email,
+                clientPhone: phone,
+                location: location,
+                type: type,
+                qty: qty,
+                desc: desc,
+                delivery: delivery,
+                status: 'Pending',
+                date: new Date().toLocaleString()
+            };
+
+            orders.unshift(newOrder); // Add to top of array
+            
+            // Reset Form & Close Modal
+            closeModal('buy-poultry-modal');
+            document.getElementById('order-qty').value = '';
+            document.getElementById('order-desc').value = '';
+
+            // Show Success Message
+            openModal('order-success-modal');
+            
+            // If Admin dashboard is active, refresh it immediately
+            if(document.getElementById('dashboard').classList.contains('active')) {
+                renderAdminOrders();
+            }
+        }
+
+        // b. Submit the Egg Order (Client Side)
+        function submitEggOrder() {
+            // 1. Capture Form Data
+            const name = document.getElementById('egg-order-name').value;
+            const phone = document.getElementById('egg-order-phone').value;
+            const email = document.getElementById('egg-order-email').value;
+            const location = document.getElementById('egg-order-location').value;
+            
+            const type = document.getElementById('egg-order-type').value;
+            const qty = document.getElementById('egg-order-qty').value;
+            const unit = document.getElementById('egg-order-unit').value; // <-- New Unit Field
+            
+            const desc = document.getElementById('egg-order-desc').value;
+            const delivery = document.querySelector('input[name="egg-delivery"]:checked').value;
+
+            // 2. Create Order Object
+            const newOrder = {
+                id: nextOrderId++,
+                clientName: name,
+                clientEmail: email,
+                clientPhone: phone,
+                location: location,
+                type: `Eggs (${type})`, // Modified for easy Admin recognition
+                qty: `${qty} ${unit}`, // Store qty and unit together
+                desc: desc,
+                delivery: delivery,
+                status: 'Pending',
+                date: new Date().toLocaleString()
+            };
+
+            orders.unshift(newOrder); // Add to top of array
+            
+            // 3. Reset Form & Show Success
+            closeModal('buy-eggs-modal');
+            document.getElementById('egg-order-qty').value = '';
+            document.getElementById('egg-order-desc').value = '';
+
+            openModal('order-success-modal');
+            
+            // 4. Force Admin Dashboard Refresh if active
+            if(document.getElementById('dashboard').classList.contains('active')) {
+                renderAdminOrders();
+            }
+        }
+        
+        // c. Submit the Hatching Service Order (Client Side)
+        function submitHatchOrder() {
+            // 1. Capture Form Data
+            const name = document.getElementById('hatch-order-name').value;
+            const phone = document.getElementById('hatch-order-phone').value;
+            const email = document.getElementById('hatch-order-email').value;
+            const location = document.getElementById('hatch-order-location').value;
+            
+            const eggType = document.getElementById('hatch-egg-type').value;
+            const qty = document.getElementById('hatch-egg-qty').value;
+            const startDate = document.getElementById('hatch-start-date').value;
+            const ownership = document.getElementById('hatch-ownership').value;
+            const monitoring = document.getElementById('hatch-strict-monitoring').checked ? 'YES (Strict Monitoring Requested)' : 'No';
+            
+            const notes = document.getElementById('hatch-notes').value;
+            // For simplicity, we don't need delivery for this, but we'll include notes
+
+            // 2. Create Order Object
+            const newOrder = {
+                id: nextOrderId++,
+                clientName: name,
+                clientEmail: email,
+                clientPhone: phone,
+                location: location,
+                type: `Hatching Service: ${eggType}`, // Clearly marks service type
+                qty: `${qty} Eggs`,
+                desc: `Ownership: ${ownership}. Start Date: ${startDate}. Monitoring: ${monitoring}. Notes: ${notes}`,
+                delivery: `Final Pickup/Delivery`, // Default term for admin clarity
+                status: 'Pending',
+                date: new Date().toLocaleString()
+            };
+
+            orders.unshift(newOrder); // Add to top of array
+            
+            // 3. Reset Form & Show Success
+            closeModal('hatching-services-modal');
+            document.getElementById('hatch-egg-qty').value = '';
+            document.getElementById('hatch-notes').value = '';
+
+            openModal('order-success-modal');
+            
+            // 4. Force Admin Dashboard Refresh if active
+            if(document.getElementById('dashboard').classList.contains('active')) {
+                renderAdminOrders();
+            }
+        }
+
+        // d. Submit the Poultry Feed Order (Client Side)
+        function submitFeedOrder() {
+            // 1. Capture Form Data
+            const name = document.getElementById('feed-order-name').value;
+            const phone = document.getElementById('feed-order-phone').value;
+            const email = document.getElementById('feed-order-email').value;
+            const location = document.getElementById('feed-order-location').value;
+            
+            const feedType = document.getElementById('feed-order-type').value;
+            const weight = document.getElementById('feed-order-weight').value;
+            
+            const desc = document.getElementById('feed-order-desc').value;
+            const delivery = document.querySelector('input[name="feed-delivery"]:checked').value;
+
+            // 2. Create Order Object
+            const newOrder = {
+                id: nextOrderId++,
+                clientName: name,
+                clientEmail: email,
+                clientPhone: phone,
+                location: location,
+                type: `Feed Order: ${feedType}`, // Clearly marks service type
+                qty: `${weight} KG`, // Weight in KG
+                desc: desc,
+                delivery: delivery,
+                status: 'Pending',
+                date: new Date().toLocaleString()
+            };
+
+            orders.unshift(newOrder); // Add to top of array
+            
+            // 3. Reset Form & Show Success
+            closeModal('buy-feed-modal');
+            document.getElementById('feed-order-weight').value = '';
+            document.getElementById('feed-order-desc').value = '';
+
+            openModal('order-success-modal');
+            
+            // 4. Force Admin Dashboard Refresh if active
+            if(document.getElementById('dashboard').classList.contains('active')) {
+                renderAdminOrders();
+            }
+        }
+
+        // e. Submit the Manure/Fertiliser Order (Client Side)
+        function submitManureOrder() {
+            // 1. Capture Form Data
+            const name = document.getElementById('manure-order-name').value;
+            const phone = document.getElementById('manure-order-phone').value;
+            const email = document.getElementById('manure-order-email').value;
+            const location = document.getElementById('manure-order-location').value;
+            
+            const fertiliserType = document.getElementById('manure-order-type').value;
+            const weight = document.getElementById('manure-order-weight').value;
+            
+            const desc = document.getElementById('manure-order-desc').value;
+            const delivery = document.querySelector('input[name="manure-delivery"]:checked').value;
+
+            // 2. Create Order Object
+            const newOrder = {
+                id: nextOrderId++,
+                clientName: name,
+                clientEmail: email,
+                clientPhone: phone,
+                location: location,
+                type: `Fertiliser Order: ${fertiliserType}`, // Clearly marks service type
+                qty: `${weight} KG`, // Weight in KG
+                desc: desc,
+                delivery: delivery,
+                status: 'Pending',
+                date: new Date().toLocaleString()
+            };
+
+            orders.unshift(newOrder); // Add to top of array
+            
+            // 3. Reset Form & Show Success
+            closeModal('buy-manure-modal');
+            document.getElementById('manure-order-weight').value = '';
+            document.getElementById('manure-order-desc').value = '';
+
+            openModal('order-success-modal');
+            
+            // 4. Force Admin Dashboard Refresh if active
+            if(document.getElementById('dashboard').classList.contains('active')) {
+                renderAdminOrders();
+            }
+        }
+
+        // f. Submit the Slaughtering Services Order (Client Side)
+        function submitSlaughterOrder() {
+            // 1. Capture Form Data
+            const name = document.getElementById('slaughter-order-name').value;
+            const phone = document.getElementById('slaughter-order-phone').value;
+            const email = document.getElementById('slaughter-order-email').value;
+            const location = document.getElementById('slaughter-order-location').value;
+            
+            const meatType = document.getElementById('slaughter-meat-type').value;
+            const weight = document.getElementById('slaughter-meat-weight').value;
+            
+            const desc = document.getElementById('slaughter-order-desc').value;
+            const delivery = document.querySelector('input[name="slaughter-delivery"]:checked').value;
+
+            // 2. Create Order Object
+            const newOrder = {
+                id: nextOrderId++,
+                clientName: name,
+                clientEmail: email,
+                clientPhone: phone,
+                location: location,
+                type: `Slaughtering: ${meatType}`, // Clearly marks service type
+                qty: `${weight} KG`, // Weight in KG
+                desc: desc,
+                delivery: delivery,
+                status: 'Pending',
+                date: new Date().toLocaleString()
+            };
+
+            orders.unshift(newOrder); // Add to top of array
+            
+            // 3. Reset Form & Show Success
+            closeModal('slaughtering-services-modal');
+            document.getElementById('slaughter-meat-weight').value = '';
+            document.getElementById('slaughter-order-desc').value = '';
+
+            openModal('order-success-modal');
+            
+            // 4. Force Admin Dashboard Refresh if active
+            if(document.getElementById('dashboard').classList.contains('active')) {
+                renderAdminOrders();
+            }
+        }
+        
+        // g. Submit Farm Tour Request (Client Side)
+        function submitFarmTourRequest() {
+            const name = document.getElementById('tour-name').value;
+            const phone = document.getElementById('tour-phone').value;
+            const email = document.getElementById('tour-email').value;
+            const date = document.getElementById('tour-date').value;
+            const duration = document.getElementById('tour-duration').value;
+            const people = document.getElementById('tour-people').value;
+            const notes = document.getElementById('tour-notes').value;
+
+            const newOrder = {
+                id: nextOrderId++,
+                clientName: name,
+                clientEmail: email,
+                clientPhone: phone,
+                location: 'Farm Site', // Fixed location for a tour
+                type: 'Farm Tour Request',
+                qty: `${people} people`,
+                desc: `Date: ${date}, Duration: ${duration} hours. Notes: ${notes}`,
+                delivery: 'N/A', // Not applicable for tour request
+                status: 'Pending',
+                date: new Date().toLocaleString()
+            };
+
+            orders.unshift(newOrder);
+            
+            closeModal('farm-tour-modal');
+            document.getElementById('tour-date').value = '';
+            document.getElementById('tour-duration').value = '';
+            document.getElementById('tour-people').value = '';
+            document.getElementById('tour-notes').value = '';
+
+            openModal('order-success-modal');
+            
+            if(document.getElementById('dashboard').classList.contains('active')) {
+                renderAdminOrders();
+            }
+        }
+
+        // h. Submit Structure Request (Client Side)
+        function submitStructureRequest() {
+            const name = document.getElementById('structure-name').value;
+            const phone = document.getElementById('structure-phone').value;
+            const email = document.getElementById('structure-email').value;
+            const location = document.getElementById('structure-location').value;
+            const structureType = document.getElementById('structure-type').value;
+            const birdsQty = document.getElementById('structure-birds-qty').value;
+            const details = document.getElementById('structure-details').value;
+
+            const newOrder = {
+                id: nextOrderId++,
+                clientName: name,
+                clientEmail: email,
+                clientPhone: phone,
+                location: location,
+                type: `Structure Request: ${structureType}`,
+                qty: `${birdsQty} birds capacity`,
+                desc: details,
+                delivery: 'Site Visit/Consultation',
+                status: 'Pending',
+                date: new Date().toLocaleString()
+            };
+
+            orders.unshift(newOrder);
+            
+            closeModal('structure-request-modal');
+            document.getElementById('structure-birds-qty').value = '';
+            document.getElementById('structure-details').value = '';
+
+            openModal('order-success-modal');
+            
+            if(document.getElementById('dashboard').classList.contains('active')) {
+                renderAdminOrders();
+            }
+        }
+
+        // i. Submit Equipment Order (Client Side)
+        function submitEquipmentRequest() {
+            const name = document.getElementById('equipment-name').value;
+            const phone = document.getElementById('equipment-phone').value;
+            const email = document.getElementById('equipment-email').value;
+            const location = document.getElementById('equipment-location').value;
+            const equipmentType = document.getElementById('equipment-type').value;
+            const qty = document.getElementById('equipment-qty').value;
+            const details = document.getElementById('equipment-details').value;
+            const delivery = document.querySelector('input[name="equipment-delivery"]:checked').value;
+
+            const newOrder = {
+                id: nextOrderId++,
+                clientName: name,
+                clientEmail: email,
+                clientPhone: phone,
+                location: location,
+                type: `Equipment Order: ${equipmentType}`,
+                qty: `${qty} units`,
+                desc: details,
+                delivery: delivery,
+                status: 'Pending',
+                date: new Date().toLocaleString()
+            };
+
+            orders.unshift(newOrder);
+            
+            closeModal('equipment-order-modal');
+            document.getElementById('equipment-qty').value = '';
+            document.getElementById('equipment-details').value = '';
+
+            openModal('order-success-modal');
+            
+            if(document.getElementById('dashboard').classList.contains('active')) {
+                renderAdminOrders();
+            }
+        }
+
+
+        // 3. Render Orders (Admin Side)
+        function renderAdminOrders() {
+            const container = document.getElementById('admin-orders-list');
+            container.innerHTML = '';
+
+            if (orders.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 bg-gray-800 p-4 rounded">No pending orders.</p>';
+                return;
+            }
+
+            orders.forEach(order => {
+                const card = document.createElement('div');
+                card.className = 'bg-gray-800 p-4 rounded border-l-4 border-yellow-500 shadow-md';
+                // Only show action buttons if status is Pending
+                const actionButtons = order.status === 'Pending' ? `
+                    <button onclick="attendOrder(${order.id})" class="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded text-sm">Attend</button>
+                    <button onclick="dismissOrder(${order.id})" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded text-sm">Dismiss</button>
+                ` : `<span class="text-sm text-gray-500">Status: ${order.status}</span>`;
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">Order #${order.id} - ${order.type} (${order.qty})</h4>
+                            <p class="text-sm text-gray-400"><i class="fa-solid fa-user mr-1"></i> ${order.clientName} | ${order.clientPhone}</p>
+                            <p class="text-sm text-gray-400"><i class="fa-solid fa-location-dot mr-1"></i> ${order.location} (${order.delivery})</p>
+                            <p class="text-sm text-gray-300 mt-2 italic">"${order.desc}"</p>
+                            <p class="text-xs text-gray-500 mt-2">${order.date}</p>
+                        </div>
+                        <div class="flex flex-col space-y-2">
+                            ${actionButtons}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 4. Admin Actions (Dismiss) - MODIFIED TO USE MODAL
+        function dismissOrder(id) {
+            const order = orders.find(o => o.id === id);
+            if (!order) return;
+
+            // Set up modal for DISMISS action
+            document.getElementById('admin-modal-title').innerText = `Dismiss Order #${id}`;
+            document.getElementById('admin-order-reason').value = "Stock unavailable or volume too high. Sorry for the inconvenience.";
+            document.getElementById('admin-reason-label').innerText = 'Reason for Dismissal (sent to client):';
+            document.getElementById('admin-submit-btn').innerText = 'Dismiss Order & Notify Client';
+
+            // Show/Hide relevant fields
+            document.getElementById('admin-price-section').classList.add('hidden');
+            document.getElementById('admin-reason-section').classList.remove('hidden');
+
+            // Set hidden tracking fields
+            document.getElementById('admin-current-order-id').value = id;
+            document.getElementById('admin-current-action-type').value = 'dismiss';
+            
+            // Open the new modal
+            openModal('admin-action-modal');
+        }
+
+        // 5. Admin Actions (Attend/Process) - MODIFIED TO USE MODAL
+        function attendOrder(id) {
+            const order = orders.find(o => o.id === id);
+            if (!order) return;
+
+            // Set up modal for ATTEND action
+            document.getElementById('admin-modal-title').innerText = `Process Order #${id}`;
+            document.getElementById('admin-order-reason').value = `Hello ${order.clientName}, your order for ${order.qty} ${order.type}(s) has been processed.`;
+            document.getElementById('admin-reason-label').innerText = 'Initial Message to Client:';
+            document.getElementById('admin-submit-btn').innerText = 'Send Price & Invoice';
+
+            // Show/Hide relevant fields
+            document.getElementById('admin-price-section').classList.remove('hidden');
+            document.getElementById('admin-reason-section').classList.remove('hidden');
+
+            // Set hidden tracking fields
+            document.getElementById('admin-current-order-id').value = id;
+            document.getElementById('admin-current-action-type').value = 'attend';
+            
+            // Open the new modal
+            openModal('admin-action-modal');
+        }
+
+        // 6. Handle Modal Submission (New Function)
+        function handleAdminFormSubmit() {
+            const id = parseInt(document.getElementById('admin-current-order-id').value);
+            const actionType = document.getElementById('admin-current-action-type').value;
+            const orderIndex = orders.findIndex(o => o.id === id);
+            const order = orders[orderIndex];
+
+            if (!order) {
+                closeModal('admin-action-modal');
+                return;
+            }
+            
+            const reasonOrBody = document.getElementById('admin-order-reason').value;
+            
+            if (actionType === 'dismiss') {
+                // --- DISMISS LOGIC ---
+                const msg = {
+                    to: order.clientEmail,
+                    subject: `Order #${id} Declined`,
+                    body: `Hello ${order.clientName}, regarding your order for ${order.qty} ${order.type}(s): \n\n${reasonOrBody}.`,
+                    action: null,
+                    read: false,
+                    date: new Date().toLocaleTimeString()
+                };
+                messages.unshift(msg);
+                
+                // Update order status (don't delete, just update for history)
+                orders[orderIndex].status = 'Dismissed';
+                renderAdminOrders();
+                alert("Order dismissed and client notified.");
+
+            } else if (actionType === 'attend') {
+                // --- ATTEND LOGIC ---
+                const price = document.getElementById('admin-order-price').value;
+                const priceType = document.querySelector('input[name="price-type"]:checked').value;
+                
+                if (!price || parseFloat(price) <= 0) {
+                    alert("Please enter a valid price.");
+                    return;
+                }
+
+                let bodyText = `${reasonOrBody}\n\nTotal Amount: KES ${price} (${priceType}). \n\nDelivery: ${order.delivery}.`;
+                
+                if (priceType === "Negotiable") {
+                    bodyText += `\n\nTo negotiate, please call +254 706 809 000 or email willyswingfarm@gmail.com.`;
+                } else {
+                    bodyText += `\n\nPlease proceed to payment below.`;
+                }
+
+                // Create Message with Action
+                const msg = {
+                    to: order.clientEmail,
+                    subject: `Order #${id} Processed`,
+                    body: bodyText,
+                    action: 'pay',
+                    price: price,
+                    item: `${order.qty} x ${order.type}`,
+                    read: false,
+                    date: new Date().toLocaleTimeString()
+                };
+                
+                messages.unshift(msg);
+                
+                // Update order status
+                orders[orderIndex].status = 'Processed (Awaiting Payment)';
+                renderAdminOrders();
+                alert("Order processed and invoice sent to client.");
+            }
+            
+            closeModal('admin-action-modal');
+        }
+
+        // --- MESSAGING LOGIC ---
+
+        function openClientMessages() {
+            renderClientMessages();
+            openModal('client-messages-modal');
+        }
+
+        function renderClientMessages() {
+            const list = document.getElementById('messages-list');
+            const dot = document.getElementById('msg-notification-dot');
+            list.innerHTML = '';
+            
+            // Filter messages for current user
+            const myMessages = messages.filter(m => m.to === currentUserEmail);
+
+            if (myMessages.length === 0) {
+                list.innerHTML = '<p class="text-gray-500 text-center mt-10">No messages yet.</p>';
+                dot.classList.add('hidden');
+                return;
+            }
+
+            myMessages.forEach((msg, index) => {
+                const msgCard = document.createElement('div');
+                msgCard.className = 'bg-gray-800 p-4 rounded border border-gray-700';
+                
+                let actionBtn = '';
+                if (msg.action === 'pay') {
+                    actionBtn = `
+                        <button onclick="payForService('order_payment', '${msg.item}', ${msg.price})" class="mt-3 bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded w-full flex justify-center items-center">
+                            <i class="fa-solid fa-mobile-screen-button mr-2"></i> Pay Via M-Pesa (KES ${msg.price})
+                        </button>
+                    `;
+                }
+
+                msgCard.innerHTML = `
+                    <div class="flex justify-between border-b border-gray-700 pb-2 mb-2">
+                        <h4 class="font-bold text-farm-accent">${msg.subject}</h4>
+                        <span class="text-xs text-gray-500">${msg.date}</span>
+                    </div>
+                    <p class="text-gray-300 text-sm whitespace-pre-line">${msg.body}</p>
+                    ${actionBtn}
+                `;
+                list.appendChild(msgCard);
+            });
+
+            // Mark as read (hide dot)
+            dot.classList.add('hidden');
+        }
+
+        // --- PAYMENT LOGIC ---
+        // New generic function to open Mpesa modal
+        function payForService(serviceKey, itemDescription, amount) {
+            if (!clientIsLoggedIn) {
+                alert('Please log in to proceed with this payment.');
+                showSection('client-login');
+                closeModal('membership-modal');
+                closeModal('online-course-modal');
+                return;
+            }
+            currentMpesaService = serviceKey; // Store the service key
+            currentMpesaAmount = amount; // Store the amount
+            document.getElementById('pay-item').value = itemDescription;
+            document.getElementById('pay-amount').value = `KES ${amount}`;
+            
+            closeModal('membership-modal'); // Close source modal if open
+            closeModal('online-course-modal'); // Close source modal if open
+            closeModal('client-messages-modal'); // Close messages if coming from an invoice
+            
+            openModal('mpesa-checkout-modal');
+        }
+
+        function initiateMpesaPayment() {
+            const mpesaPhoneNumber = document.querySelector('#mpesa-checkout-modal input[type="tel"]').value;
+            if (!mpesaPhoneNumber) {
+                alert('Please enter your M-Pesa phone number.');
+                return;
+            }
+
+            alert(`MPESA STK Push initiated for KES ${currentMpesaAmount} for "${document.getElementById('pay-item').value}" to ${mpesaPhoneNumber}! (Backend Integration Pending)`);
+            closeModal('mpesa-checkout-modal');
+
+            // --- Post-payment logic based on currentMpesaService ---
+            if (currentMpesaService === 'online_course') {
+                // Admin WhatsApp redirect
+                const adminWhatsappNumber = '25470680900'; // Admin WhatsApp number
+                const message = encodeURIComponent('Hello, I have successfully applied for the next online course');
+                window.open(`https://wa.me/${adminWhatsappNumber}?text=${message}`, '_blank');
+                
+                // Simulate admin notification (add to admin orders or a specific notification array)
+                const adminNotification = {
+                    id: nextOrderId++, 
+                    clientName: currentUserEmail ? currentUserEmail.split('@')[0] : 'Guest User',
+                    clientEmail: currentUserEmail || 'guest@example.com',
+                    clientPhone: mpesaPhoneNumber,
+                    location: 'N/A',
+                    type: 'Online Course Application',
+                    qty: '1 week',
+                    desc: 'User paid for online course. Redirected to WhatsApp.',
+                    delivery: 'Online',
+                    status: 'Paid',
+                    date: new Date().toLocaleString()
+                };
+                orders.unshift(adminNotification); // Add to admin orders for visibility
+                if(document.getElementById('dashboard').classList.contains('active')) {
+                    renderAdminOrders();
+                }
+
+                alert("Payment successful! You are being redirected to admin's WhatsApp.");
+            } else if (currentMpesaService.startsWith('pdf_')) {
+                const pdfId = parseInt(currentMpesaService.split('_')[1]);
+                const paidPdf = pdfLibrary.find(p => p.id === pdfId);
+                if (paidPdf) {
+                    alert('Payment successful! Opening your PDF now.');
+                    window.open(paidPdf.url, '_blank');
+                }
+            } else if (currentMpesaService === 'membership') {
+                alert('Payment for Premium Membership successful! Your benefits are now active.');
+                // Here, you would typically update user's premium status in Supabase/backend.
+                // For now, a simple alert is sufficient.
+            } else if (currentMpesaService === 'order_payment') {
+                alert('Payment for your order successful!');
+                // Here, you would typically update the specific order status.
+            }
+
+            // Reset service tracker
+            currentMpesaService = '';
+            currentMpesaAmount = 0;
+            document.querySelector('#mpesa-checkout-modal input[type="tel"]').value = ''; // Clear phone number
+        }
+
+        // --- PDF LIBRARY LOGIC (for Diseases & Management) ---
+        function renderPdfLibrary(targetDivId, isAdmin = false) {
+            const container = document.getElementById(targetDivId);
+            if (!container) return;
+
+            container.innerHTML = ''; // Clear existing content
+
+            if (pdfLibrary.length === 0) {
+                container.innerHTML = `<p class="col-span-full text-center text-gray-500 py-4">No PDFs available yet.</p>`;
+                return;
+            }
+
+            pdfLibrary.forEach(pdf => {
+                const card = document.createElement('div');
+                card.className = `bg-farm-card p-6 rounded-lg shadow-lg border ${pdf.isFree ? 'border-gray-700' : 'border-farm-accent'} text-center relative overflow-hidden`;
+
+                let premiumTag = '';
+                let buttonHtml = '';
+                if (pdf.isFree) {
+                    buttonHtml = `
+                        <button onclick="downloadPdf('${pdf.url}', false, 0)" class="bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded w-full">
+                            <i class="fa-solid fa-download mr-2"></i> Download Free PDF
+                        </button>
+                    `;
+                } else {
+                    premiumTag = `<div class="absolute top-0 right-0 bg-farm-accent text-black text-xs font-bold px-2 py-1">PREMIUM</div>`;
+                    buttonHtml = `
+                        <button onclick="downloadPdf('${pdf.url}', true, 25, ${pdf.id})" class="bg-farm-accent hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded w-full">
+                            <i class="fa-solid fa-lock mr-2"></i> Pay KES 25 to Download
+                        </button>
+                    `;
+                }
+                
+                let adminDeleteBtn = '';
+                if (isAdmin) {
+                    adminDeleteBtn = `<button onclick="deletePdfResource(${pdf.id})" class="absolute top-2 left-2 bg-red-600 hover:bg-red-500 text-white p-1 rounded-full text-xs transition z-10"><i class="fa-solid fa-trash"></i> Delete</button>`;
+                }
+
+                card.innerHTML = `
+                    ${premiumTag}
+                    ${adminDeleteBtn}
+                    <i class="fa-solid fa-file-pdf text-5xl ${pdf.isFree ? 'text-red-500' : 'text-yellow-500'} mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2 text-white">${pdf.title}</h3>
+                    <p class="text-gray-400 text-sm mb-4">${pdf.description}</p>
+                    ${buttonHtml}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function downloadPdf(pdfUrl, isPremium, pdfPrice, pdfId) {
+            if (isPremium) {
+                if (!clientIsLoggedIn) { // Check if user is logged in
+                    alert('Please log in to purchase premium PDFs.');
+                    showSection('client-login');
+                    return;
+                }
+                // Open Mpesa modal for premium PDFs
+                payForService(`pdf_${pdfId}`, `${pdfLibrary.find(p => p.id === pdfId)?.title} PDF`, pdfPrice);
+            } else {
+                // Directly open free PDF
+                window.open(pdfUrl, '_blank');
+            }
+        }
+
+        function addPdfResource() {
+            const title = document.getElementById('pdf-admin-title').value.trim();
+            const url = document.getElementById('pdf-admin-url').value.trim();
+            const description = document.getElementById('pdf-admin-description').value.trim();
+            const isFree = document.getElementById('pdf-admin-free').checked;
+
+            if (title && url && description) {
+                const newPdf = {
+                    id: nextPdfId++,
+                    title: title,
+                    description: description,
+                    url: url,
+                    isFree: isFree
+                };
+                pdfLibrary.unshift(newPdf); // Add to beginning
+
+                // Clear form
+                document.getElementById('pdf-admin-title').value = '';
+                document.getElementById('pdf-admin-url').value = '';
+                document.getElementById('pdf-admin-description').value = '';
+                document.getElementById('pdf-admin-free').checked = false;
+
+                renderPdfLibrary('admin-uploaded-pdf-list', true); // Refresh admin view
+                if (document.getElementById('diseases-management').classList.contains('active')) {
+                    renderPdfLibrary('pdf-library-display'); // Also refresh client view if active
+                }
+                alert('PDF resource uploaded successfully!');
+            } else {
+                alert('Please fill out all PDF fields.');
+            }
+        }
+
+        function deletePdfResource(id) {
+            if (confirm('Are you sure you want to delete this PDF resource?')) {
+                pdfLibrary = pdfLibrary.filter(pdf => pdf.id !== id);
+                renderPdfLibrary('admin-uploaded-pdf-list', true); // Refresh admin view
+                if (document.getElementById('diseases-management').classList.contains('active')) {
+                    renderPdfLibrary('pdf-library-display'); // Also refresh client view if active
+                }
+                alert('PDF resource deleted.');
+            }
+        }
+
+            // Initialize
+            document.addEventListener('DOMContentLoaded', () => {
+                renderPoultry();
+                // --- NEW CODE FOR CHATBOX INTEGRATION ---
+                const chatToggleBtn = document.getElementById('chat-toggle-btn');
+                const chatWindow = document.getElementById('chat-window');
+                const chatInput = document.getElementById('chat-input');
+                const chatSendBtn = document.getElementById('chat-send-btn');
+                const chatBody = document.getElementById('chat-body');
+
+                function toggleChat() {
+                    chatWindow.classList.toggle('hidden');
+                    if (!chatWindow.classList.contains('hidden')) {
+                        chatInput.focus();
+                    }
+                }
+
+                function handleSendMessage() {
+                    const message = chatInput.value.trim();
+                    if (message === '') return;
+
+                    // 1. Display User Message
+                    const userMsgHtml = `
+                        <div class="flex justify-end">
+                            <div class="bg-blue-600 text-white p-3 rounded-xl rounded-br-none max-w-[85%] text-sm shadow-md">
+                                ${message}
+                            </div>
+                        </div>
+                    `;
+                    chatBody.insertAdjacentHTML('beforeend', userMsgHtml);
+                    
+                    // **TODO: INTEGRATE BACKEND API CALL HERE**
+                    // Currently, this just simulates an AI response
+                    
+                    // 2. Clear input
+                    chatInput.value = '';
+
+                    // 3. Scroll to the bottom
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                    
+                    // SIMULATED AI RESPONSE (Remove this when integrating actual API)
+                    setTimeout(() => {
+                        const aiMsgHtml = `
+                            <div class="flex justify-start">
+                                <div class="bg-gray-700 text-white p-3 rounded-xl rounded-tl-none max-w-[85%] text-sm shadow-md">
+                                    Thanks for your message! I'm ready for the backend connection. How can I help you with your poultry farming query?
+                                </div>
+                            </div>
+                        `;
+                        chatBody.insertAdjacentHTML('beforeend', aiMsgHtml);
+                        chatBody.scrollTop = chatBody.scrollHeight;
+                    }, 800);
+                }
+
+            // Event Listeners
+            chatToggleBtn.addEventListener('click', toggleChat);
+            chatSendBtn.addEventListener('click', handleSendMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleSendMessage();
+                }
+            });
+            // ------------------------------------------------
+            // --- NEW CODE FOR ADMIN DASHBOARD ---
+            const loginBtn = document.getElementById('admin-login-btn');
+            const logoutBtn = document.getElementById('admin-logout-btn');
+            
+            // Check if the dashboard is being viewed initially (prevent unauthorized access)
+            // Note: This only prevents access on the front-end, not the server-side.
+            if(document.getElementById('dashboard').classList.contains('active')) {
+                document.getElementById('dashboard').classList.remove('active');
+                document.getElementById('admin').classList.add('active');
+            }
+
+            loginBtn.addEventListener('click', handleAdminLogin);
+            logoutBtn.addEventListener('click', handleAdminLogout);
+            
+            // Allow login via Enter key
+            document.getElementById('admin').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleAdminLogin();
+                }
+            });
+
+            // --- NEW CODE FOR CLIENT REGISTRATION ---
+            const clientLoginBtn = document.getElementById('client-login-btn');
+            const clientRegisterBtn = document.getElementById('client-register-btn');
+            const showRegisterLink = document.getElementById('show-register-link');
+            const showLoginLink = document.getElementById('show-login-link');
+            
+            clientLoginBtn.addEventListener('click', handleClientLogin);
+            clientRegisterBtn.addEventListener('click', handleClientRegistration);
+            
+            // Toggle form listeners
+            showRegisterLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleForms(false);
+            });
+            
+            showLoginLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleForms(true);
+            });
+                    
+            // --- NEW CODE FOR CLIENT PORTAL ---
+            
+            const clientLogoutBtn = document.getElementById('client-logout-btn');
+            
+            clientLoginBtn.addEventListener('click', handleClientLogin);
+            clientLogoutBtn.addEventListener('click', handleClientLogout);
+            
+            // Allow login via Enter key
+            document.getElementById('client-login').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleClientLogin();
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
