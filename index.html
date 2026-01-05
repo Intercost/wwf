@@ -173,6 +173,14 @@
                         </button>
                     </div>
                 </div>
+                <!-- NEW: Events & Workshops Module (Prominent) -->
+                <div class="mt-10 bg-farm-card p-6 rounded-lg shadow-lg border border-farm-accent">
+                    <h3 class="text-2xl font-bold text-white mb-4">Upcoming Events & Workshops!</h3>
+                    <p class="text-gray-400 mb-6">Join our exciting farm events and learn from experts. Click below to see what's happening!</p>
+                    <button onclick="openModal('events-workshop-modal')" class="bg-farm-accent hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-lg text-lg">
+                        <i class="fa-solid fa-calendar-alt mr-2"></i> View Events
+                    </button>
+                </div>
             </div>
 
             <!-- Features Grid -->
@@ -342,7 +350,7 @@
                     <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Disease Diagnosis</li>
                     <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Vitamins & Supplements</li>
                 </ul>
-                <button onclick="showSection('contact')" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded">
+                <button onclick="openModal('vet-request-modal')" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded">
                     Request Vet Visit
                 </button>
             </div>
@@ -652,6 +660,17 @@
                         <p class="text-xs text-gray-400">Drinkers, feeders, brooders, and other essential tools.</p>
                     </div>
 
+                    <!-- NEW: Training & Workshop card -->
+                    <div onclick="openModal('events-workshop-modal')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
+                                <i class="fa-solid fa-calendar-check text-farm-accent group-hover:text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Training & Workshops</h4>
+                        </div>
+                        <p class="text-xs text-gray-400">View and book upcoming training sessions and farm workshops.</p>
+                    </div>
+
                     <div onclick="handleServiceClick('membership')" class="bg-gray-800 p-5 rounded-lg border-2 border-yellow-500 hover:bg-gray-700 cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group relative overflow-hidden">
                         <div class="absolute top-0 right-0 bg-yellow-500 text-black text-xs font-bold px-2 py-1">PREMIUM</div>
                         <div class="flex items-center mb-3">
@@ -708,12 +727,65 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="poultry-tracking-grid">
                 </div>
             
+            <!-- NEW: Admin Add/Update Inventory Section -->
             <div class="mt-12 p-6 bg-farm-card rounded-lg border border-gray-700">
                 <h3 class="text-xl font-bold mb-4">Add/Update Inventory</h3>
-                <p class="text-gray-400">This area will be connected to the backend to manage inventory, sales, and expenses.</p>
-                <button class="mt-4 bg-farm-accent hover:bg-yellow-600 text-white px-4 py-2 rounded">
-                    Manage Data (Backend Placeholder)
-                </button>
+                <p class="text-gray-400 mb-4">Manage your poultry and feed stock here. These changes will reflect in reports and availability checks for clients (future backend integration).</p>
+                
+                <div class="bg-gray-800 p-4 rounded-md mb-6">
+                    <h4 class="font-semibold mb-3 text-white">Update Poultry Stock</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <select id="inventory-poultry-type" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
+                            <option value="Chicken">Chicken</option>
+                            <option value="Duck">Duck</option>
+                            <option value="Turkey">Turkey</option>
+                            <option value="Goose">Goose</option>
+                            <option value="Guinea Fowl">Guinea Fowl</option>
+                        </select>
+                        <input type="number" id="inventory-poultry-qty" placeholder="Quantity to Add/Subtract" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
+                        <select id="inventory-poultry-action" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
+                            <option value="add">Add</option>
+                            <option value="subtract">Subtract</option>
+                        </select>
+                    </div>
+                    <button onclick="updatePoultryStock()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded w-full">
+                        <i class="fa-solid fa-boxes-stacked mr-1"></i> Update Poultry Stock
+                    </button>
+                    <p id="poultry-stock-feedback" class="text-sm mt-2 text-center text-gray-400"></p>
+                </div>
+
+                <div class="bg-gray-800 p-4 rounded-md">
+                    <h4 class="font-semibold mb-3 text-white">Update Feed Stock</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <input type="text" id="inventory-feed-type" placeholder="Feed Type (e.g., Layers Mash)" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
+                        <input type="number" id="inventory-feed-qty" placeholder="Weight in KG to Add/Subtract" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
+                        <select id="inventory-feed-action" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
+                            <option value="add">Add</option>
+                            <option value="subtract">Subtract</option>
+                        </select>
+                    </div>
+                    <button onclick="updateFeedStock()" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded w-full">
+                        <i class="fa-solid fa-wheat-awn mr-1"></i> Update Feed Stock
+                    </button>
+                    <p id="feed-stock-feedback" class="text-sm mt-2 text-center text-gray-400"></p>
+                </div>
+            </div>
+
+            <!-- NEW: Admin Egg Price Management Section -->
+            <div class="mt-12 p-6 bg-farm-card rounded-lg border border-gray-700">
+                <h3 class="text-xl font-bold mb-4 flex items-center"><i class="fa-solid fa-egg mr-2 text-farm-accent"></i>Egg Price Management</h3>
+                <p class="text-gray-400 mb-4">Set the prices for different types of eggs. These prices will be visible to all users in the "View Poultry" section.</p>
+                
+                <div class="bg-gray-800 p-4 rounded-md mb-6">
+                    <h4 class="font-semibold mb-3 text-white">Set Egg Prices</h4>
+                    <div id="egg-price-inputs" class="space-y-3">
+                        <!-- Egg price inputs will be dynamically generated -->
+                    </div>
+                    <button onclick="updateEggPrices()" class="mt-4 bg-farm-accent hover:bg-yellow-600 text-white px-4 py-2 rounded w-full">
+                        <i class="fa-solid fa-money-bill-wave mr-1"></i> Update Egg Prices
+                    </button>
+                    <p id="egg-price-feedback" class="text-sm mt-2 text-center text-gray-400"></p>
+                </div>
             </div>
 
             <div class="mt-8 mb-12">
@@ -729,15 +801,10 @@
                 <div class="bg-gray-800 p-4 rounded-md mb-6">
                     <h4 class="font-semibold mb-3 text-white">Add New Gallery Photo</h4>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input type="text" id="new-photo-url" placeholder="Image URL (Placeholder URL)" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
-                        <select id="new-photo-product" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
-                            <option value="">Select Poultry/Product</option>
-                            <option value="Chicken">Chicken</option>
-                            <option value="Duck">Duck</option>
-                            <option value="Goose">Goose</option>
-                            <option value="Feed">Feed</option>
-                            <option value="Eggs">Eggs</option>
-                        </select>
+                        <!-- Modified: Input type file for gallery photo -->
+                        <input type="file" id="new-photo-file" accept="image/*" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-farm-accent file:text-white hover:file:bg-yellow-600">
+                        <!-- Modified: Text input for poultry product -->
+                        <input type="text" id="new-photo-product" placeholder="Poultry/Product (e.g., Chicken, Eggs)" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
                         <input type="text" id="new-photo-description" placeholder="Brief Description" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
                     </div>
                     <button onclick="addGalleryPhoto()" class="mt-4 bg-farm-accent hover:bg-yellow-600 text-white px-4 py-2 rounded w-full">
@@ -776,6 +843,44 @@
                 <h4 class="font-semibold mb-3 text-white">Current PDF Library</h4>
                 <div id="admin-uploaded-pdf-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     <p class="col-span-4 text-center text-gray-500 py-4">No uploaded PDFs.</p>
+                </div>
+            </div>
+
+            <!-- NEW: Admin Events & Workshop Management Section -->
+            <div class="mt-12 p-6 bg-farm-card rounded-lg border border-gray-700">
+                <h3 class="text-xl font-bold mb-4 flex items-center"><i class="fa-solid fa-calendar-alt mr-2 text-farm-accent"></i>Events & Workshop Management</h3>
+                <p class="text-gray-500 mb-4">Add, edit, or remove events and workshops that appear to users.</p>
+                
+                <div class="bg-gray-800 p-4 rounded-md mb-6">
+                    <h4 class="font-semibold mb-3 text-white">Add/Edit Event</h4>
+                    <form id="event-form" onsubmit="event.preventDefault(); saveEvent()">
+                        <input type="hidden" id="event-id">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <input type="text" id="event-title" placeholder="Event Title" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm" required>
+                            <input type="date" id="event-date" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm" required>
+                            <input type="time" id="event-time" placeholder="Time (e.g., 10:00 AM)" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm" required>
+                            <input type="text" id="event-location" placeholder="Location" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm" required>
+                        </div>
+                        <div class="mb-4">
+                            <input type="number" id="event-price" placeholder="Price (KES) - 0 for free" min="0" class="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm" value="0">
+                        </div>
+                        <div class="mb-4">
+                            <textarea id="event-description" rows="3" placeholder="Event Description" class="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm" required></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm text-gray-400 mb-1">Event Image</label>
+                            <input type="file" id="event-image-file" accept="image/*" class="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-farm-accent file:text-white hover:file:bg-yellow-600">
+                            <p class="text-xs text-gray-500 mt-1">Upload an image for the event. (Optional)</p>
+                        </div>
+                        <button type="submit" class="bg-farm-accent hover:bg-yellow-600 text-white px-4 py-2 rounded w-full">
+                            <i class="fa-solid fa-calendar-plus mr-1"></i> Save Event
+                        </button>
+                    </form>
+                </div>
+
+                <h4 class="font-semibold mb-3 text-white">Current Events</h4>
+                <div id="admin-events-list" class="grid grid-cols-1 gap-4">
+                    <p class="text-gray-500 bg-gray-800 p-4 rounded">No events scheduled.</p>
                 </div>
             </div>
         </div>
@@ -1589,6 +1694,75 @@
         </div>
     </div>
 
+    <!-- NEW: Vet Request Modal -->
+    <div id="vet-request-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-[60] flex items-center justify-center backdrop-blur-sm overflow-y-auto">
+        <div class="bg-farm-card p-8 rounded-lg shadow-2xl w-full max-w-lg border border-gray-700 m-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h3 class="text-2xl font-bold text-white"><i class="fa-solid fa-user-doctor text-red-500 mr-2"></i>Request Vet Support</h3>
+                <button onclick="closeModal('vet-request-modal')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); submitVetRequest();" class="space-y-4">
+                <p class="text-gray-400 mb-4">Please select the type(s) of veterinary support you require:</p>
+                
+                <div class="space-y-2">
+                    <label class="flex items-center space-x-3 cursor-pointer p-3 bg-gray-800 rounded border border-gray-700 hover:border-farm-accent">
+                        <input type="checkbox" name="vet-service" value="Onsite Visit Diagnosis" class="form-checkbox h-5 w-5 text-farm-accent rounded focus:ring-farm-accent">
+                        <span class="text-gray-300 text-base">Onsite Visit Diagnosis</span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer p-3 bg-gray-800 rounded border border-gray-700 hover:border-farm-accent">
+                        <input type="checkbox" name="vet-service" value="Disease Treatment" class="form-checkbox h-5 w-5 text-farm-accent rounded focus:ring-farm-accent">
+                        <span class="text-gray-300 text-base">Disease Treatment</span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer p-3 bg-gray-800 rounded border border-gray-700 hover:border-farm-accent">
+                        <input type="checkbox" name="vet-service" value="Vaccine and Medicine Supply" class="form-checkbox h-5 w-5 text-farm-accent rounded focus:ring-farm-accent">
+                        <span class="text-gray-300 text-base">Vaccine and Medicine Supply</span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer p-3 bg-gray-800 rounded border border-gray-700 hover:border-farm-accent">
+                        <input type="checkbox" name="vet-service" value="Vaccination Schedule" class="form-checkbox h-5 w-5 text-farm-accent rounded focus:ring-farm-accent">
+                        <span class="text-gray-300 text-base">Asking for Vaccination Schedule</span>
+                    </label>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-gray-400 text-sm mb-1">Your Name</label>
+                    <input type="text" id="vet-name" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Email Address</label>
+                    <input type="email" id="vet-email" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Phone Number</label>
+                    <input type="tel" id="vet-phone" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Farm Location / Address</label>
+                    <input type="text" id="vet-location" class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white" required>
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">Additional Details / Specific Symptoms</label>
+                    <textarea id="vet-notes" rows="3" placeholder="Describe symptoms, number of affected birds, or specific medicine needed..." class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded mt-4">Submit Vet Request</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- NEW: Events & Workshop Modal for Clients -->
+    <div id="events-workshop-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-[60] flex items-center justify-center backdrop-blur-sm overflow-y-auto">
+        <div class="bg-farm-card p-8 rounded-lg shadow-2xl w-full max-w-2xl border border-farm-accent m-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h3 class="text-2xl font-bold text-white"><i class="fa-solid fa-calendar-check text-farm-accent mr-2"></i>Upcoming Events & Workshops</h3>
+                <button onclick="closeModal('events-workshop-modal')" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            
+            <div id="client-events-list" class="space-y-6">
+                <p class="text-gray-500 text-center">No upcoming events or workshops at the moment.</p>
+            </div>
+        </div>
+    </div>
 
     <!-- JavaScript Logic -->
     <script>
@@ -1600,8 +1774,8 @@
         ];
         let nextGalleryId = 4; // Used to assign unique IDs
 
-        // Data Source for Poultry
-        const poultryData = [
+        // Data Source for Poultry (Changed to let for price modification)
+        let poultryData = [
             {
                 type: 'Chicken',
                 varieties: 'Layers, Improved Kienyeji, Cocks',
@@ -1646,10 +1820,23 @@
             }
         ];
 
+        // NEW: Inventory Data (Simulated)
+        let inventory = {
+            'Chicken': 450,
+            'Duck': 85,
+            'Turkey': 30,
+            'Goose': 15,
+            'Guinea Fowl': 25,
+            'Layers Mash': 1000, // KG
+            'Chick Mash': 500, // KG
+            'Growers Mash': 750 // KG
+        };
+
         // **NEW:** Client Credentials for Front-End Check 
         const CLIENT_EMAIL = 'client@wwf.com';
         const CLIENT_PASSWORD = '5316wwf';
         let clientIsLoggedIn = false;
+        let pendingOrderType = null; // NEW: To store desired service after login
 
         // **NEW:** Variable to store registered accounts (will be replaced by backend)
         const registeredClients = new Map([
@@ -1688,6 +1875,14 @@
         ];
         let nextPdfId = 7;
 
+        // NEW: Events Data
+        let eventsData = [
+            { id: 1, title: 'Organic Feed Workshop', date: '2025-07-20', time: '10:00 AM', location: 'Farm Training Center', description: 'Learn to formulate your own organic poultry feed.', imageUrl: 'https://via.placeholder.com/400x200/d97706/1e293b?text=Feed+Workshop', price: 150 }, 
+            { id: 2, title: 'Chick Rearing Seminar', date: '2025-08-15', time: '02:00 PM', location: 'Online via Zoom', description: 'Best practices for raising healthy chicks from day one.', imageUrl: 'https://via.placeholder.com/400x200/15803d/f1f5f9?text=Chick+Seminar', price: 0 }
+        ];
+        let nextEventId = 3;
+
+
         // --- UTILITY FUNCTIONS ---
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
@@ -1711,6 +1906,17 @@
             // Special rendering for specific sections
             if (sectionId === 'diseases-management') {
                 renderPdfLibrary('pdf-library-display');
+            }
+            if (sectionId === 'client-portal') {
+                renderClientGallery('farm-gallery', false);
+            }
+            if (sectionId === 'dashboard') {
+                renderPoultryTracking();
+                renderAdminOrders();
+                renderClientGallery('admin-gallery-view', true);
+                renderPdfLibrary('admin-uploaded-pdf-list', true);
+                renderEggPriceInputs(); // NEW: Render egg price inputs
+                renderAdminEvents(); // NEW: Render admin events
             }
 
             // Scroll to top
@@ -1767,40 +1973,61 @@
 
         // Function to handle adding a new photo (called from Admin Dashboard)
         function addGalleryPhoto() {
-            const url = document.getElementById('new-photo-url').value.trim();
+            const fileInput = document.getElementById('new-photo-file');
             const product = document.getElementById('new-photo-product').value.trim();
             const description = document.getElementById('new-photo-description').value.trim();
 
-            if (url && product && description) {
-                // ... (existing logic to add photo to galleryData) ...
-                const newPhoto = {
-                    id: nextGalleryId++,
-                    url: url,
-                    product: product,
-                    description: description,
-                    date: new Date().toLocaleDateString()
-                };
-                
-                galleryData.unshift(newPhoto); // Add to the start
-                
-                // Clear form
-                document.getElementById('new-photo-url').value = '';
-                document.getElementById('new-photo-product').value = '';
-                document.getElementById('new-photo-description').value = '';
+            let url = 'https://via.placeholder.com/400x300/1e293b/d97706?text=New+Photo'; // Default placeholder
 
-                // 1. Re-render the Admin management view (with delete buttons)
-                renderClientGallery('admin-gallery-view', true); 
-                
-                // 2. NEW: Check if the Client Portal is currently visible and update it
-                if (document.getElementById('client-portal').classList.contains('active')) {
-                    renderClientGallery('farm-gallery', false);
-                }
-                
-                alert('Photo added successfully! Client Portal has been updated.');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Please select an image file to upload or enter a URL if file picker is not available.');
+                return;
+            }
+
+            // In a real application, you'd upload the file to a server (e.g., Supabase Storage, AWS S3)
+            // and get back a public URL. For this front-end only demo, we'll use a placeholder URL.
+            // If we wanted to display the *actual* selected image without upload, we'd use FileReader
+            // to convert it to a Data URL, but that's not persistent.
+            // For now, we simulate a successful "upload" and use a generic placeholder or the file name.
+
+            const selectedFile = fileInput.files[0];
+            if (selectedFile) {
+                // To actually display the image on the client side without backend storage:
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    url = e.target.result; // Data URL of the selected image
+                    if (product && description) {
+                        const newPhoto = {
+                            id: nextGalleryId++,
+                            url: url,
+                            product: product,
+                            description: description,
+                            date: new Date().toLocaleDateString()
+                        };
+                        
+                        galleryData.unshift(newPhoto); // Add to the start
+                        
+                        // Clear form
+                        fileInput.value = ''; // Clears the file input
+                        document.getElementById('new-photo-product').value = '';
+                        document.getElementById('new-photo-description').value = '';
+
+                        renderClientGallery('admin-gallery-view', true); 
+                        if (document.getElementById('client-portal').classList.contains('active')) {
+                            renderClientGallery('farm-gallery', false);
+                        }
+                        
+                        alert('Photo added successfully! Client Portal has been updated.');
+                    } else {
+                        alert('Please fill out all fields.');
+                    }
+                };
+                reader.readAsDataURL(selectedFile); // Read the file as a Data URL
             } else {
-                alert('Please fill out all fields.');
+                alert('Please select an image file.');
             }
         }
+
 
         // Function to handle deleting a photo (called from Admin Dashboard)
         function deleteGalleryPhoto(id) {
@@ -1809,6 +2036,11 @@
                 
                 // Re-render the Admin management view only (with delete buttons)
                 renderClientGallery('admin-gallery-view', true); 
+                
+                // If the Client Portal is active, refresh its gallery too
+                if (document.getElementById('client-portal').classList.contains('active')) {
+                    renderClientGallery('farm-gallery', false);
+                }
             }
         }
 
@@ -1838,7 +2070,7 @@
                             <p class="text-sm text-gray-500">Egg Price</p>
                             <p class="text-xl font-bold text-white">${bird.price_egg}</p>
                         </div>
-                        <button class="mt-4 w-full bg-green-700 hover:bg-green-600 text-white py-2 rounded transition" onclick="showSection('contact')">
+                        <button class="mt-4 w-full bg-green-700 hover:bg-green-600 text-white py-2 rounded transition" onclick="checkLoginAndOrder('buy_eggs')">
                             Order Now
                         </button>
                     </div>
@@ -1881,6 +2113,12 @@
                     document.getElementById('msg-notification-dot').classList.remove('hidden');
                 }
 
+                // NEW: Check for pending order after successful login
+                if (pendingOrderType) {
+                    handleServiceClick(pendingOrderType);
+                    pendingOrderType = null; // Clear the pending order
+                }
+
             } else {
                 // Show the error message, which now includes the 'Create new account' link
                 errorMsg.classList.remove('hidden');
@@ -1892,6 +2130,7 @@
         function handleClientLogout() {
             clientIsLoggedIn = false;
             currentUserEmail = '';
+            pendingOrderType = null; // Clear any pending orders on logout
             document.getElementById('client-portal').classList.remove('active');
             document.getElementById('client-login').classList.add('active'); // Back to login screen
         }
@@ -1961,15 +2200,16 @@
             const grid = document.getElementById('poultry-tracking-grid');
             grid.innerHTML = ''; // Clear existing
 
-            // Initial dummy data for the dashboard population
-            const trackingData = [
-                { type: 'Chicken', total: 450, icon: 'fa-crow', color: 'text-yellow-500' },
-                { type: 'Duck', total: 85, icon: 'fa-water', color: 'text-blue-500' },
-                { type: 'Turkey', total: 30, icon: 'fa-feather', color: 'text-red-500' },
-                { type: 'Goose', total: 15, icon: 'fa-feather-pointed', color: 'text-green-500' },
-            ];
-            
-            trackingData.forEach(bird => {
+            // Using the new 'inventory' data
+            const trackingDisplayData = [
+                { type: 'Chicken', total: inventory['Chicken'], icon: 'fa-crow', color: 'text-yellow-500' },
+                { type: 'Duck', total: inventory['Duck'], icon: 'fa-water', color: 'text-blue-500' },
+                { type: 'Turkey', total: inventory['Turkey'], icon: 'fa-feather', color: 'text-red-500' },
+                { type: 'Goose', total: inventory['Goose'], icon: 'fa-feather-pointed', color: 'text-green-500' },
+                { type: 'Guinea Fowl', total: inventory['Guinea Fowl'], icon: 'fa-dove', color: 'text-purple-500' }
+            ].filter(item => item.total !== undefined); // Only display if in inventory
+
+            trackingDisplayData.forEach(bird => {
                 const card = document.createElement('div');
                 card.className = 'bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-farm-accent';
                 card.innerHTML = `
@@ -1985,6 +2225,137 @@
                 grid.appendChild(card);
             });
         }
+
+        // NEW: Update Poultry Stock
+        function updatePoultryStock() {
+            const type = document.getElementById('inventory-poultry-type').value;
+            const qty = parseInt(document.getElementById('inventory-poultry-qty').value);
+            const action = document.getElementById('inventory-poultry-action').value;
+            const feedback = document.getElementById('poultry-stock-feedback');
+
+            if (isNaN(qty) || qty <= 0) {
+                feedback.className = 'text-sm mt-2 text-center text-red-500';
+                feedback.textContent = 'Please enter a valid quantity.';
+                return;
+            }
+
+            if (action === 'add') {
+                inventory[type] = (inventory[type] || 0) + qty;
+                feedback.className = 'text-sm mt-2 text-center text-green-500';
+                feedback.textContent = `${qty} ${type}(s) added. New total: ${inventory[type]}.`;
+            } else if (action === 'subtract') {
+                if (inventory[type] < qty) {
+                    feedback.className = 'text-sm mt-2 text-center text-red-500';
+                    feedback.textContent = `Cannot subtract ${qty}. Only ${inventory[type]} ${type}(s) in stock.`;
+                    return;
+                }
+                inventory[type] -= qty;
+                feedback.className = 'text-sm mt-2 text-center text-green-500';
+                feedback.textContent = `${qty} ${type}(s) subtracted. New total: ${inventory[type]}.`;
+            }
+
+            // Clear inputs and refresh display
+            document.getElementById('inventory-poultry-qty').value = '';
+            renderPoultryTracking();
+        }
+
+        // NEW: Update Feed Stock
+        function updateFeedStock() {
+            const type = document.getElementById('inventory-feed-type').value.trim();
+            const qty = parseInt(document.getElementById('inventory-feed-qty').value);
+            const action = document.getElementById('inventory-feed-action').value;
+            const feedback = document.getElementById('feed-stock-feedback');
+
+            if (!type) {
+                feedback.className = 'text-sm mt-2 text-center text-red-500';
+                feedback.textContent = 'Please enter a feed type.';
+                return;
+            }
+            if (isNaN(qty) || qty <= 0) {
+                feedback.className = 'text-sm mt-2 text-center text-red-500';
+                feedback.textContent = 'Please enter a valid weight (KG).';
+                return;
+            }
+
+            if (action === 'add') {
+                inventory[type] = (inventory[type] || 0) + qty;
+                feedback.className = 'text-sm mt-2 text-center text-green-500';
+                feedback.textContent = `${qty} KG of ${type} added. New total: ${inventory[type]} KG.`;
+            } else if (action === 'subtract') {
+                if (inventory[type] < qty) {
+                    feedback.className = 'text-sm mt-2 text-center text-red-500';
+                    feedback.textContent = `Cannot subtract ${qty} KG. Only ${inventory[type]} KG of ${type} in stock.`;
+                    return;
+                }
+                inventory[type] -= qty;
+                feedback.className = 'text-sm mt-2 text-center text-green-500';
+                feedback.textContent = `${qty} KG of ${type} subtracted. New total: ${inventory[type]} KG.`;
+            }
+
+            // Clear inputs
+            document.getElementById('inventory-feed-type').value = '';
+            document.getElementById('inventory-feed-qty').value = '';
+            // No need to refresh poultry tracking as it's separate.
+        }
+
+        // NEW: Render Egg Price Inputs for Admin
+        function renderEggPriceInputs() {
+            const container = document.getElementById('egg-price-inputs');
+            container.innerHTML = ''; // Clear existing
+
+            poultryData.forEach((bird, index) => {
+                // Extract numeric value from current price_egg string (e.g., "KES 180 / dozen" -> 180)
+                const currentPriceMatch = bird.price_egg.match(/KES (\d+)/);
+                const currentPrice = currentPriceMatch ? parseInt(currentPriceMatch[1]) : '';
+                const unitMatch = bird.price_egg.match(/\/ (.+)/);
+                const unit = unitMatch ? unitMatch[1].trim() : '';
+
+                const div = document.createElement('div');
+                div.className = 'flex items-center space-x-2';
+                div.innerHTML = `
+                    <label class="text-gray-400 w-1/3">${bird.type} Eggs (${unit || 'N/A'}):</label>
+                    <input type="number" id="egg-price-${index}" value="${currentPrice}" min="0" placeholder="Price per ${unit}" 
+                           class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm w-2/3">
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // NEW: Update Egg Prices
+        function updateEggPrices() {
+            let changesMade = false;
+            poultryData.forEach((bird, index) => {
+                const input = document.getElementById(`egg-price-${index}`);
+                if (input) {
+                    const newPrice = input.value.trim();
+                    if (newPrice !== '' && !isNaN(parseInt(newPrice))) {
+                        const unitMatch = bird.price_egg.match(/\/ (.+)/);
+                        const unit = unitMatch ? unitMatch[1].trim() : 'dozen';
+                        const newPriceString = `KES ${newPrice} / ${unit}`;
+                        if (bird.price_egg !== newPriceString) {
+                            bird.price_egg = newPriceString;
+                            changesMade = true;
+                        }
+                    } else if (newPrice === '') { // Allow clearing price
+                        if (bird.price_egg !== 'Contact for price') {
+                            bird.price_egg = 'Contact for price';
+                            changesMade = true;
+                        }
+                    }
+                }
+            });
+
+            const feedback = document.getElementById('egg-price-feedback');
+            if (changesMade) {
+                renderPoultry(); // Re-render client poultry section to reflect new prices
+                feedback.className = 'text-sm mt-2 text-center text-green-500';
+                feedback.textContent = 'Egg prices updated successfully!';
+            } else {
+                feedback.className = 'text-sm mt-2 text-center text-gray-400';
+                feedback.textContent = 'No changes were made to egg prices.';
+            }
+        }
+
 
         // Function to handle admin login attempt
         function handleAdminLogin() {
@@ -2011,6 +2382,8 @@
                 renderAdminOrders();
                 renderClientGallery('admin-gallery-view', true); // Admin view of gallery
                 renderPdfLibrary('admin-uploaded-pdf-list', true); // Render admin's PDF library
+                renderEggPriceInputs(); // NEW: Render egg price inputs
+                renderAdminEvents(); // NEW: Render admin events
                 window.scrollTo(0, 0);
 
                 // Update Nav Menu to show Logout (Optional but good UX)
@@ -2028,6 +2401,17 @@
         }
 
         // --- ORDER LOGIC ---
+
+        // NEW: Function to check login status before ordering
+        function checkLoginAndOrder(serviceType) {
+            if (!clientIsLoggedIn) {
+                pendingOrderType = serviceType; // Store the desired service
+                showSection('client-login');
+                alert('Please log in to place an order.');
+            } else {
+                handleServiceClick(serviceType);
+            }
+        }
 
         // 1. Trigger the Modal (Modified to include new service types)
         function handleServiceClick(serviceType) {
@@ -2077,12 +2461,11 @@
                 if(currentUserEmail) document.getElementById('structure-email').value = currentUserEmail;
                 openModal('structure-request-modal');
             
-            } else if (serviceType === 'equipment') { 
-                if(currentUserEmail) document.getElementById('equipment-email').value = currentUserEmail;
-                openModal('equipment-order-modal');
-            
             } else if (serviceType === 'vet_support') { 
-                showSection('vet');
+                if(currentUserEmail) {
+                    document.getElementById('vet-email').value = currentUserEmail;
+                }
+                openModal('vet-request-modal'); // NEW: Open vet request modal
             
             } else if (serviceType === 'membership') { // NEW: Membership
                 openModal('membership-modal');
@@ -2090,6 +2473,8 @@
                 openModal('online-course-modal');
             } else if (serviceType === 'diseases') { // NEW: Diseases & Treatment page
                 showSection('diseases-management');
+            } else if (serviceType === 'training_workshop') { // NEW: Training & Workshop
+                openModal('events-workshop-modal');
             } else {
                 alert("This feature (" + serviceType.replace('_', ' ') + ") is coming in the next update!");
             }
@@ -2475,6 +2860,56 @@
             }
         }
 
+        // NEW: Submit Vet Request
+        function submitVetRequest() {
+            const name = document.getElementById('vet-name').value;
+            const email = document.getElementById('vet-email').value;
+            const phone = document.getElementById('vet-phone').value;
+            const location = document.getElementById('vet-location').value;
+            const notes = document.getElementById('vet-notes').value;
+
+            const selectedServices = Array.from(document.querySelectorAll('input[name="vet-service"]:checked'))
+                                            .map(cb => cb.value);
+
+            if (selectedServices.length === 0) {
+                alert('Please select at least one veterinary service.');
+                return;
+            }
+
+            const serviceDescription = selectedServices.join(', ');
+
+            const newOrder = {
+                id: nextOrderId++,
+                clientName: name,
+                clientEmail: email,
+                clientPhone: phone,
+                location: location,
+                type: `Vet Support: ${serviceDescription}`,
+                qty: 'N/A', // Quantity might not apply directly here
+                desc: notes,
+                delivery: 'Onsite/Consultation',
+                status: 'Pending',
+                date: new Date().toLocaleString()
+            };
+
+            orders.unshift(newOrder);
+
+            closeModal('vet-request-modal');
+            // Clear form (reset checkboxes, text fields)
+            document.querySelectorAll('input[name="vet-service"]').forEach(cb => cb.checked = false);
+            document.getElementById('vet-name').value = '';
+            document.getElementById('vet-email').value = '';
+            document.getElementById('vet-phone').value = '';
+            document.getElementById('vet-location').value = '';
+            document.getElementById('vet-notes').value = '';
+
+            openModal('order-success-modal');
+
+            if(document.getElementById('dashboard').classList.contains('active')) {
+                renderAdminOrders();
+            }
+        }
+
 
         // 3. Render Orders (Admin Side)
         function renderAdminOrders() {
@@ -2500,6 +2935,7 @@
                         <div>
                             <h4 class="font-bold text-white text-lg">Order #${order.id} - ${order.type} (${order.qty})</h4>
                             <p class="text-sm text-gray-400"><i class="fa-solid fa-user mr-1"></i> ${order.clientName} | ${order.clientPhone}</p>
+                            <p class="text-sm text-gray-400"><i class="fa-solid fa-envelope mr-1"></i> ${order.clientEmail}</p>
                             <p class="text-sm text-gray-400"><i class="fa-solid fa-location-dot mr-1"></i> ${order.location} (${order.delivery})</p>
                             <p class="text-sm text-gray-300 mt-2 italic">"${order.desc}"</p>
                             <p class="text-xs text-gray-500 mt-2">${order.date}</p>
@@ -2659,7 +3095,7 @@
                 let actionBtn = '';
                 if (msg.action === 'pay') {
                     actionBtn = `
-                        <button onclick="payForService('order_payment', '${msg.item}', ${msg.price})" class="mt-3 bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded w-full flex justify-center items-center">
+                        <button onclick="payForService('order_payment_${msg.id}', '${msg.item}', ${msg.price})" class="mt-3 bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded w-full flex justify-center items-center">
                             <i class="fa-solid fa-mobile-screen-button mr-2"></i> Pay Via M-Pesa (KES ${msg.price})
                         </button>
                     `;
@@ -2688,6 +3124,7 @@
                 showSection('client-login');
                 closeModal('membership-modal');
                 closeModal('online-course-modal');
+                closeModal('events-workshop-modal'); // Close events modal if open
                 return;
             }
             currentMpesaService = serviceKey; // Store the service key
@@ -2698,6 +3135,7 @@
             closeModal('membership-modal'); // Close source modal if open
             closeModal('online-course-modal'); // Close source modal if open
             closeModal('client-messages-modal'); // Close messages if coming from an invoice
+            closeModal('events-workshop-modal'); // Close events modal if open
             
             openModal('mpesa-checkout-modal');
         }
@@ -2715,7 +3153,7 @@
             // --- Post-payment logic based on currentMpesaService ---
             if (currentMpesaService === 'online_course') {
                 // Admin WhatsApp redirect
-                const adminWhatsappNumber = '25470680900'; // Admin WhatsApp number
+                const adminWhatsappNumber = '254706809000'; // Admin WhatsApp number
                 const message = encodeURIComponent('Hello, I have successfully applied for the next online course');
                 window.open(`https://wa.me/${adminWhatsappNumber}?text=${message}`, '_blank');
                 
@@ -2750,9 +3188,39 @@
                 alert('Payment for Premium Membership successful! Your benefits are now active.');
                 // Here, you would typically update user's premium status in Supabase/backend.
                 // For now, a simple alert is sufficient.
-            } else if (currentMpesaService === 'order_payment') {
+            } else if (currentMpesaService.startsWith('order_payment_')) {
+                // Update the specific order's status after payment
+                const orderId = parseInt(currentMpesaService.split('_')[2]);
+                const orderIndex = orders.findIndex(o => o.id === orderId);
+                if (orderIndex !== -1) {
+                    orders[orderIndex].status = 'Paid (Awaiting Fulfilment)';
+                    renderAdminOrders(); // Refresh admin view
+                }
                 alert('Payment for your order successful!');
-                // Here, you would typically update the specific order status.
+            } else if (currentMpesaService.startsWith('event_booking_')) {
+                const eventId = parseInt(currentMpesaService.split('_')[2]);
+                const bookedEvent = eventsData.find(e => e.id === eventId);
+                if (bookedEvent) {
+                    // Simulate admin notification (add to admin orders for visibility)
+                    const adminNotification = {
+                        id: nextOrderId++, 
+                        clientName: currentUserEmail ? currentUserEmail.split('@')[0] : 'Guest User',
+                        clientEmail: currentUserEmail || 'guest@example.com',
+                        clientPhone: mpesaPhoneNumber,
+                        location: bookedEvent.location, 
+                        type: `Event Booking: ${bookedEvent.title}`,
+                        qty: '1 slot',
+                        desc: `User paid KES ${currentMpesaAmount} for event booking.`,
+                        delivery: 'N/A',
+                        status: 'Paid',
+                        date: new Date().toLocaleString()
+                    };
+                    orders.unshift(adminNotification); // Add to admin orders for visibility
+                    if(document.getElementById('dashboard').classList.contains('active')) {
+                        renderAdminOrders();
+                    }
+                    alert(`Payment successful for "${bookedEvent.title}"! You have booked your spot.`);
+                }
             }
 
             // Reset service tracker
@@ -2867,6 +3335,167 @@
                 }
                 alert('PDF resource deleted.');
             }
+        }
+
+        // NEW: Event Management Functions
+        function renderAdminEvents() {
+            const container = document.getElementById('admin-events-list');
+            container.innerHTML = '';
+            if (eventsData.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 bg-gray-800 p-4 rounded">No events scheduled.</p>';
+                return;
+            }
+            eventsData.forEach(event => {
+                const eventCard = document.createElement('div');
+                eventCard.className = 'bg-gray-800 p-4 rounded border-l-4 border-blue-500 shadow-md relative';
+                eventCard.innerHTML = `
+                    <h4 class="font-bold text-white text-lg">${event.title}</h4>
+                    <p class="text-sm text-gray-400"><i class="fa-solid fa-calendar-day mr-1"></i> ${event.date} at ${event.time}</p>
+                    <p class="text-sm text-gray-400"><i class="fa-solid fa-location-dot mr-1"></i> ${event.location}</p>
+                    <p class="text-sm text-gray-400">Price: ${event.price === 0 ? 'Free' : `KES ${event.price}`}</p>
+                    <p class="text-sm text-gray-300 mt-2 italic">${event.description}</p>
+                    ${event.imageUrl ? `<img src="${event.imageUrl}" alt="${event.title}" class="w-24 h-auto rounded mt-2">` : ''}
+                    <div class="absolute top-2 right-2 space-x-2">
+                        <button onclick="editEvent(${event.id})" class="bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 rounded text-xs">
+                            <i class="fa-solid fa-edit"></i> Edit
+                        </button>
+                        <button onclick="deleteEvent(${event.id})" class="bg-red-600 hover:bg-red-500 text-white px-2 py-1 rounded text-xs">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
+                    </div>
+                `;
+                container.appendChild(eventCard);
+            });
+        }
+
+        function saveEvent() {
+            const id = document.getElementById('event-id').value;
+            const title = document.getElementById('event-title').value.trim();
+            const date = document.getElementById('event-date').value.trim();
+            const time = document.getElementById('event-time').value.trim();
+            const location = document.getElementById('event-location').value.trim();
+            const description = document.getElementById('event-description').value.trim();
+            const price = parseFloat(document.getElementById('event-price').value);
+            const imageFile = document.getElementById('event-image-file').files[0];
+
+            if (!title || !date || !time || !location || !description || isNaN(price) || price < 0) {
+                alert('Please fill all required event fields correctly.');
+                return;
+            }
+
+            let imageUrl = ''; 
+            if (id) {
+                const existingEvent = eventsData.find(e => e.id === parseInt(id));
+                if (existingEvent) {
+                    imageUrl = existingEvent.imageUrl; // Retain existing image if no new file
+                }
+            }
+
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageUrl = e.target.result;
+                    performSaveEvent(id, title, date, time, location, description, imageUrl, price);
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                performSaveEvent(id, title, date, time, location, description, imageUrl, price);
+            }
+        }
+
+        function performSaveEvent(id, title, date, time, location, description, imageUrl, price) {
+            if (id) {
+                const eventIndex = eventsData.findIndex(e => e.id === parseInt(id));
+                if (eventIndex !== -1) {
+                    eventsData[eventIndex] = { id: parseInt(id), title, date, time, location, description, imageUrl, price };
+                    alert('Event updated successfully!');
+                }
+            } else {
+                const newEvent = { id: nextEventId++, title, date, time, location, description, imageUrl, price };
+                eventsData.unshift(newEvent);
+                alert('Event added successfully!');
+            }
+
+            // Clear form
+            document.getElementById('event-id').value = '';
+            document.getElementById('event-title').value = '';
+            document.getElementById('event-date').value = '';
+            document.getElementById('event-time').value = '';
+            document.getElementById('event-location').value = '';
+            document.getElementById('event-description').value = '';
+            document.getElementById('event-image-file').value = ''; // Clear file input
+            document.getElementById('event-price').value = '0';
+
+            renderAdminEvents();
+            renderClientEvents(); // Update client-facing events module
+        }
+
+        function editEvent(id) {
+            const event = eventsData.find(e => e.id === id);
+            if (event) {
+                document.getElementById('event-id').value = event.id;
+                document.getElementById('event-title').value = event.title;
+                document.getElementById('event-date').value = event.date;
+                document.getElementById('event-time').value = event.time;
+                document.getElementById('event-location').value = event.location;
+                document.getElementById('event-description').value = event.description;
+                document.getElementById('event-price').value = event.price;
+                document.getElementById('event-image-file').value = ''; // Clear file input, user can select new
+                // Scroll to form to make editing easier
+                document.getElementById('event-form').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function deleteEvent(id) {
+            if (confirm('Are you sure you want to delete this event?')) {
+                eventsData = eventsData.filter(e => e.id !== id);
+                renderAdminEvents();
+                renderClientEvents(); // Update client-facing events module
+                alert('Event deleted successfully.');
+            }
+        }
+
+        function renderClientEvents() {
+            const container = document.getElementById('client-events-list');
+            container.innerHTML = ''; // Clear existing
+
+            if (eventsData.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center">No upcoming events or workshops at the moment.</p>';
+                return;
+            }
+
+            eventsData.forEach(event => {
+                const eventCard = document.createElement('div');
+                eventCard.className = 'bg-gray-800 p-4 rounded-lg shadow-md border-l-4 border-farm-accent flex flex-col md:flex-row items-start space-x-4';
+                
+                let imageHtml = event.imageUrl ? `<img src="${event.imageUrl}" alt="${event.title}" class="w-full md:w-32 h-auto md:h-24 object-cover rounded mb-3 md:mb-0">` : 
+                                                 `<div class="w-full md:w-32 h-24 bg-gray-700 rounded flex items-center justify-center text-gray-500 text-3xl mb-3 md:mb-0"><i class="fa-solid fa-calendar-day"></i></div>`;
+
+                let bookButtonHtml = '';
+                if (event.price > 0) {
+                    bookButtonHtml = `<button onclick="payForService('event_booking_${event.id}', '${event.title} Event', ${event.price})" class="mt-3 bg-farm-accent hover:bg-yellow-600 text-white px-4 py-2 rounded text-sm">
+                                        <i class="fa-solid fa-ticket-alt mr-1"></i> Book Now (KES ${event.price})
+                                    </button>`;
+                } else {
+                    bookButtonHtml = `<button onclick="alert('You can attend the ${event.title} event for FREE! Contact us for details.')" class="mt-3 bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded text-sm">
+                                        <i class="fa-solid fa-ticket-alt mr-1"></i> Reserve Spot (Free)
+                                    </button>`;
+                }
+
+
+                eventCard.innerHTML = `
+                    ${imageHtml}
+                    <div class="flex-grow">
+                        <h4 class="font-bold text-white text-xl mb-1">${event.title}</h4>
+                        <p class="text-sm text-gray-400"><i class="fa-solid fa-calendar-alt mr-1"></i> ${event.date} at ${event.time}</p>
+                        <p class="text-sm text-gray-400"><i class="fa-solid fa-map-marker-alt mr-1"></i> ${event.location}</p>
+                        <p class="text-sm text-gray-400">Price: ${event.price === 0 ? 'Free' : `KES ${event.price}`}</p>
+                        <p class="text-gray-300 text-sm mt-2">${event.description}</p>
+                        ${bookButtonHtml}
+                    </div>
+                `;
+                container.appendChild(eventCard);
+            });
         }
 
             // Initialize
@@ -2986,6 +3615,9 @@
                     handleClientLogin();
                 }
             });
+
+            // Initial render for client events (for the home module and client portal)
+            renderClientEvents();
         });
 
     </script>
