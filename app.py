@@ -13,7 +13,11 @@ CORS(app)  # Enable CORS for all routes
 @app.route('/')
 def home():
     """Serves the index.html file from the templates folder."""
-    return render_template('index.html')
+    return render_template(
+        'index.html',
+        supabase_url=os.getenv('SUPABASE_URL', ''),
+        supabase_anon_key=os.getenv('SUPABASE_ANON_KEY', '')
+    )
 
 # Initialize Groq client
 # Make sure to set your GROQ_API_KEY environment variable

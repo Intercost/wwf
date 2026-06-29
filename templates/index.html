@@ -1789,8 +1789,8 @@
     <!-- JavaScript Logic -->
     <script>
         // Supabase Configuration
-        const SUPABASE_URL = 'https://boeowlxopywawvgpkdue.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvZW93bHhvcHl3YXd2Z3BrZHVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NTQyNzcsImV4cCI6MjA5ODIzMDI3N30.vMbEZ3VwDfcKpWxLirlQOnIifbDBsNHaL9XLvL8oiLU';
+        const SUPABASE_URL = '{{ supabase_url }}';
+        const SUPABASE_ANON_KEY = '{{ supabase_anon_key }}';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ── Admin credentials (front-end only – move to server auth later) ──
