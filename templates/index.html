@@ -6,18 +6,16 @@
     <title>Willy's Wing Farm</title>
     
     <!-- Tailwind CSS for Dark Aesthetic and Layout -->
-    <!-- Suppress CDN production warning: For this single-file Flask app, CDN is acceptable for now -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Suppress CDN production warning BEFORE loading Tailwind so the patch is in place in time -->
     <script>
-        // Suppress Tailwind CDN warning
-        console.warn = (originalWarn => {
-            return (...args) => {
-                if (!args[0]?.includes('cdn.tailwindcss.com should not be used in production')) {
-                    originalWarn(...args);
-                }
-            };
-        })(console.warn);
+        // Suppress Tailwind CDN warning – must run before cdn.tailwindcss.com loads
+        const _origWarn = console.warn.bind(console);
+        console.warn = (...args) => {
+            if (typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) return;
+            _origWarn(...args);
+        };
     </script>
+    <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -1802,9 +1800,9 @@
         // Supabase Configuration
         const SUPABASE_URL = '{{ supabase_url }}';
         const SUPABASE_ANON_KEY = '{{ supabase_anon_key }}';
-        // Avoid duplicate declaration
+        // Use var (not const) so re-declaration by the supabase UMD bundle doesn't cause a SyntaxError
         window.supabaseClient = window.supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const supabase = window.supabaseClient;
+        var supabase = window.supabaseClient; // eslint-disable-line no-var
 
         // ── Admin credentials (front-end only – move to server auth later) ──
         const ADMIN_EMAIL = 'wwf@gmail.com';
