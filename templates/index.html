@@ -6,7 +6,18 @@
     <title>Willy's Wing Farm</title>
     
     <!-- Tailwind CSS for Dark Aesthetic and Layout -->
+    <!-- Suppress CDN production warning: For this single-file Flask app, CDN is acceptable for now -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Suppress Tailwind CDN warning
+        console.warn = (originalWarn => {
+            return (...args) => {
+                if (!args[0]?.includes('cdn.tailwindcss.com should not be used in production')) {
+                    originalWarn(...args);
+                }
+            };
+        })(console.warn);
+    </script>
     
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -1791,7 +1802,9 @@
         // Supabase Configuration
         const SUPABASE_URL = '{{ supabase_url }}';
         const SUPABASE_ANON_KEY = '{{ supabase_anon_key }}';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Avoid duplicate declaration
+        window.supabaseClient = window.supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabase = window.supabaseClient;
 
         // ── Admin credentials (front-end only – move to server auth later) ──
         const ADMIN_EMAIL = 'wwf@gmail.com';
