@@ -2489,17 +2489,51 @@
                 }]).select();
             }
 
-            successMsg.classList.remove('hidden');
             errorMsg.classList.add('hidden');
 
             document.getElementById('reg-full-name').value = '';
             document.getElementById('reg-email').value = '';
             document.getElementById('reg-password').value = '';
 
+            // If Supabase already handed back an active session (i.e. email
+            // confirmation is OFF in your Supabase Auth settings), the account
+            // is immediately usable — log the client straight into the portal
+            // instead of bouncing them back to the login form.
+            if (data.session && data.user) {
+                currentUserEmail = data.user.email;
+                currentUserId = data.user.id;
+                clientIsLoggedIn = true;
+
+                await loadMessagesFromSupabase();
+
+                document.getElementById('client-login').classList.remove('active');
+                document.getElementById('client-portal').classList.add('active');
+                window.scrollTo(0, 0);
+
+                setTimeout(() => {
+                    renderClientGallery('farm-gallery', false);
+                }, 100);
+
+                const unread = messages.filter(m => !m.read).length;
+                if (unread > 0) {
+                    document.getElementById('msg-notification-dot').classList.remove('hidden');
+                }
+
+                if (pendingOrderType) {
+                    handleServiceClick(pendingOrderType);
+                    pendingOrderType = null;
+                }
+                return;
+            }
+
+            // Otherwise (email confirmation is still ON), there's no session
+            // yet — the client must confirm their email before they can log in.
+            successMsg.textContent = 'Account created! Please check your email to confirm your address, then log in.';
+            successMsg.classList.remove('hidden');
             setTimeout(() => {
                 toggleForms(true);
                 successMsg.classList.add('hidden');
-            }, 2000);
+            }, 3500);
         }
 
         // Function to render the poultry tracking cards

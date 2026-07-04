@@ -19,9 +19,20 @@ def home():
         supabase_anon_key=os.getenv('SUPABASE_ANON_KEY', '')
     )
 
-# Initialize Groq client
-# Make sure to set your GROQ_API_KEY environment variable
-client = Groq()
+# Initialize Groq client lazily so a missing/invalid API key doesn't crash
+# the whole serverless function on import (which would 500 every route,
+# not just /api/chat).
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+client = None
+client_init_error = None
+
+if GROQ_API_KEY:
+    try:
+        client = Groq(api_key=GROQ_API_KEY)
+    except Exception as e:
+        client_init_error = str(e)
+else:
+    client_init_error = "GROQ_API_KEY environment variable is not set"
 
 MODEL_NAME = "openai/gpt-oss-20b"
 
@@ -70,48 +81,80 @@ def chat():
     Expects JSON: {"message": "user's question"}
     Returns JSON: {"response": "AI's answer"}
     """
+    if client is None:
+        # This is almost always the real cause of a 500 here: the
+        # GROQ_API_KEY env var isn't set (or is invalid) on the deployment.
+        return jsonify({
+            "error": f"Groq client not initialized: {client_init_error}. "
+                      f"Check that GROQ_API_KEY is set in your Vercel project's "
+                      f"Environment Variables (Settings > Environment Variables), "
+                      f"then redeploy."
+        }), 500
+
     try:
         data = request.get_json()
-        
+
         if not data or 'message' not in data:
             return jsonify({"error": "Missing 'message' field in request"}), 400
-        
+
         user_message = data['message'].strip()
-        
+
         if not user_message:
             return jsonify({"error": "Message cannot be empty"}), 400
-        
+
         # Construct messages for the API
         messages = [
             {"role": "system", "content": WWF_SYSTEM_INSTRUCTION},
             {"role": "user", "content": user_message}
         ]
-        
-        # Call Groq API
-        completion = client.chat.completions.create(
-            model=MODEL_NAME,
-            messages=messages,
-            temperature=1,
-            max_completion_tokens=8192,
-            top_p=1,
-            reasoning_effort="medium",
-            stream=False,
-            stop=None
-        )
-        
+
+        # Call Groq API. Some installed versions of the groq SDK don't
+        # support reasoning_effort yet, so retry without it if that's
+        # what's failing — this keeps the endpoint working either way.
+        try:
+            completion = client.chat.completions.create(
+                model=MODEL_NAME,
+                messages=messages,
+                temperature=1,
+                max_completion_tokens=8192,
+                top_p=1,
+                reasoning_effort="medium",
+                stream=False,
+                stop=None
+            )
+        except TypeError:
+            completion = client.chat.completions.create(
+                model=MODEL_NAME,
+                messages=messages,
+                temperature=1,
+                max_completion_tokens=8192,
+                top_p=1,
+                stream=False,
+                stop=None
+            )
+
         # Extract the response
         ai_response = completion.choices[0].message.content
-        
+
         return jsonify({"response": ai_response}), 200
-        
+
     except Exception as e:
+        # Print full traceback to Vercel function logs for debugging,
+        # while still returning a readable error to the frontend.
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": f"Server error: {str(e)}"}), 500
 
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """Simple health check endpoint."""
-    return jsonify({"status": "healthy", "service": "WWF AI API"}), 200
+    return jsonify({
+        "status": "healthy",
+        "service": "WWF AI API",
+        "groq_client_ready": client is not None,
+        "groq_client_error": client_init_error
+    }), 200
 
 
 if __name__ == '__main__':
