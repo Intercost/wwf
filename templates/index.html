@@ -26,16 +26,40 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 
     <script>
+        // First, handle dark/light mode
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            updateThemeIcon();
+        }
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            updateThemeIcon();
+        }
+        function updateThemeIcon() {
+            const btn = document.getElementById('theme-toggle');
+            const mobileBtn = document.getElementById('theme-toggle-mobile');
+            if (document.documentElement.classList.contains('dark')) {
+                if (btn) btn.innerHTML = '<i class="fas fa-moon"></i>';
+                if (mobileBtn) mobileBtn.innerHTML = '<i class="fas fa-moon"></i> Toggle Theme';
+            } else {
+                if (btn) btn.innerHTML = '<i class="fas fa-sun"></i>';
+                if (mobileBtn) mobileBtn.innerHTML = '<i class="fas fa-sun"></i> Toggle Theme';
+            }
+        }
+        initTheme();
+
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         farm: {
-                            dark: '#0f172a',    // Deep dark blue/black
-                            card: '#1e293b',    // Lighter dark for cards
-                            accent: '#d97706',  // Amber/Gold for "Premium Farm" feel
-                            green: '#15803d',   // Organic Green
-                            text: '#f1f5f9'     // Off-white text
                         }
                     },
                     fontFamily: {
@@ -48,12 +72,51 @@
     </script>
 
     <style>
-        body {
-            background-color: #0f172a;
-            color: #f1f5f9;
-            font-family: 'Roboto', sans-serif;
+        /* CSS Variables for both light mode (default) and dark mode (using .dark class) */
+        :root {
+            --bg: #f8fafc;
+            --bg2: #e2e8f0;
+            --bg3: #cbd5e1;
+            --card: #ffffff;
+            --border: #d1d5db;
+            --accent: #3b82f6;
+            --accent2: #06b6d4;
+            --accent3: #10b981;
+            --accent4: #f59e0b;
+            --accent5: #ef4444;
+            --accent6: #8b5cf6;
+            --text: #0f172a;
+            --text2: #475569;
+            --text3: #64748b;
+            --gold: #d4a853;
+            --radius: 12px;
+            --shadow: 0 4px 24px rgba(0,0,0,0.1);
         }
-        
+        .dark {
+            --bg: #0b0f19;
+            --bg2: #111827;
+            --bg3: #1a2235;
+            --card: #151d2e;
+            --border: #1e2d45;
+            --text: #e8edf5;
+            --text2: #94a3b8;
+            --text3: #64748b;
+            --shadow: 0 4px 24px rgba(0,0,0,0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Roboto', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
         h1, h2, h3, h4, h5 {
             font-family: 'Playfair Display', serif;
         }
@@ -80,19 +143,26 @@
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #0f172a; 
+            background: var(--bg);
         }
         ::-webkit-scrollbar-thumb {
-            background: #334155; 
+            background: var(--border);
             border-radius: 4px;
         }
+        .bg-farm-accent {
+            background: var(--accent2);
+        }
+        .bg-farm-accent:hover {
+            opacity: 0.9;
+        }
         ::-webkit-scrollbar-thumb:hover {
-            background: #d97706; 
+            background: var(--accent2);
         }
 
         /* Nav Link Hover Effect */
         .nav-link {
             position: relative;
+            color: var(--text2);
         }
         .nav-link::after {
             content: '';
@@ -101,12 +171,49 @@
             height: 2px;
             bottom: -2px;
             left: 0;
-            background-color: #d97706;
+            background-color: var(--accent2);
             transition: width 0.3s;
         }
         .nav-link:hover::after {
             width: 100%;
         }
+        .nav-link:hover {
+            color: var(--accent2);
+        }
+
+        /* Custom classes using variables */
+        .bg-farm-card {
+            background: var(--card);
+        }
+        .text-farm-accent {
+            color: var(--accent2);
+        }
+        .border-farm-accent {
+            border-color: var(--border);
+        }
+        .bg-farm-accent {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+        }
+
+        /* Theme toggle button */
+        #theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text2);
+            transition: all 0.2s;
+        }
+        #theme-toggle:hover {
+            background: var(--border);
+            color: var(--text);
+        }
+    </style>
 
         /* Chat Typing Indicator */
         .typing-indicator {
@@ -132,7 +239,7 @@
 <body class="flex flex-col min-h-screen">
 
     <!-- Navigation -->
-    <nav class="bg-farm-card border-b border-gray-800 sticky top-0 z-50 shadow-lg">
+    <nav class="sticky top-0 z-50 shadow-lg" style="background: var(--card); border-bottom: 1px solid var(--border);">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <!-- Logo -->
@@ -145,17 +252,20 @@
                 
                 <!-- Desktop Menu -->
                 <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-4">
-                        <button onclick="showSection('home')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Home</button>
-                        <button onclick="showSection('farm-gallery-public')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Gallery</button>
-                        <button onclick="showSection('poultry')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Shop</button>
-                        <button onclick="showSection('services')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Services & Events</button>
-                        <button onclick="showSection('equipments')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Equipment</button>
-                        <button onclick="showSection('vet')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Vet Support</button>
-                        <button onclick="showSection('knowledge')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent text-yellow-200"><i class="fa-solid fa-star mr-1"></i>Premium</button>
-                        <button onclick="showSection('contact')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Contact</button>
-                        <button onclick="goToClientPortal()" class="bg-farm-accent hover:bg-yellow-600 text-white px-3 py-2 rounded-md text-sm font-medium ml-2"><i class="fa-solid fa-user mr-1"></i>My Portal</button>
-                        <button onclick="showSection('admin')" class="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md text-sm font-medium ml-2"><i class="fa-solid fa-lock mr-1"></i>Admin</button>
+                    <div class="ml-10 flex items-center gap-4">
+                        <button onclick="showSection('home')" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Home</button>
+                        <button onclick="showSection('farm-gallery-public')" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Gallery</button>
+                        <button onclick="showSection('poultry')" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Shop</button>
+                        <button onclick="showSection('services')" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Services & Events</button>
+                        <button onclick="showSection('equipments')" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Equipment</button>
+                        <button onclick="showSection('vet')" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Vet Support</button>
+                        <button onclick="showSection('knowledge')" class="nav-link px-3 py-2 rounded-md text-sm font-medium" style="color: var(--accent4);"><i class="fa-solid fa-star mr-1"></i>Premium</button>
+                        <button onclick="showSection('contact')" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Contact</button>
+                        <button onclick="goToClientPortal()" class="bg-farm-accent text-white px-3 py-2 rounded-md text-sm font-medium ml-2 hover:opacity-90"><i class="fa-solid fa-user mr-1"></i>My Portal</button>
+                        <button onclick="showSection('admin')" class="px-3 py-2 rounded-md text-sm font-medium ml-2" style="background: var(--bg3); color: var(--text2);"><i class="fa-solid fa-lock mr-1"></i>Admin</button>
+                        <button id="theme-toggle" onclick="toggleTheme()">
+                            <i class="fas fa-sun"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -169,18 +279,23 @@
         </div>
 
         <!-- Mobile Menu (Hidden by default) -->
-        <div id="mobile-menu" class="hidden md:hidden bg-farm-card pb-4">
+        <div id="mobile-menu" class="hidden md:hidden pb-4" style="background: var(--card);">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <button onclick="showSection('home')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Home</button>
-                <button onclick="showSection('farm-gallery-public')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Gallery</button>
-                <button onclick="showSection('poultry')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Shop</button>
-                <button onclick="showSection('services')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Services</button>
-                <button onclick="showSection('equipments')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Equipment</button>
-                <button onclick="showSection('vet')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Vet Support</button>
-                <button onclick="showSection('knowledge')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 text-yellow-200">Premium</button>
-                <button onclick="goToClientPortal()" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 text-farm-accent"><i class="fa-solid fa-user mr-1"></i>My Portal</button>
-                <button onclick="showSection('admin')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Admin</button>
-                <button onclick="showSection('contact')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Contact</button>
+                <button onclick="showSection('home')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700" style="color: var(--text2);">Home</button>
+                <button onclick="showSection('farm-gallery-public')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Gallery</button>
+                <button onclick="showSection('poultry')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Shop</button>
+                <button onclick="showSection('services')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Services</button>
+                <button onclick="showSection('equipments')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Equipment</button>
+                <button onclick="showSection('vet')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Vet Support</button>
+                <button onclick="showSection('knowledge')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--accent4);"><i class="fa-solid fa-star mr-1"></i>Premium</button>
+                <button onclick="goToClientPortal()" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--accent2);"><i class="fa-solid fa-user mr-1"></i>My Portal</button>
+                <button onclick="showSection('admin')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Admin</button>
+                <button onclick="showSection('contact')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Contact</button>
+                <div class="pt-3 px-3">
+                    <button id="theme-toggle-mobile" onclick="toggleTheme()" class="w-full flex items-center justify-center gap-2 py-2 rounded-md" style="background: var(--bg3); color: var(--text2); border: 1px solid var(--border);">
+                        <i class="fas fa-sun"></i> Toggle Theme
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
@@ -191,30 +306,30 @@
         <!-- 1. HOME SECTION -->
         <div id="home" class="section-content active">
             <div class="text-center py-16 lg:py-24">
-                <img src="/logo.jpg" alt="Willy's Wing Farm logo" class="h-28 w-28 md:h-36 md:w-36 rounded-full object-cover mx-auto mb-6 border-4 border-farm-accent shadow-lg">
-                <h1 class="text-4xl tracking-tight font-extrabold text-white sm:text-5xl md:text-6xl mb-6">
+                <img src="/logo.jpg" alt="Willy's Wing Farm logo" class="h-28 w-28 md:h-36 md:w-36 rounded-full object-cover mx-auto mb-6 shadow-lg" style="border: 4px solid var(--accent2);">
+                <h1 class="text-4xl tracking-tight font-extrabold sm:text-5xl md:text-6xl mb-6" style="color: var(--text);">
                     <span class="block">Premium 1-Month-Old Chicks</span>
-                    <span class="block text-farm-accent">Ready for Your Farm</span>
+                    <span class="block" style="color: var(--accent2);">Ready for Your Farm</span>
                     
                 </h1>
-                <p class="mt-3 max-w-md mx-auto text-base text-gray-300 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                <p class="mt-3 max-w-md mx-auto text-base sm:text-lg md:mt-5 md:text-xl md:max-w-3xl" style="color: var(--text2);">
                     Located in Makhonge, Bungoma County. We specialize in high-quality 1-month-old chicks raised with organic feed. From Sasso to Layers and Broilers, we have what you need.
                 </p>
                 <div class="mt-10 max-w-sm mx-auto sm:max-w-none sm:flex sm:justify-center">
                     <div class="space-y-4 sm:space-y-0 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5">
-                        <button onclick="showSection('farm-gallery-public')" class="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-farm-accent bg-farm-card hover:bg-gray-700 md:py-4 md:text-lg md:px-10">
+                        <button onclick="showSection('farm-gallery-public')" class="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md md:py-4 md:text-lg md:px-10" style="color: var(--accent2); background: var(--card); border: 1px solid var(--border);">
                             View Our Chicks
                         </button>
-                        <button onclick="showSection('poultry')" class="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-farm-accent hover:bg-yellow-600 md:py-4 md:text-lg md:px-10">
+                        <button onclick="showSection('poultry')" class="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white md:py-4 md:text-lg md:px-10 bg-farm-accent hover:opacity-90">
                             <i class="fa-solid fa-basket-shopping mr-2"></i>Shop Here
                         </button>
                     </div>
                 </div>
                 <!-- NEW: Events & Workshops Module (Prominent) -->
-                <div class="mt-10 bg-farm-card p-6 rounded-lg shadow-lg border border-farm-accent">
-                    <h3 class="text-2xl font-bold text-white mb-4">Upcoming Events & Workshops!</h3>
-                    <p class="text-gray-400 mb-6">Join our exciting farm events and learn from experts. Click below to see what's happening!</p>
-                    <button onclick="openModal('events-workshop-modal')" class="bg-farm-accent hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-lg text-lg">
+                <div class="mt-10 p-6 rounded-lg shadow-lg" style="background: var(--card); border: 1px solid var(--accent2);">
+                    <h3 class="text-2xl font-bold mb-4" style="color: var(--text);">Upcoming Events & Workshops!</h3>
+                    <p class="mb-6" style="color: var(--text3);">Join our exciting farm events and learn from experts. Click below to see what's happening!</p>
+                    <button onclick="openModal('events-workshop-modal')" class="text-white font-bold py-3 px-8 rounded-lg text-lg bg-farm-accent hover:opacity-90">
                         <i class="fa-solid fa-calendar-alt mr-2"></i> View Events
                     </button>
                 </div>
@@ -222,33 +337,33 @@
 
             <!-- Features Grid -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-                <div class="bg-farm-card p-6 rounded-lg shadow-lg border border-gray-800 text-center">
-                    <i class="fa-solid fa-leaf text-4xl text-green-500 mb-4"></i>
-                    <h3 class="text-xl font-bold mb-2">Organic Feed</h3>
-                    <p class="text-gray-400">All our birds are raised using strict organic feeding methods for the healthiest produce.</p>
+                <div class="p-6 rounded-lg shadow-lg text-center" style="background: var(--card); border: 1px solid var(--border);">
+                    <i class="fa-solid fa-leaf text-4xl mb-4" style="color: var(--accent3);"></i>
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--text);">Organic Feed</h3>
+                    <p style="color: var(--text3);">All our birds are raised using strict organic feeding methods for the healthiest produce.</p>
                 </div>
-                <div class="bg-farm-card p-6 rounded-lg shadow-lg border border-gray-800 text-center">
-                    <i class="fa-solid fa-truck-fast text-4xl text-blue-500 mb-4"></i>
-                    <h3 class="text-xl font-bold mb-2">Delivery Services</h3>
-                    <p class="text-gray-400">We deliver across the region. 50% discount on any egg cracked during transport.</p>
+                <div class="p-6 rounded-lg shadow-lg text-center" style="background: var(--card); border: 1px solid var(--border);">
+                    <i class="fa-solid fa-truck-fast text-4xl mb-4" style="color: var(--accent);"></i>
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--text);">Delivery Services</h3>
+                    <p style="color: var(--text3);">We deliver across the region. 50% discount on any egg cracked during transport.</p>
                 </div>
-                <div class="bg-farm-card p-6 rounded-lg shadow-lg border border-gray-800 text-center">
-                    <i class="fa-solid fa-user-doctor text-4xl text-red-500 mb-4"></i>
-                    <h3 class="text-xl font-bold mb-2">Expert Care</h3>
-                    <p class="text-gray-400">From veterinary support to educational programs, we share our expertise with you.</p>
+                <div class="p-6 rounded-lg shadow-lg text-center" style="background: var(--card); border: 1px solid var(--border);">
+                    <i class="fa-solid fa-user-doctor text-4xl mb-4" style="color: var(--accent5);"></i>
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--text);">Expert Care</h3>
+                    <p style="color: var(--text3);">From veterinary support to educational programs, we share our expertise with you.</p>
                 </div>
             </div>
         </div>
 
         <!-- 2. VIEW POULTRY SECTION -->
         <div id="poultry" class="section-content">
-            <h2 class="text-3xl font-bold mb-2 border-b border-gray-700 pb-2">Shop Our Chicks & Products</h2>
-            <p class="text-gray-400 mb-8">Browse everything we have available — no login needed. You'll only be asked to sign in when you're ready to place an order.</p>
+            <h2 class="text-3xl font-bold mb-2 pb-2" style="border-bottom: 1px solid var(--border); color: var(--text);">Shop Our Chicks & Products</h2>
+            <p class="mb-8" style="color: var(--text3);">Browse everything we have available — no login needed. You'll only be asked to sign in when you're ready to place an order.</p>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="poultry-grid">
                 <!-- Javascript will inject real product cards (with photos) here -->
             </div>
 
-            <h3 class="text-2xl font-bold mt-14 mb-6 border-b border-gray-700 pb-2">Current Egg Prices</h3>
+            <h3 class="text-2xl font-bold mt-14 mb-6 pb-2" style="border-bottom: 1px solid var(--border); color: var(--text);">Current Egg Prices</h3>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4" id="egg-price-grid">
                 <!-- Javascript will inject egg price cards here -->
             </div>
@@ -265,8 +380,8 @@
 
         <!-- PUBLIC FARM GALLERY (photos the admin posts — open to everyone, no login) -->
         <div id="farm-gallery-public" class="section-content">
-            <h2 class="text-3xl font-bold mb-2 border-b border-gray-700 pb-2">Our Chicks & Farm Gallery</h2>
-            <p class="text-gray-400 mb-8">A look at our chicks and life on the farm. Tap any photo to view it full-screen.</p>
+            <h2 class="text-3xl font-bold mb-2 pb-2" style="border-bottom: 1px solid var(--border); color: var(--text);">Our Chicks & Farm Gallery</h2>
+            <p class="mb-8" style="color: var(--text3);">A look at our chicks and life on the farm. Tap any photo to view it full-screen.</p>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="public-farm-gallery">
                 <!-- Javascript will inject gallery photos here -->
             </div>
@@ -274,97 +389,97 @@
 
         <!-- 3. SERVICES & EVENTS SECTION -->
         <div id="services" class="section-content">
-            <h2 class="text-3xl font-bold mb-8 border-b border-gray-700 pb-2">Services & Events</h2>
+            <h2 class="text-3xl font-bold mb-8 pb-2" style="border-bottom: 1px solid var(--border); color: var(--text);">Services & Events</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 
-                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
-                    <div class="h-32 bg-gray-700 flex items-center justify-center">
-                        <i class="fa-solid fa-map-location-dot text-5xl text-gray-500"></i>
+                <div class="rounded-lg overflow-hidden shadow-lg" style="background: var(--card); border: 1px solid var(--border);">
+                    <div class="h-32 flex items-center justify-center" style="background: var(--bg2);">
+                        <i class="fa-solid fa-map-location-dot text-5xl" style="color: var(--text3);"></i>
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-farm-accent mb-2">Farm Tours</h3>
-                        <p class="text-gray-400 text-sm">Visit Makhonge to see how we operate. Educational tours available for schools and aspiring farmers.</p>
+                        <h3 class="text-xl font-bold mb-2" style="color: var(--accent2);">Farm Tours</h3>
+                        <p class="text-sm" style="color: var(--text3);">Visit Makhonge to see how we operate. Educational tours available for schools and aspiring farmers.</p>
                     </div>
                 </div>
 
-                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
-                    <div class="h-32 bg-gray-700 flex items-center justify-center">
-                        <i class="fa-solid fa-laptop-file text-5xl text-gray-500"></i>
+                <div class="rounded-lg overflow-hidden shadow-lg" style="background: var(--card); border: 1px solid var(--border);">
+                    <div class="h-32 flex items-center justify-center" style="background: var(--bg2);">
+                        <i class="fa-solid fa-laptop-file text-5xl" style="color: var(--text3);"></i>
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-farm-accent mb-2">Online Courses</h3>
-                        <p class="text-gray-400 text-sm">Learn poultry farming from the comfort of your home. We offer modules on organic feeding, disease control, and more.</p>
+                        <h3 class="text-xl font-bold mb-2" style="color: var(--accent2);">Online Courses</h3>
+                        <p class="text-sm" style="color: var(--text3);">Learn poultry farming from the comfort of your home. We offer modules on organic feeding, disease control, and more.</p>
                     </div>
                 </div>
 
-                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
-                    <div class="h-32 bg-gray-700 flex items-center justify-center">
-                        <i class="fa-solid fa-hammer text-5xl text-gray-500"></i>
+                <div class="rounded-lg overflow-hidden shadow-lg" style="background: var(--card); border: 1px solid var(--border);">
+                    <div class="h-32 flex items-center justify-center" style="background: var(--bg2);">
+                        <i class="fa-solid fa-hammer text-5xl" style="color: var(--text3);"></i>
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-farm-accent mb-2">Structure Development</h3>
-                        <p class="text-gray-400 text-sm">We design and build portable and permanent poultry structures tailored to your land size.</p>
+                        <h3 class="text-xl font-bold mb-2" style="color: var(--accent2);">Structure Development</h3>
+                        <p class="text-sm" style="color: var(--text3);">We design and build portable and permanent poultry structures tailored to your land size.</p>
                     </div>
                 </div>
 
-                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
-                    <div class="h-32 bg-gray-700 flex items-center justify-center">
-                        <i class="fa-solid fa-temperature-three-quarters text-5xl text-red-500"></i>
+                <div class="rounded-lg overflow-hidden shadow-lg" style="background: var(--card); border: 1px solid var(--border);">
+                    <div class="h-32 flex items-center justify-center" style="background: var(--bg2);">
+                        <i class="fa-solid fa-temperature-three-quarters text-5xl" style="color: var(--accent5);"></i>
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-farm-accent mb-2">Hatching Services</h3>
-                        <p class="text-gray-400 text-sm">Professional hatching using high-capacity, reliable incubators. Ensure a high yield for your fertile eggs.</p>
+                        <h3 class="text-xl font-bold mb-2" style="color: var(--accent2);">Hatching Services</h3>
+                        <p class="text-sm" style="color: var(--text3);">Professional hatching using high-capacity, reliable incubators. Ensure a high yield for your fertile eggs.</p>
                     </div>
                 </div>
                 
-                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
-                    <div class="h-32 bg-gray-700 flex items-center justify-center">
-                        <i class="fa-solid fa-sack-dollar text-5xl text-green-500"></i>
+                <div class="rounded-lg overflow-hidden shadow-lg" style="background: var(--card); border: 1px solid var(--border);">
+                    <div class="h-32 flex items-center justify-center" style="background: var(--bg2);">
+                        <i class="fa-solid fa-sack-dollar text-5xl" style="color: var(--accent3);"></i>
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-farm-accent mb-2">Organic Feed Supply</h3>
-                        <p class="text-gray-400 text-sm">Supply of all feed stages: Starters, Growers, Finishers, and Layers. High-quality organic formulation.</p>
+                        <h3 class="text-xl font-bold mb-2" style="color: var(--accent2);">Organic Feed Supply</h3>
+                        <p class="text-sm" style="color: var(--text3);">Supply of all feed stages: Starters, Growers, Finishers, and Layers. High-quality organic formulation.</p>
                     </div>
                 </div>
                 
-                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
-                    <div class="h-32 bg-gray-700 flex items-center justify-center">
-                        <i class="fa-solid fa-chalkboard-user text-5xl text-blue-500"></i>
+                <div class="rounded-lg overflow-hidden shadow-lg" style="background: var(--card); border: 1px solid var(--border);">
+                    <div class="h-32 flex items-center justify-center" style="background: var(--bg2);">
+                        <i class="fa-solid fa-chalkboard-user text-5xl" style="color: var(--accent);"></i>
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-farm-accent mb-2">Training Workshops</h3>
-                        <p class="text-gray-400 text-sm">Hands-on, intensive training sessions during hosted farm events and community meetups.</p>
+                        <h3 class="text-xl font-bold mb-2" style="color: var(--accent2);">Training Workshops</h3>
+                        <p class="text-sm" style="color: var(--text3);">Hands-on, intensive training sessions during hosted farm events and community meetups.</p>
                     </div>
                 </div>
                 
-                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
-                    <div class="h-32 bg-gray-700 flex items-center justify-center">
-                        <i class="fa-solid fa-comments text-5xl text-purple-500"></i>
+                <div class="rounded-lg overflow-hidden shadow-lg" style="background: var(--card); border: 1px solid var(--border);">
+                    <div class="h-32 flex items-center justify-center" style="background: var(--bg2);">
+                        <i class="fa-solid fa-comments text-5xl" style="color: var(--accent6);"></i>
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-farm-accent mb-2">Poultry Farm Consultations</h3>
-                        <p class="text-gray-400 text-sm">Expert advice on farm setup, operational efficiency, disease prevention, and organic certification.</p>
+                        <h3 class="text-xl font-bold mb-2" style="color: var(--accent2);">Poultry Farm Consultations</h3>
+                        <p class="text-sm" style="color: var(--text3);">Expert advice on farm setup, operational efficiency, disease prevention, and organic certification.</p>
                     </div>
                 </div>
                 
-                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
-                    <div class="h-32 bg-gray-700 flex items-center justify-center">
-                        <i class="fa-solid fa-drumstick-bite text-5xl text-red-600"></i>
+                <div class="rounded-lg overflow-hidden shadow-lg" style="background: var(--card); border: 1px solid var(--border);">
+                    <div class="h-32 flex items-center justify-center" style="background: var(--bg2);">
+                        <i class="fa-solid fa-drumstick-bite text-5xl" style="color: var(--accent5);"></i>
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-farm-accent mb-2">Slaughtering & Packaging</h3>
-                        <p class="text-gray-400 text-sm">Hygienic slaughtering and professional packaging services for market-ready poultry products.</p>
+                        <h3 class="text-xl font-bold mb-2" style="color: var(--accent2);">Slaughtering & Packaging</h3>
+                        <p class="text-sm" style="color: var(--text3);">Hygienic slaughtering and professional packaging services for market-ready poultry products.</p>
                     </div>
                 </div>
                 
-                <div class="bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800">
-                    <div class="h-32 bg-gray-700 flex items-center justify-center">
-                        <i class="fa-solid fa-truck-moving text-5xl text-orange-500"></i>
+                <div class="rounded-lg overflow-hidden shadow-lg" style="background: var(--card); border: 1px solid var(--border);">
+                    <div class="h-32 flex items-center justify-center" style="background: var(--bg2);">
+                        <i class="fa-solid fa-truck-moving text-5xl" style="color: var(--accent4);"></i>
                     </div>
                     <div class="p-6">
-                        <h3 class="text-xl font-bold text-farm-accent mb-2">Product Delivery</h3>
-                        <p class="text-gray-400 text-sm">Reliable and prompt delivery services for eggs, live birds, feed, and packaged meat products.</p>
+                        <h3 class="text-xl font-bold mb-2" style="color: var(--accent2);">Product Delivery</h3>
+                        <p class="text-sm" style="color: var(--text3);">Reliable and prompt delivery services for eggs, live birds, feed, and packaged meat products.</p>
                     </div>
                 </div>
             </div>
@@ -372,46 +487,46 @@
 
         <!-- 4. EQUIPMENT SECTION -->
         <div id="equipments" class="section-content">
-            <h2 class="text-3xl font-bold mb-8 border-b border-gray-700 pb-2">Poultry Equipment</h2>
-            <p class="text-gray-400 mb-6">High-quality tools to ensure your farm runs smoothly.</p>
+            <h2 class="text-3xl font-bold mb-8 pb-2" style="border-bottom: 1px solid var(--border); color: var(--text);">Poultry Equipment</h2>
+            <p class="mb-6" style="color: var(--text3);">High-quality tools to ensure your farm runs smoothly.</p>
             
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <!-- Equipment Item -->
-                <div class="bg-farm-card p-4 rounded text-center hover:bg-gray-800 transition">
-                    <i class="fa-solid fa-bottle-water text-4xl text-blue-400 mb-3"></i>
-                    <h4 class="font-bold">Automatic Drinkers</h4>
+                <div class="p-4 rounded text-center transition" style="background: var(--card); border: 1px solid var(--border);">
+                    <i class="fa-solid fa-bottle-water text-4xl mb-3" style="color: var(--accent);"></i>
+                    <h4 class="font-bold" style="color: var(--text);">Automatic Drinkers</h4>
                 </div>
                 <!-- Equipment Item -->
-                <div class="bg-farm-card p-4 rounded text-center hover:bg-gray-800 transition">
-                    <i class="fa-solid fa-bowl-rice text-4xl text-yellow-600 mb-3"></i>
-                    <h4 class="font-bold">Feeders</h4>
+                <div class="p-4 rounded text-center transition" style="background: var(--card); border: 1px solid var(--border);">
+                    <i class="fa-solid fa-bowl-rice text-4xl mb-3" style="color: var(--accent4);"></i>
+                    <h4 class="font-bold" style="color: var(--text);">Feeders</h4>
                 </div>
                 <!-- Equipment Item -->
-                <div class="bg-farm-card p-4 rounded text-center hover:bg-gray-800 transition">
-                    <i class="fa-solid fa-temperature-arrow-up text-4xl text-red-400 mb-3"></i>
-                    <h4 class="font-bold">Brooders</h4>
+                <div class="p-4 rounded text-center transition" style="background: var(--card); border: 1px solid var(--border);">
+                    <i class="fa-solid fa-temperature-arrow-up text-4xl mb-3" style="color: var(--accent5);"></i>
+                    <h4 class="font-bold" style="color: var(--text);">Brooders</h4>
                 </div>
                 <!-- Equipment Item -->
-                <div class="bg-farm-card p-4 rounded text-center hover:bg-gray-800 transition">
-                    <i class="fa-solid fa-sack-dollar text-4xl text-green-400 mb-3"></i>
-                    <h4 class="font-bold">Fertilizer Bags</h4>
+                <div class="p-4 rounded text-center transition" style="background: var(--card); border: 1px solid var(--border);">
+                    <i class="fa-solid fa-sack-dollar text-4xl mb-3" style="color: var(--accent3);"></i>
+                    <h4 class="font-bold" style="color: var(--text);">Fertilizer Bags</h4>
                 </div>
             </div>
         </div>
 
         <!-- 5. VET SUPPORT -->
         <div id="vet" class="section-content">
-            <div class="bg-farm-card p-8 rounded-lg border-l-4 border-red-600">
-                <h2 class="text-3xl font-bold mb-4">Veterinary Support & Medicine</h2>
-                <p class="text-lg text-gray-300 mb-6">
+            <div class="p-8 rounded-lg" style="background: var(--card); border-left: 4px solid var(--accent5); border: 1px solid var(--border);">
+                <h2 class="text-3xl font-bold mb-4" style="color: var(--text);">Veterinary Support & Medicine</h2>
+                <p class="text-lg mb-6" style="color: var(--text2);">
                     Healthy birds are profitable birds. We supply essential poultry medicines and offer consultation for disease management.
                 </p>
                 <ul class="space-y-3 mb-8">
-                    <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Vaccination Schedules</li>
-                    <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Disease Diagnosis</li>
-                    <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Vitamins & Supplements</li>
+                    <li class="flex items-center" style="color: var(--text2);"><i class="fa-solid fa-check mr-2" style="color: var(--accent3);"></i> Vaccination Schedules</li>
+                    <li class="flex items-center" style="color: var(--text2);"><i class="fa-solid fa-check mr-2" style="color: var(--accent3);"></i> Disease Diagnosis</li>
+                    <li class="flex items-center" style="color: var(--text2);"><i class="fa-solid fa-check mr-2" style="color: var(--accent3);"></i> Vitamins & Supplements</li>
                 </ul>
-                <button onclick="openModal('vet-request-modal')" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded">
+                <button onclick="openModal('vet-request-modal')" class="text-white font-bold py-2 px-6 rounded" style="background: var(--accent5);">
                     Request Vet Visit
                 </button>
             </div>
@@ -419,8 +534,8 @@
 
         <!-- 5.5. DISEASE & MANAGEMENT SECTION (NEW PAGE) -->
         <div id="diseases-management" class="section-content">
-            <h2 class="text-3xl font-bold mb-8 border-b border-gray-700 pb-2">Poultry Disease & Management</h2>
-            <p class="text-gray-400 mb-6">Access valuable resources for identifying, preventing, and treating common poultry diseases.</p>
+            <h2 class="text-3xl font-bold mb-8 pb-2" style="border-bottom: 1px solid var(--border); color: var(--text);">Poultry Disease & Management</h2>
+            <p class="mb-6" style="color: var(--text3);">Access valuable resources for identifying, preventing, and treating common poultry diseases.</p>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="pdf-library-display">
                 <!-- PDFs will be rendered here by JavaScript -->
@@ -430,15 +545,15 @@
         <!-- 6. PREMIUM KNOWLEDGE -->
         <div id="knowledge" class="section-content">
             <div class="text-center py-12">
-                <i class="fa-solid fa-crown text-6xl text-yellow-400 mb-6"></i>
-                <h2 class="text-3xl font-bold text-white mb-4">Premium Knowledge Base</h2>
-                <p class="text-gray-400 max-w-2xl mx-auto mb-8">
+                <i class="fa-solid fa-crown text-6xl mb-6" style="color: var(--accent4);"></i>
+                <h2 class="text-3xl font-bold mb-4" style="color: var(--text);">Premium Knowledge Base</h2>
+                <p class="max-w-2xl mx-auto mb-8" style="color: var(--text3);">
                     Access detailed guides on bird characteristics, care instructions, breeding secrets, and weight optimization for Chickens, Ducks, Turkeys, and Geese.
                 </p>
-                <div class="bg-gray-800 p-6 rounded-lg inline-block max-w-md">
-                    <h3 class="text-xl font-bold mb-2">Subscribe to Access</h3>
-                    <p class="text-sm text-gray-500 mb-4">Detailed care guides are available for subscribed members only.</p>
-                    <button class="bg-farm-accent hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded w-full" onclick="payForService('membership', 'Premium Membership Subscription', 250)">
+                <div class="p-6 rounded-lg inline-block max-w-md" style="background: var(--bg2); border: 1px solid var(--border);">
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--text);">Subscribe to Access</h3>
+                    <p class="text-sm mb-4" style="color: var(--text3);">Detailed care guides are available for subscribed members only.</p>
+                    <button class="text-white font-bold py-2 px-6 rounded w-full bg-farm-accent hover:opacity-90" onclick="payForService('membership', 'Premium Membership Subscription', 250)">
                         Login / Subscribe
                     </button>
                 </div>
@@ -449,64 +564,64 @@
         <div id="contact" class="section-content">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
                 <div>
-                    <h2 class="text-3xl font-bold mb-6">Get in Touch</h2>
+                    <h2 class="text-3xl font-bold mb-6" style="color: var(--text);">Get in Touch</h2>
                     <div class="space-y-6">
                         <div class="flex items-start">
-                            <i class="fa-solid fa-location-dot text-farm-accent text-2xl mr-4 mt-1"></i>
+                            <i class="fa-solid fa-location-dot text-2xl mr-4 mt-1" style="color: var(--accent2);"></i>
                             <div>
-                                <h4 class="font-bold text-lg">Address</h4>
-                                <p class="text-gray-400">Makhonge, Tongaren Constituency,<br>Bungoma County</p>
+                                <h4 class="font-bold text-lg" style="color: var(--text);">Address</h4>
+                                <p style="color: var(--text3);">Makhonge, Tongaren Constituency,<br>Bungoma County</p>
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <i class="fa-solid fa-phone text-farm-accent text-2xl mr-4 mt-1"></i>
+                            <i class="fa-solid fa-phone text-2xl mr-4 mt-1" style="color: var(--accent2);"></i>
                             <div>
-                                <h4 class="font-bold text-lg">Phone</h4>
-                                <p class="text-gray-400">+254 706 809 000</p>
+                                <h4 class="font-bold text-lg" style="color: var(--text);">Phone</h4>
+                                <p style="color: var(--text3);">+254 706 809 000</p>
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <i class="fa-solid fa-clock text-farm-accent text-2xl mr-4 mt-1"></i>
+                            <i class="fa-solid fa-clock text-2xl mr-4 mt-1" style="color: var(--accent2);"></i>
                             <div>
-                                <h4 class="font-bold text-lg">Hours</h4>
-                                <p class="text-gray-400">Mon - Sat: 8:00 AM - 4:00 PM</p>
+                                <h4 class="font-bold text-lg" style="color: var(--text);">Hours</h4>
+                                <p style="color: var(--text3);">Mon - Sat: 8:00 AM - 4:00 PM</p>
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <i class="fa-brands fa-whatsapp text-farm-accent text-2xl mr-4 mt-1"></i>
+                            <i class="fa-brands fa-whatsapp text-2xl mr-4 mt-1" style="color: var(--accent2);"></i>
                             <div>
-                                <h4 class="font-bold text-lg">Community</h4>
-                                <a href="https://chat.whatsapp.com/KUDjHkQxhkvIkbwFOzKZZp?mode=hqrc" target="_blank" class="text-green-400 hover:text-green-300 underline">Join our WhatsApp Group</a>
+                                <h4 class="font-bold text-lg" style="color: var(--text);">Community</h4>
+                                <a href="https://chat.whatsapp.com/KUDjHkQxhkvIkbwFOzKZZp?mode=hqrc" target="_blank" style="color: var(--accent3);" class="hover:opacity-80 underline">Join our WhatsApp Group</a>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Simple Contact Form -->
-                <div class="bg-farm-card p-8 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-bold mb-4">Send us a Message</h3>
+                <div class="p-8 rounded-lg shadow-lg" style="background: var(--card); border: 1px solid var(--border);">
+                    <h3 class="text-xl font-bold mb-4" style="color: var(--text);">Send us a Message</h3>
                     <form onsubmit="event.preventDefault(); submitContactForm();">
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-400 mb-1">Name</label>
-                            <input type="text" id="contact-name" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-farm-accent">
+                            <label class="block text-sm font-medium mb-1" style="color: var(--text3);">Name</label>
+                            <input type="text" id="contact-name" class="w-full rounded px-3 py-2" style="background: var(--bg2); border: 1px solid var(--border); color: var(--text);">
                         </div>
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-400 mb-1">Email</label>
-                            <input type="email" id="contact-email" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-farm-accent">
+                            <label class="block text-sm font-medium mb-1" style="color: var(--text3);">Email</label>
+                            <input type="email" id="contact-email" class="w-full rounded px-3 py-2" style="background: var(--bg2); border: 1px solid var(--border); color: var(--text);">
                         </div>
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-400 mb-1">Phone (optional)</label>
-                            <input type="text" id="contact-phone" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-farm-accent">
+                            <label class="block text-sm font-medium mb-1" style="color: var(--text3);">Phone (optional)</label>
+                            <input type="text" id="contact-phone" class="w-full rounded px-3 py-2" style="background: var(--bg2); border: 1px solid var(--border); color: var(--text);">
                         </div>
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-400 mb-1">Subject (optional)</label>
-                            <input type="text" id="contact-subject" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-farm-accent">
+                            <label class="block text-sm font-medium mb-1" style="color: var(--text3);">Subject (optional)</label>
+                            <input type="text" id="contact-subject" class="w-full rounded px-3 py-2" style="background: var(--bg2); border: 1px solid var(--border); color: var(--text);">
                         </div>
                         <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-400 mb-1">Message</label>
-                            <textarea id="contact-message" rows="4" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-farm-accent"></textarea>
+                            <label class="block text-sm font-medium mb-1" style="color: var(--text3);">Message</label>
+                            <textarea id="contact-message" rows="4" class="w-full rounded px-3 py-2" style="background: var(--bg2); border: 1px solid var(--border); color: var(--text);"></textarea>
                         </div>
-                        <button type="submit" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded transition">
+                        <button type="submit" class="w-full text-white font-bold py-2 px-4 rounded transition bg-farm-accent hover:opacity-90">
                             Send Message
                         </button>
                     </form>
@@ -517,63 +632,63 @@
         <!-- 8. Client LOGIN -->
         <div id="client-login" class="section-content">
             <div class="flex justify-center items-center h-96">
-                <div class="bg-farm-card p-8 rounded-lg shadow-lg w-full max-w-md border border-gray-700">
+                <div class="p-8 rounded-lg shadow-lg w-full max-w-md" style="background: var(--card); border: 1px solid var(--border);">
 
-                    <div id="login-context-message" class="hidden bg-farm-accent bg-opacity-20 border border-farm-accent text-sm text-white rounded p-3 mb-5">
+                    <div id="login-context-message" class="hidden rounded p-3 mb-5" style="background: rgba(59, 130, 246, 0.2); border: 1px solid var(--accent); color: var(--text);">
                         <i class="fa-solid fa-circle-info mr-1"></i> Almost there! Please log in or create a free account so we know where to send updates about your order.
                     </div>
 
                     <div id="login-form-container">
-                        <h2 class="text-2xl font-bold mb-6 text-center"><i class="fa-solid fa-user-lock text-farm-accent mr-2"></i>Client Portal Access</h2>
-                        <p class="text-sm text-gray-400 mb-6 text-center">Login to access exclusive farm updates, images, and track your orders.</p>
+                        <h2 class="text-2xl font-bold mb-6 text-center" style="color: var(--text);"><i class="fa-solid fa-user-lock mr-2" style="color: var(--accent2);"></i>Client Portal Access</h2>
+                        <p class="text-sm mb-6 text-center" style="color: var(--text3);">Login to access exclusive farm updates, images, and track your orders.</p>
                         
                         <div class="mb-4">
-                            <label class="block text-sm text-gray-400 mb-1">Email Address</label>
-                            <input type="email" id="client-email" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2" required>
+                            <label class="block text-sm mb-1" style="color: var(--text3);">Email Address</label>
+                            <input type="email" id="client-email" class="w-full rounded px-3 py-2" style="background: var(--bg2); border: 1px solid var(--border); color: var(--text);" required>
                         </div>
                         <div class="mb-6">
-                            <label class="block text-sm text-gray-400 mb-1">Password</label>
-                            <input type="password" id="client-password" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2" required>
+                            <label class="block text-sm mb-1" style="color: var(--text3);">Password</label>
+                            <input type="password" id="client-password" class="w-full rounded px-3 py-2" style="background: var(--bg2); border: 1px solid var(--border); color: var(--text);" required>
                         </div>
                         
-                        <button id="client-login-btn" class="w-full bg-farm-accent hover:bg-yellow-600 text-white font-bold py-2 rounded">Login</button>
+                        <button id="client-login-btn" class="w-full text-white font-bold py-2 rounded bg-farm-accent hover:opacity-90">Login</button>
                         
-                        <p id="client-login-error" class="text-red-500 text-sm mt-3 text-center hidden">
+                        <p id="client-login-error" class="text-sm mt-3 text-center hidden" style="color: var(--accent5);">
                             Invalid email or password.
                         </p>
-                        <p class="text-center text-sm mt-4 text-gray-400">
+                        <p class="text-center text-sm mt-4" style="color: var(--text3);">
                             Don't have an account? 
-                            <a href="#" id="show-register-link" class="text-farm-accent hover:text-yellow-400 font-semibold">Create new account.</a>
+                            <a href="#" id="show-register-link" class="font-semibold" style="color: var(--accent2);">Create new account.</a>
                         </p>
-                        <p class="text-center text-sm mt-2 text-gray-500" id="forgot-password-link">
-                            <a href="#" class="text-gray-400 hover:text-farm-accent">Forgot Password?</a>
+                        <p class="text-center text-sm mt-2" id="forgot-password-link" style="color: var(--text3);">
+                            <a href="#" style="color: var(--text3);">Forgot Password?</a>
                         </p>
                     </div>
                     
                     <div id="register-form-container" class="hidden">
-                        <h2 class="text-2xl font-bold mb-6 text-center"><i class="fa-solid fa-user-plus text-farm-accent mr-2"></i>Create New Account</h2>
+                        <h2 class="text-2xl font-bold mb-6 text-center" style="color: var(--text);"><i class="fa-solid fa-user-plus mr-2" style="color: var(--accent2);"></i>Create New Account</h2>
                         
                         <div class="mb-4">
-                            <label class="block text-sm text-gray-400 mb-1">Full Name</label>
-                            <input type="text" id="reg-full-name" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2" required>
+                            <label class="block text-sm mb-1" style="color: var(--text3);">Full Name</label>
+                            <input type="text" id="reg-full-name" class="w-full rounded px-3 py-2" style="background: var(--bg2); border: 1px solid var(--border); color: var(--text);" required>
                         </div>
                         <div class="mb-4">
-                            <label class="block text-sm text-gray-400 mb-1">Email Address</label>
-                            <input type="email" id="reg-email" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2" required>
+                            <label class="block text-sm mb-1" style="color: var(--text3);">Email Address</label>
+                            <input type="email" id="reg-email" class="w-full rounded px-3 py-2" style="background: var(--bg2); border: 1px solid var(--border); color: var(--text);" required>
                         </div>
                         <div class="mb-6">
-                            <label class="block text-sm text-gray-400 mb-1">Password</label>
-                            <input type="password" id="reg-password" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2" required>
+                            <label class="block text-sm mb-1" style="color: var(--text3);">Password</label>
+                            <input type="password" id="reg-password" class="w-full rounded px-3 py-2" style="background: var(--bg2); border: 1px solid var(--border); color: var(--text);" required>
                         </div>
                         
-                        <button id="client-register-btn" class="w-full bg-green-700 hover:bg-green-600 text-white font-bold py-2 rounded">Register Account</button>
+                        <button id="client-register-btn" class="w-full text-white font-bold py-2 rounded" style="background: var(--accent3);">Register Account</button>
                         
-                        <p id="registration-success" class="text-green-500 text-sm mt-3 text-center hidden">Account created successfully! Please log in.</p>
-                        <p id="registration-error" class="text-red-500 text-sm mt-3 text-center hidden">Error creating account. Please try again.</p>
+                        <p id="registration-success" class="text-sm mt-3 text-center hidden" style="color: var(--accent3);">Account created successfully! Please log in.</p>
+                        <p id="registration-error" class="text-sm mt-3 text-center hidden" style="color: var(--accent5);">Error creating account. Please try again.</p>
                         
-                        <p class="text-center text-sm mt-4 text-gray-500">
+                        <p class="text-center text-sm mt-4" style="color: var(--text3);">
                             Already have an account? 
-                            <a href="#" id="show-login-link" class="text-farm-accent hover:text-yellow-400 font-semibold">Login here.</a>
+                            <a href="#" id="show-login-link" class="font-semibold" style="color: var(--accent2);">Login here.</a>
                         </p>
                     </div>
                     
@@ -584,186 +699,186 @@
         <!-- . CLIENT PORTAL -->
         <div id="client-portal" class="section-content">
     
-            <div class="flex justify-between items-center border-b border-gray-700 pb-4 mb-8">
+            <div class="flex justify-between items-center pb-4 mb-8" style="border-bottom: 1px solid var(--border);">
                 <div>
-                    <h2 class="text-3xl font-bold"><i class="fa-solid fa-camera-retro text-farm-accent mr-2"></i>Willy's Farm Portal</h2>
-                    <p class="text-sm text-gray-400 mt-1">Welcome back! Manage your farm orders and view the gallery.</p>
+                    <h2 class="text-3xl font-bold" style="color: var(--text);"><i class="fa-solid fa-camera-retro mr-2" style="color: var(--accent2);"></i>Willy's Farm Portal</h2>
+                    <p class="text-sm mt-1" style="color: var(--text3);">Welcome back! Manage your farm orders and view the gallery.</p>
                 </div>
-                <button onclick="openClientMessages()" class="relative p-2 text-gray-300 hover:text-white transition">
+                <button onclick="openClientMessages()" class="relative p-2 transition" style="color: var(--text2);">
                     <i class="fa-solid fa-envelope text-2xl"></i>
-                    <span id="msg-notification-dot" class="hidden absolute top-0 right-0 block h-3 w-3 rounded-full ring-2 ring-gray-900 bg-red-600"></span>
+                    <span id="msg-notification-dot" class="hidden absolute top-0 right-0 block h-3 w-3 rounded-full ring-2" style="background: var(--accent5);"></span>
                 </button>
 
-                <button id="client-logout-btn" class="bg-red-700 hover:bg-red-600 text-white px-4 py-2 rounded text-sm font-medium transition shadow-md">
+                <button id="client-logout-btn" class="text-white px-4 py-2 rounded text-sm font-medium transition shadow-md" style="background: var(--accent5);">
                     <i class="fa-solid fa-right-from-bracket mr-1"></i>Logout
                 </button>
             </div>
 
-            <div class="border-t border-gray-700 pt-8">
-                <h3 class="text-xl font-bold mb-6 text-white border-l-4 border-farm-accent pl-3">
-                    <i class="fa-solid fa-store mr-2 text-farm-accent"></i>Client Dashboard & Shop
+            <div class="pt-8" style="border-top: 1px solid var(--border);">
+                <h3 class="text-xl font-bold mb-6 pl-3" style="color: var(--text); border-left: 4px solid var(--accent2);">
+                    <i class="fa-solid fa-store mr-2" style="color: var(--accent2);"></i>Client Dashboard & Shop
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-12">
 
-                    <div onclick="handleServiceClick('buy_poultry')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                    <div onclick="handleServiceClick('buy_poultry')" class="p-5 rounded-lg cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group" style="background: var(--card); border: 1px solid var(--border);">
                         <div class="flex items-center mb-3">
-                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
-                                <i class="fa-solid fa-crow text-farm-accent group-hover:text-white"></i>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition" style="background: var(--bg2);">
+                                <i class="fa-solid fa-crow group-hover:text-white" style="color: var(--accent2);"></i>
                             </div>
-                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Buy Poultry</h4>
+                            <h4 class="font-bold group-hover:text-farm-accent transition" style="color: var(--text);">Buy Poultry</h4>
                         </div>
-                        <p class="text-xs text-gray-400">Order high-quality layers, Sasso, ducks, and turkeys for your farm.</p>
+                        <p class="text-xs" style="color: var(--text3);">Order high-quality layers, Sasso, ducks, and turkeys for your farm.</p>
                     </div>
 
-                    <div onclick="handleServiceClick('buy_eggs')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                    <div onclick="handleServiceClick('buy_eggs')" class="p-5 rounded-lg cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group" style="background: var(--card); border: 1px solid var(--border);">
                         <div class="flex items-center mb-3">
-                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
-                                <i class="fa-solid fa-egg text-farm-accent group-hover:text-white"></i>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition" style="background: var(--bg2);">
+                                <i class="fa-solid fa-egg group-hover:text-white" style="color: var(--accent2);"></i>
                             </div>
-                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Buy Eggs</h4>
+                            <h4 class="font-bold group-hover:text-farm-accent transition" style="color: var(--text);">Buy Eggs</h4>
                         </div>
-                        <p class="text-xs text-gray-400">Fresh organic table eggs or fertile eggs for hatching purposes.</p>
+                        <p class="text-xs" style="color: var(--text3);">Fresh organic table eggs or fertile eggs for hatching purposes.</p>
                     </div>
 
-                    <div onclick="handleServiceClick('hatching')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                    <div onclick="handleServiceClick('hatching')" class="p-5 rounded-lg cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group" style="background: var(--card); border: 1px solid var(--border);">
                         <div class="flex items-center mb-3">
-                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
-                                <i class="fa-solid fa-temperature-three-quarters text-farm-accent group-hover:text-white"></i>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition" style="background: var(--bg2);">
+                                <i class="fa-solid fa-temperature-three-quarters group-hover:text-white" style="color: var(--accent2);"></i>
                             </div>
-                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Hatching Services</h4>
+                            <h4 class="font-bold group-hover:text-farm-accent transition" style="color: var(--text);">Hatching Services</h4>
                         </div>
-                        <p class="text-xs text-gray-400">Book incubator space. High hatch-rate guarantee for fertile eggs.</p>
+                        <p class="text-xs" style="color: var(--text3);">Book incubator space. High hatch-rate guarantee for fertile eggs.</p>
                     </div>
 
-                    <div onclick="handleServiceClick('buy_feed')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                    <div onclick="handleServiceClick('buy_feed')" class="p-5 rounded-lg cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group" style="background: var(--card); border: 1px solid var(--border);">
                         <div class="flex items-center mb-3">
-                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
-                                <i class="fa-solid fa-bowl-rice text-farm-accent group-hover:text-white"></i>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition" style="background: var(--bg2);">
+                                <i class="fa-solid fa-bowl-rice group-hover:text-white" style="color: var(--accent2);"></i>
                             </div>
-                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Buy Poultry Feed</h4>
+                            <h4 class="font-bold group-hover:text-farm-accent transition" style="color: var(--text);">Buy Poultry Feed</h4>
                         </div>
-                        <p class="text-xs text-gray-400">Organic Starters, Growers, Layers mash, and supplements.</p>
+                        <p class="text-xs" style="color: var(--text3);">Organic Starters, Growers, Layers mash, and supplements.</p>
                     </div>
 
-                    <div onclick="handleServiceClick('buy_fertilizer')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                    <div onclick="handleServiceClick('buy_fertilizer')" class="p-5 rounded-lg cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group" style="background: var(--card); border: 1px solid var(--border);">
                         <div class="flex items-center mb-3">
-                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
-                                <i class="fa-solid fa-leaf text-farm-accent group-hover:text-white"></i>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition" style="background: var(--bg2);">
+                                <i class="fa-solid fa-leaf group-hover:text-white" style="color: var(--accent2);"></i>
                             </div>
-                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Organic Fertilizer</h4>
+                            <h4 class="font-bold group-hover:text-farm-accent transition" style="color: var(--text);">Organic Fertilizer</h4>
                         </div>
-                        <p class="text-xs text-gray-400">Nutrient-rich poultry manure bags for crop farming.</p>
+                        <p class="text-xs" style="color: var(--text3);">Nutrient-rich poultry manure bags for crop farming.</p>
                     </div>
 
-                    <div onclick="handleServiceClick('slaughtering')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                    <div onclick="handleServiceClick('slaughtering')" class="p-5 rounded-lg cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group" style="background: var(--card); border: 1px solid var(--border);">
                         <div class="flex items-center mb-3">
-                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
-                                <i class="fa-solid fa-utensils text-farm-accent group-hover:text-white"></i>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition" style="background: var(--bg2);">
+                                <i class="fa-solid fa-utensils group-hover:text-white" style="color: var(--accent2);"></i>
                             </div>
-                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Slaughtering</h4>
+                            <h4 class="font-bold group-hover:text-farm-accent transition" style="color: var(--text);">Slaughtering</h4>
                         </div>
-                        <p class="text-xs text-gray-400">Hygienic processing, dressing, and packaging services.</p>
+                        <p class="text-xs" style="color: var(--text3);">Hygienic processing, dressing, and packaging services.</p>
                     </div>
 
-                    <div onclick="handleServiceClick('vet_support')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                    <div onclick="handleServiceClick('vet_support')" class="p-5 rounded-lg cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group" style="background: var(--card); border: 1px solid var(--border);">
                         <div class="flex items-center mb-3">
-                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
-                                <i class="fa-solid fa-user-doctor text-farm-accent group-hover:text-white"></i>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition" style="background: var(--bg2);">
+                                <i class="fa-solid fa-user-doctor group-hover:text-white" style="color: var(--accent2);"></i>
                             </div>
-                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Vet Support</h4>
+                            <h4 class="font-bold group-hover:text-farm-accent transition" style="color: var(--text);">Vet Support</h4>
                         </div>
-                        <p class="text-xs text-gray-400">Vaccination schedules, medicine supply, and onsite diagnosis.</p>
+                        <p class="text-xs" style="color: var(--text3);">Vaccination schedules, medicine supply, and onsite diagnosis.</p>
                     </div>
 
-                    <div onclick="handleServiceClick('structures')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                    <div onclick="handleServiceClick('structures')" class="p-5 rounded-lg cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group" style="background: var(--card); border: 1px solid var(--border);">
                         <div class="flex items-center mb-3">
-                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
-                                <i class="fa-solid fa-house-chimney text-farm-accent group-hover:text-white"></i>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition" style="background: var(--bg2);">
+                                <i class="fa-solid fa-house-chimney group-hover:text-white" style="color: var(--accent2);"></i>
                             </div>
-                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Buy Structures</h4>
+                            <h4 class="font-bold group-hover:text-farm-accent transition" style="color: var(--text);">Buy Structures</h4>
                         </div>
-                        <p class="text-xs text-gray-400">Portable coops or request permanent structure construction.</p>
+                        <p class="text-xs" style="color: var(--text3);">Portable coops or request permanent structure construction.</p>
                     </div>
 
-                    <div onclick="handleServiceClick('advisory')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                    <div onclick="handleServiceClick('advisory')" class="p-5 rounded-lg cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group" style="background: var(--card); border: 1px solid var(--border);">
                         <div class="flex items-center mb-3">
-                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
-                                <i class="fa-solid fa-phone-volume text-farm-accent group-hover:text-white"></i>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition" style="background: var(--bg2);">
+                                <i class="fa-solid fa-phone-volume group-hover:text-white" style="color: var(--accent2);"></i>
                             </div>
-                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Advisory Calls</h4>
+                            <h4 class="font-bold group-hover:text-farm-accent transition" style="color: var(--text);">Advisory Calls</h4>
                         </div>
-                        <p class="text-xs text-gray-400">Expert phone consultation for immediate farming challenges.</p>
+                        <p class="text-xs" style="color: var(--text3);">Expert phone consultation for immediate farming challenges.</p>
                     </div>
 
-                    <div onclick="handleServiceClick('courses')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                    <div onclick="handleServiceClick('courses')" class="p-5 rounded-lg cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group" style="background: var(--card); border: 1px solid var(--border);">
                         <div class="flex items-center mb-3">
-                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
-                                <i class="fa-solid fa-laptop-code text-farm-accent group-hover:text-white"></i>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition" style="background: var(--bg2);">
+                                <i class="fa-solid fa-laptop-code group-hover:text-white" style="color: var(--accent2);"></i>
                             </div>
-                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Online Courses</h4>
+                            <h4 class="font-bold group-hover:text-farm-accent transition" style="color: var(--text);">Online Courses</h4>
                         </div>
-                        <p class="text-xs text-gray-400">Access modules on rearing, feeding, and business management.</p>
+                        <p class="text-xs" style="color: var(--text3);">Access modules on rearing, feeding, and business management.</p>
                     </div>
 
-                    <div onclick="handleServiceClick('diseases')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                    <div onclick="handleServiceClick('diseases')" class="p-5 rounded-lg cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group" style="background: var(--card); border: 1px solid var(--border);">
                         <div class="flex items-center mb-3">
-                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
-                                <i class="fa-solid fa-kit-medical text-farm-accent group-hover:text-white"></i>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition" style="background: var(--bg2);">
+                                <i class="fa-solid fa-kit-medical group-hover:text-white" style="color: var(--accent2);"></i>
                             </div>
-                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Diseases & Treatment</h4>
+                            <h4 class="font-bold group-hover:text-farm-accent transition" style="color: var(--text);">Diseases & Treatment</h4>
                         </div>
-                        <p class="text-xs text-gray-400">Detailed guides on identifying and treating common poultry ailments.</p>
+                        <p class="text-xs" style="color: var(--text3);">Detailed guides on identifying and treating common poultry ailments.</p>
                     </div>
 
-                    <div onclick="handleServiceClick('farm_tour')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                    <div onclick="handleServiceClick('farm_tour')" class="p-5 rounded-lg cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group" style="background: var(--card); border: 1px solid var(--border);">
                         <div class="flex items-center mb-3">
-                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
-                                <i class="fa-solid fa-map-location-dot text-farm-accent group-hover:text-white"></i>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition" style="background: var(--bg2);">
+                                <i class="fa-solid fa-map-location-dot group-hover:text-white" style="color: var(--accent2);"></i>
                             </div>
-                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Book Farm Tour</h4>
+                            <h4 class="font-bold group-hover:text-farm-accent transition" style="color: var(--text);">Book Farm Tour</h4>
                         </div>
-                        <p class="text-xs text-gray-400">Schedule a physical visit to learn from our daily operations.</p>
+                        <p class="text-xs" style="color: var(--text3);">Schedule a physical visit to learn from our daily operations.</p>
                     </div>
 
-                    <div onclick="handleServiceClick('equipment')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                    <div onclick="handleServiceClick('equipment')" class="p-5 rounded-lg cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group" style="background: var(--card); border: 1px solid var(--border);">
                         <div class="flex items-center mb-3">
-                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
-                                <i class="fa-solid fa-wrench text-farm-accent group-hover:text-white"></i>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition" style="background: var(--bg2);">
+                                <i class="fa-solid fa-wrench group-hover:text-white" style="color: var(--accent2);"></i>
                             </div>
-                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Buy Equipment</h4>
+                            <h4 class="font-bold group-hover:text-farm-accent transition" style="color: var(--text);">Buy Equipment</h4>
                         </div>
-                        <p class="text-xs text-gray-400">Drinkers, feeders, brooders, and other essential tools.</p>
+                        <p class="text-xs" style="color: var(--text3);">Drinkers, feeders, brooders, and other essential tools.</p>
                     </div>
 
                     <!-- NEW: Training & Workshop card -->
-                    <div onclick="openModal('events-workshop-modal')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
+                    <div onclick="openModal('events-workshop-modal')" class="p-5 rounded-lg cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group" style="background: var(--card); border: 1px solid var(--border);">
                         <div class="flex items-center mb-3">
-                            <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition">
-                                <i class="fa-solid fa-calendar-check text-farm-accent group-hover:text-white"></i>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3 group-hover:bg-farm-accent transition" style="background: var(--bg2);">
+                                <i class="fa-solid fa-calendar-check group-hover:text-white" style="color: var(--accent2);"></i>
                             </div>
-                            <h4 class="font-bold text-white group-hover:text-farm-accent transition">Training & Workshops</h4>
+                            <h4 class="font-bold group-hover:text-farm-accent transition" style="color: var(--text);">Training & Workshops</h4>
                         </div>
-                        <p class="text-xs text-gray-400">View and book upcoming training sessions and farm workshops.</p>
+                        <p class="text-xs" style="color: var(--text3);">View and book upcoming training sessions and farm workshops.</p>
                     </div>
 
-                    <div onclick="handleServiceClick('membership')" class="bg-gray-800 p-5 rounded-lg border-2 border-yellow-500 hover:bg-gray-700 cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group relative overflow-hidden">
-                        <div class="absolute top-0 right-0 bg-yellow-500 text-black text-xs font-bold px-2 py-1">PREMIUM</div>
+                    <div onclick="handleServiceClick('membership')" class="p-5 rounded-lg cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group relative overflow-hidden" style="background: var(--bg2); border: 2px solid var(--accent4);">
+                        <div class="absolute top-0 right-0 text-black text-xs font-bold px-2 py-1" style="background: var(--accent4);">PREMIUM</div>
                         <div class="flex items-center mb-3">
-                            <div class="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center mr-3">
-                                <i class="fa-solid fa-crown text-yellow-500"></i>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-3" style="background: var(--bg3);">
+                                <i class="fa-solid fa-crown" style="color: var(--accent4);"></i>
                             </div>
-                            <h4 class="font-bold text-yellow-500">Membership</h4>
+                            <h4 class="font-bold" style="color: var(--accent4);">Membership</h4>
                         </div>
-                        <p class="text-xs text-gray-300">Enjoy weekly eggs booking, advance chick booking, reserved hatching slots, and priority vet visits.</p>
+                        <p class="text-xs" style="color: var(--text2);">Enjoy weekly eggs booking, advance chick booking, reserved hatching slots, and priority vet visits.</p>
                     </div>
 
                 </div>
             </div>
 
             <div class="mb-12">
-                <h3 class="text-xl font-bold mb-4 text-white border-l-4 border-farm-accent pl-3">Live Farm Gallery</h3>
-                <p class="text-sm text-gray-400 mb-6">See what's happening on the farm right now.</p>
+                <h3 class="text-xl font-bold mb-4 pl-3" style="color: var(--text); border-left: 4px solid var(--accent2);">Live Farm Gallery</h3>
+                <p class="text-sm mb-6" style="color: var(--text3);">See what's happening on the farm right now.</p>
                 
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="farm-gallery">
                     </div>
@@ -774,40 +889,40 @@
         <!-- 9. ADMIN LOGIN -->
         <div id="admin" class="section-content">
             <div class="flex justify-center items-center h-96">
-                <div class="bg-farm-card p-8 rounded-lg shadow-lg w-full max-w-md border border-gray-700">
-                    <h2 class="text-2xl font-bold mb-6 text-center"><i class="fa-solid fa-lock text-farm-accent mr-2"></i>Admin Login</h2>
+                <div class="p-8 rounded-lg shadow-lg w-full max-w-md" style="background: var(--card); border: 1px solid var(--border);">
+                    <h2 class="text-2xl font-bold mb-6 text-center" style="color: var(--text);"><i class="fa-solid fa-lock mr-2" style="color: var(--accent2);"></i>Admin Login</h2>
                     <div class="mb-4">
-                        <label class="block text-sm text-gray-400 mb-1">Email Address</label>
-                        <input type="email" id="admin-email" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2" required>
+                        <label class="block text-sm mb-1" style="color: var(--text3);">Email Address</label>
+                        <input type="email" id="admin-email" class="w-full rounded px-3 py-2" style="background: var(--bg2); border: 1px solid var(--border); color: var(--text);" required>
                     </div>
                     <div class="mb-6">
-                        <label class="block text-sm text-gray-400 mb-1">Password</label>
-                        <input type="password" id="admin-password" class="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2" required>
+                        <label class="block text-sm mb-1" style="color: var(--text3);">Password</label>
+                        <input type="password" id="admin-password" class="w-full rounded px-3 py-2" style="background: var(--bg2); border: 1px solid var(--border); color: var(--text);" required>
                     </div>
-                    <button id="admin-login-btn" class="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 rounded">Login</button>
-                    <p id="login-error" class="text-red-500 text-sm mt-3 text-center hidden">Invalid email or password.</p>
+                    <button id="admin-login-btn" class="w-full text-white font-bold py-2 rounded" style="background: var(--bg3);">Login</button>
+                    <p id="login-error" class="text-sm mt-3 text-center hidden" style="color: var(--accent5);">Invalid email or password.</p>
                 </div>
             </div>
         </div>
 
         <div id="dashboard" class="section-content">
-            <div class="flex justify-between items-center border-b border-gray-700 pb-4 mb-8">
-                <h2 class="text-3xl font-bold"><i class="fa-solid fa-chart-line text-farm-accent mr-2"></i>Admin Dashboard</h2>
-                <button id="admin-logout-btn" class="bg-red-700 hover:bg-red-600 text-white px-4 py-2 rounded text-sm font-medium">
+            <div class="flex justify-between items-center pb-4 mb-8" style="border-bottom: 1px solid var(--border);">
+                <h2 class="text-3xl font-bold" style="color: var(--text);"><i class="fa-solid fa-chart-line mr-2" style="color: var(--accent2);"></i>Admin Dashboard</h2>
+                <button id="admin-logout-btn" class="text-white px-4 py-2 rounded text-sm font-medium" style="background: var(--accent5);">
                     <i class="fa-solid fa-right-from-bracket mr-1"></i>Logout
                 </button>
             </div>
 
             <!-- NEW: Product Management Section -->
-            <div class="mt-8 p-6 bg-farm-card rounded-lg border border-gray-700">
-                <h3 class="text-xl font-bold mb-4 flex items-center"><i class="fa-solid fa-boxes-stacked mr-2 text-farm-accent"></i>Product Management</h3>
-                <p class="text-gray-400 mb-4">Manage the products available on the website. Toggle "Is Available" to show/hide products from the public.</p>
+            <div class="mt-8 p-6 rounded-lg" style="background: var(--card); border: 1px solid var(--border);">
+                <h3 class="text-xl font-bold mb-4 flex items-center" style="color: var(--text);"><i class="fa-solid fa-boxes-stacked mr-2" style="color: var(--accent2);"></i>Product Management</h3>
+                <p class="mb-4" style="color: var(--text3);">Manage the products available on the website. Toggle "Is Available" to show/hide products from the public.</p>
                 
-                <div class="bg-gray-800 p-4 rounded-md mb-6">
-                    <h4 class="font-semibold mb-3 text-white">Add New Product</h4>
+                <div class="p-4 rounded-md mb-6" style="background: var(--bg2);">
+                    <h4 class="font-semibold mb-3" style="color: var(--text);">Add New Product</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <input type="text" id="new-product-name" placeholder="Product Name" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
-                        <select id="new-product-category" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
+                        <input type="text" id="new-product-name" placeholder="Product Name" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
+                        <select id="new-product-category" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
                             <option value="Chicks">Chicks</option>
                             <option value="Layers">Layers</option>
                             <option value="Broilers">Broilers</option>
@@ -816,142 +931,142 @@
                             <option value="Other">Other</option>
                         </select>
                         <div class="flex gap-2">
-                            <input type="number" id="new-product-price" placeholder="Price (KES)" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm flex-1">
-                            <input type="text" id="new-product-unit" placeholder="Unit (e.g., per chick)" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm flex-1">
+                            <input type="number" id="new-product-price" placeholder="Price (KES)" class="rounded px-3 py-2 text-sm flex-1" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
+                            <input type="text" id="new-product-unit" placeholder="Unit (e.g., per chick)" class="rounded px-3 py-2 text-sm flex-1" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
                         </div>
-                        <input type="number" id="new-product-stock" placeholder="Available Stock" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
+                        <input type="number" id="new-product-stock" placeholder="Available Stock" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
                         <div class="col-span-1 md:col-span-2">
-                            <input type="text" id="new-product-description" placeholder="Description" class="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
+                            <input type="text" id="new-product-description" placeholder="Description" class="w-full rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
                         </div>
                         <div class="col-span-1 md:col-span-2 flex items-center gap-2">
-                            <input type="file" id="new-product-image" accept="image/*" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-farm-accent file:text-white hover:file:bg-yellow-600">
-                            <label class="flex items-center gap-2 text-gray-300">
-                                <input type="checkbox" id="new-product-available" class="form-checkbox text-farm-accent" checked>
+                            <input type="file" id="new-product-image" accept="image/*" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
+                            <label class="flex items-center gap-2" style="color: var(--text2);">
+                                <input type="checkbox" id="new-product-available" class="form-checkbox" checked style="accent-color: var(--accent2);">
                                 Is Available
                             </label>
                         </div>
                     </div>
-                    <button onclick="addProduct()" class="bg-farm-accent hover:bg-yellow-600 text-white px-4 py-2 rounded w-full">
+                    <button onclick="addProduct()" class="text-white px-4 py-2 rounded w-full bg-farm-accent">
                         <i class="fa-solid fa-plus mr-1"></i> Add Product
                     </button>
                 </div>
 
-                <h4 class="font-semibold mb-3 text-white">Current Products</h4>
+                <h4 class="font-semibold mb-3" style="color: var(--text);">Current Products</h4>
                 <div id="admin-products-list" class="space-y-4">
-                    <p class="text-gray-500 bg-gray-800 p-4 rounded">No products yet. Add one above!</p>
+                    <p class="p-4 rounded" style="background: var(--bg2); color: var(--text3);">No products yet. Add one above!</p>
                 </div>
             </div>
 
             <!-- NEW: Admin Egg Price Management Section -->
-            <div class="mt-12 p-6 bg-farm-card rounded-lg border border-gray-700">
-                <h3 class="text-xl font-bold mb-4 flex items-center"><i class="fa-solid fa-egg mr-2 text-farm-accent"></i>Egg Price Management</h3>
-                <p class="text-gray-400 mb-4">Set the prices for different types of eggs. These prices will be visible to all users.</p>
+            <div class="mt-12 p-6 rounded-lg" style="background: var(--card); border: 1px solid var(--border);">
+                <h3 class="text-xl font-bold mb-4 flex items-center" style="color: var(--text);"><i class="fa-solid fa-egg mr-2" style="color: var(--accent2);"></i>Egg Price Management</h3>
+                <p class="mb-4" style="color: var(--text3);">Set the prices for different types of eggs. These prices will be visible to all users.</p>
                 
-                <div class="bg-gray-800 p-4 rounded-md mb-6">
-                    <h4 class="font-semibold mb-3 text-white">Set Egg Prices</h4>
+                <div class="p-4 rounded-md mb-6" style="background: var(--bg2);">
+                    <h4 class="font-semibold mb-3" style="color: var(--text);">Set Egg Prices</h4>
                     <div id="egg-price-inputs" class="space-y-3">
                         <!-- Egg price inputs will be dynamically generated -->
                     </div>
-                    <button onclick="updateEggPrices()" class="mt-4 bg-farm-accent hover:bg-yellow-600 text-white px-4 py-2 rounded w-full">
+                    <button onclick="updateEggPrices()" class="mt-4 text-white px-4 py-2 rounded w-full bg-farm-accent">
                         <i class="fa-solid fa-money-bill-wave mr-1"></i> Update Egg Prices
                     </button>
-                    <p id="egg-price-feedback" class="text-sm mt-2 text-center text-gray-400"></p>
+                    <p id="egg-price-feedback" class="text-sm mt-2 text-center" style="color: var(--text3);"></p>
                 </div>
             </div>
 
             <div class="mt-8 mb-12">
-                <h3 class="text-2xl font-bold mb-4 border-l-4 border-blue-500 pl-3">Incoming Orders</h3>
+                <h3 class="text-2xl font-bold mb-4 pl-3" style="color: var(--text); border-left: 4px solid var(--accent);">Incoming Orders</h3>
                 <div id="admin-orders-list" class="grid grid-cols-1 gap-4">
-                    <p class="text-gray-500 bg-gray-800 p-4 rounded">No pending orders.</p>
+                    <p class="p-4 rounded" style="background: var(--bg2); color: var(--text3);">No pending orders.</p>
                 </div>
             </div>
 
-            <div class="mt-12 p-6 bg-farm-card rounded-lg border border-gray-700">
-                <h3 class="text-xl font-bold mb-4 flex items-center"><i class="fa-solid fa-camera mr-2 text-farm-accent"></i>Gallery Image Management</h3>
+            <div class="mt-12 p-6 rounded-lg" style="background: var(--card); border: 1px solid var(--border);">
+                <h3 class="text-xl font-bold mb-4 flex items-center" style="color: var(--text);"><i class="fa-solid fa-camera mr-2" style="color: var(--accent2);"></i>Gallery Image Management</h3>
                 
-                <div class="bg-gray-800 p-4 rounded-md mb-6">
-                    <h4 class="font-semibold mb-3 text-white">Add New Gallery Photo</h4>
+                <div class="p-4 rounded-md mb-6" style="background: var(--bg2);">
+                    <h4 class="font-semibold mb-3" style="color: var(--text);">Add New Gallery Photo</h4>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <!-- Modified: Input type file for gallery photo -->
-                        <input type="file" id="new-photo-file" accept="image/*" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-farm-accent file:text-white hover:file:bg-yellow-600">
+                        <input type="file" id="new-photo-file" accept="image/*" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
                         <!-- Modified: Text input for poultry product -->
-                        <input type="text" id="new-photo-product" placeholder="Poultry/Product (e.g., Chicken, Eggs)" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
-                        <input type="text" id="new-photo-description" placeholder="Brief Description" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
+                        <input type="text" id="new-photo-product" placeholder="Poultry/Product (e.g., Chicken, Eggs)" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
+                        <input type="text" id="new-photo-description" placeholder="Brief Description" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
                     </div>
-                    <button onclick="addGalleryPhoto()" class="mt-4 bg-farm-accent hover:bg-yellow-600 text-white px-4 py-2 rounded w-full">
+                    <button onclick="addGalleryPhoto()" class="mt-4 text-white px-4 py-2 rounded w-full bg-farm-accent">
                         <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Upload & Post to Client Portal
                     </button>
                 </div>
 
-                <h4 class="font-semibold mb-3 text-white">Current Client Portal Gallery</h4>
+                <h4 class="font-semibold mb-3" style="color: var(--text);">Current Client Portal Gallery</h4>
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="admin-gallery-view">
                     </div>
             </div>
 
             <!-- Admin PDF Management Section (Moved here from disease-management-page for admin visibility) -->
-            <div class="mt-12 p-6 bg-farm-card rounded-lg border border-gray-700">
-                <h3 class="text-xl font-bold mb-4 flex items-center"><i class="fa-solid fa-file-pdf mr-2 text-farm-accent"></i>PDF Resource Management</h3>
-                <p class="text-gray-500 mb-4">Manage downloadable PDF guides for the 'Diseases & Treatment' section.</p>
-                <div class="bg-gray-800 p-4 rounded-md mb-6">
-                    <h4 class="font-semibold mb-3 text-white">Add New PDF Resource</h4>
+            <div class="mt-12 p-6 rounded-lg" style="background: var(--card); border: 1px solid var(--border);">
+                <h3 class="text-xl font-bold mb-4 flex items-center" style="color: var(--text);"><i class="fa-solid fa-file-pdf mr-2" style="color: var(--accent2);"></i>PDF Resource Management</h3>
+                <p class="mb-4" style="color: var(--text3);">Manage downloadable PDF guides for the 'Diseases & Treatment' section.</p>
+                <div class="p-4 rounded-md mb-6" style="background: var(--bg2);">
+                    <h4 class="font-semibold mb-3" style="color: var(--text);">Add New PDF Resource</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input type="text" id="pdf-admin-title" placeholder="PDF Title" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
-                        <input type="text" id="pdf-admin-url" placeholder="Direct PDF URL" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm">
+                        <input type="text" id="pdf-admin-title" placeholder="PDF Title" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
+                        <input type="text" id="pdf-admin-url" placeholder="Direct PDF URL" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
                         <div class="col-span-1 md:col-span-2">
-                            <textarea id="pdf-admin-description" rows="2" placeholder="Brief Description" class="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm"></textarea>
+                            <textarea id="pdf-admin-description" rows="2" placeholder="Brief Description" class="w-full rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);"></textarea>
                         </div>
                         <div class="col-span-1 md:col-span-2 flex items-center space-x-4">
-                            <label class="flex items-center text-gray-400">
-                                <input type="checkbox" id="pdf-admin-free" class="form-checkbox text-farm-accent mr-2">
+                            <label class="flex items-center" style="color: var(--text3);">
+                                <input type="checkbox" id="pdf-admin-free" class="form-checkbox mr-2" style="accent-color: var(--accent2);">
                                 <span>Mark as Free (No payment required)</span>
                             </label>
                         </div>
                     </div>
-                    <button onclick="addPdfResource()" class="mt-4 bg-farm-accent hover:bg-yellow-600 text-white px-4 py-2 rounded w-full">
+                    <button onclick="addPdfResource()" class="mt-4 text-white px-4 py-2 rounded w-full bg-farm-accent">
                         <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Upload PDF to Library
                     </button>
                 </div>
-                <h4 class="font-semibold mb-3 text-white">Current PDF Library</h4>
+                <h4 class="font-semibold mb-3" style="color: var(--text);">Current PDF Library</h4>
                 <div id="admin-uploaded-pdf-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    <p class="col-span-4 text-center text-gray-500 py-4">No uploaded PDFs.</p>
+                    <p class="col-span-4 text-center py-4" style="color: var(--text3);">No uploaded PDFs.</p>
                 </div>
             </div>
 
             <!-- NEW: Admin Events & Workshop Management Section -->
-            <div class="mt-12 p-6 bg-farm-card rounded-lg border border-gray-700">
-                <h3 class="text-xl font-bold mb-4 flex items-center"><i class="fa-solid fa-calendar-alt mr-2 text-farm-accent"></i>Events & Workshop Management</h3>
-                <p class="text-gray-500 mb-4">Add, edit, or remove events and workshops that appear to users.</p>
+            <div class="mt-12 p-6 rounded-lg" style="background: var(--card); border: 1px solid var(--border);">
+                <h3 class="text-xl font-bold mb-4 flex items-center" style="color: var(--text);"><i class="fa-solid fa-calendar-alt mr-2" style="color: var(--accent2);"></i>Events & Workshop Management</h3>
+                <p class="mb-4" style="color: var(--text3);">Add, edit, or remove events and workshops that appear to users.</p>
                 
-                <div class="bg-gray-800 p-4 rounded-md mb-6">
-                    <h4 class="font-semibold mb-3 text-white">Add/Edit Event</h4>
+                <div class="p-4 rounded-md mb-6" style="background: var(--bg2);">
+                    <h4 class="font-semibold mb-3" style="color: var(--text);">Add/Edit Event</h4>
                     <form id="event-form" onsubmit="event.preventDefault(); saveEvent()">
                         <input type="hidden" id="event-id">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <input type="text" id="event-title" placeholder="Event Title" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm" required>
-                            <input type="date" id="event-date" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm" required>
-                            <input type="time" id="event-time" placeholder="Time (e.g., 10:00 AM)" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm" required>
-                            <input type="text" id="event-location" placeholder="Location" class="bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm" required>
+                            <input type="text" id="event-title" placeholder="Event Title" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);" required>
+                            <input type="date" id="event-date" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);" required>
+                            <input type="time" id="event-time" placeholder="Time (e.g., 10:00 AM)" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);" required>
+                            <input type="text" id="event-location" placeholder="Location" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);" required>
                         </div>
                         <div class="mb-4">
-                            <input type="number" id="event-price" placeholder="Price (KES) - 0 for free" min="0" class="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm" value="0">
+                            <input type="number" id="event-price" placeholder="Price (KES) - 0 for free" min="0" class="w-full rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);" value="0">
                         </div>
                         <div class="mb-4">
-                            <textarea id="event-description" rows="3" placeholder="Event Description" class="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm" required></textarea>
+                            <textarea id="event-description" rows="3" placeholder="Event Description" class="w-full rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);" required></textarea>
                         </div>
                         <div class="mb-4">
-                            <label class="block text-sm text-gray-400 mb-1">Event Image</label>
-                            <input type="file" id="event-image-file" accept="image/*" class="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-farm-accent file:text-white hover:file:bg-yellow-600">
-                            <p class="text-xs text-gray-500 mt-1">Upload an image for the event. (Optional)</p>
+                            <label class="block text-sm mb-1" style="color: var(--text3);">Event Image</label>
+                            <input type="file" id="event-image-file" accept="image/*" class="w-full rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
+                            <p class="text-xs mt-1" style="color: var(--text3);">Upload an image for the event. (Optional)</p>
                         </div>
-                        <button type="submit" class="bg-farm-accent hover:bg-yellow-600 text-white px-4 py-2 rounded w-full">
+                        <button type="submit" class="text-white px-4 py-2 rounded w-full bg-farm-accent">
                             <i class="fa-solid fa-calendar-plus mr-1"></i> Save Event
                         </button>
                     </form>
                 </div>
 
-                <h4 class="font-semibold mb-3 text-white">Current Events</h4>
+                <h4 class="font-semibold mb-3" style="color: var(--text);">Current Events</h4>
                 <div id="admin-events-list" class="grid grid-cols-1 gap-4">
-                    <p class="text-gray-500 bg-gray-800 p-4 rounded">No events scheduled.</p>
+                    <p class="p-4 rounded" style="background: var(--bg2); color: var(--text3);">No events scheduled.</p>
                 </div>
             </div>
         </div>
@@ -959,41 +1074,41 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 border-t border-gray-800 py-8 mt-8">
+    <footer class="py-8 mt-8" style="background: var(--bg2); border-top: 1px solid var(--border);">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-gray-500">&copy; 2026 Willy's Wing Farm. All rights reserved.</p>
-            <p class="text-gray-600 text-sm mt-2">Makhonge, Bungoma County | +254 706 809 000</p>
+            <p style="color: var(--text3);">&copy; 2026 Willy's Wing Farm. All rights reserved.</p>
+            <p class="text-sm mt-2" style="color: var(--text3);">Makhonge, Bungoma County | +254 706 809 000</p>
         </div>
     </footer>
 
     <!-- WWF AI Chat Bubble (Visual Placeholder for now) -->
     <div id="ai-chat-container" class="fixed bottom-6 right-6 z-50">
     
-        <button id="chat-toggle-btn" class="bg-farm-accent hover:bg-yellow-500 text-white rounded-full p-4 shadow-lg flex items-center justify-center w-16 h-16 transition hover:scale-110">
+        <button id="chat-toggle-btn" class="text-white rounded-full p-4 shadow-lg flex items-center justify-center w-16 h-16 transition hover:scale-110 bg-farm-accent">
             <i class="fa-solid fa-robot text-2xl"></i>
         </button>
 
-        <div id="chat-window" class="hidden absolute bottom-20 right-0 w-80 h-96 bg-farm-card rounded-lg shadow-2xl border border-gray-700 flex flex-col overflow-hidden">
+        <div id="chat-window" class="hidden absolute bottom-20 right-0 w-80 h-96 rounded-lg shadow-2xl flex flex-col overflow-hidden" style="background: var(--card); border: 1px solid var(--border);">
             
-            <div class="bg-gray-800 p-3 flex justify-between items-center border-b border-gray-700">
-                <h3 class="text-white font-bold text-lg"><i class="fa-solid fa-robot mr-2 text-farm-accent"></i>WWF AI Agent</h3>
-                <button onclick="document.getElementById('chat-window').classList.add('hidden')" class="text-gray-400 hover:text-white">
+            <div class="p-3 flex justify-between items-center" style="background: var(--bg2); border-bottom: 1px solid var(--border);">
+                <h3 class="font-bold text-lg" style="color: var(--text);"><i class="fa-solid fa-robot mr-2" style="color: var(--accent2);"></i>WWF AI Agent</h3>
+                <button onclick="document.getElementById('chat-window').classList.add('hidden')" style="color: var(--text2);">
                     <i class="fa-solid fa-xmark text-xl"></i>
                 </button>
             </div>
 
             <div id="chat-body" class="flex-grow p-3 space-y-3 overflow-y-auto custom-scrollbar">
                 <div class="flex justify-start">
-                    <div class="bg-gray-700 text-white p-3 rounded-xl rounded-tl-none max-w-[85%] text-sm shadow-md">
+                    <div class="p-3 rounded-xl rounded-tl-none max-w-[85%] text-sm shadow-md" style="background: var(--bg2); color: var(--text);">
                         Welcome! I'm the WWF AI. How can I assist you with your poultry needs today?
                     </div>
                 </div>
                 </div>
 
-            <div class="p-3 border-t border-gray-700">
+            <div class="p-3" style="border-top: 1px solid var(--border);">
                 <div class="flex space-x-2">
-                    <input type="text" id="chat-input" placeholder="Type your message..." class="flex-grow bg-gray-800 text-white border border-gray-600 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-farm-accent">
-                    <button id="chat-send-btn" class="bg-farm-accent hover:bg-yellow-600 text-white rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0">
+                    <input type="text" id="chat-input" placeholder="Type your message..." class="flex-grow rounded-full px-4 py-2 text-sm" style="background: var(--bg2); border: 1px solid var(--border); color: var(--text);">
+                    <button id="chat-send-btn" class="text-white rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 bg-farm-accent">
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
