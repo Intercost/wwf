@@ -2543,6 +2543,7 @@
         // Function to render the poultry tracking cards
         function renderPoultryTracking() {
             const grid = document.getElementById('poultry-tracking-grid');
+            if (!grid) return; // Element isn't present on this page — nothing to render into
             grid.innerHTML = ''; // Clear existing
 
             // Using the new 'inventory' data

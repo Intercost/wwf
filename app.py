@@ -111,14 +111,21 @@ def chat():
         # Call Groq API. Some installed versions of the groq SDK don't
         # support reasoning_effort yet, so retry without it if that's
         # what's failing — this keeps the endpoint working either way.
+        #
+        # NOTE: max_completion_tokens is kept modest on purpose. Groq's
+        # on_demand tier enforces an 8,000 tokens-per-minute cap, and that
+        # limit is checked against the *requested* budget (prompt + this
+        # value), not just tokens actually used. A high value here causes
+        # every request — even "hey" — to be rejected with a 413
+        # rate_limit_exceeded error before the model ever responds.
         try:
             completion = client.chat.completions.create(
                 model=MODEL_NAME,
                 messages=messages,
                 temperature=1,
-                max_completion_tokens=8192,
+                max_completion_tokens=1024,
                 top_p=1,
-                reasoning_effort="medium",
+                reasoning_effort="low",
                 stream=False,
                 stop=None
             )
@@ -127,7 +134,7 @@ def chat():
                 model=MODEL_NAME,
                 messages=messages,
                 temperature=1,
-                max_completion_tokens=8192,
+                max_completion_tokens=1024,
                 top_p=1,
                 stream=False,
                 stop=None
