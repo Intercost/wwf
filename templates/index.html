@@ -238,58 +238,66 @@
 <body class="flex flex-col min-h-screen">
 
     <!-- Navigation -->
-    <nav class="sticky top-0 z-50 shadow-lg" style="background: var(--card); border-bottom: 1px solid var(--border);">
+    <nav class="sticky top-0 z-50 shadow-lg relative" style="background: var(--card); border-bottom: 1px solid var(--border);">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <!-- Logo -->
                 <div class="flex-shrink-0 cursor-pointer flex items-center" onclick="showSection('home')">
-                    <img src="/logo.jpg" alt="Willy's Wing Farm logo" class="h-12 w-12 rounded-full object-cover mr-3 border-2 border-farm-accent">
+                    <img src="/logo.jpg" alt="Willy's Wing Farm logo" class="h-12 w-12 object-cover mr-3 border-2 border-farm-accent">
                     <span class="text-2xl font-bold text-farm-accent">
                         Willy's Wing Farm
                     </span>
                 </div>
                 
-                <!-- Desktop Menu -->
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-center gap-4">
-                        <button onclick="showSection('home')" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Home</button>
-                        <button onclick="showSection('farm-gallery-public')" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Gallery</button>
-                        <button onclick="showSection('poultry')" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Shop</button>
-                        <button onclick="showSection('services')" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Services & Events</button>
-                        <button onclick="showSection('equipments')" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Equipment</button>
-                        <button onclick="showSection('vet')" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Vet Support</button>
-                        <button onclick="showSection('knowledge')" class="nav-link px-3 py-2 rounded-md text-sm font-medium" style="color: var(--accent4);"><i class="fa-solid fa-star mr-1"></i>Premium</button>
-                        <button onclick="showSection('contact')" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Contact</button>
-                        <button onclick="goToClientPortal()" class="bg-farm-accent text-white px-3 py-2 rounded-md text-sm font-medium ml-2 hover:opacity-90"><i class="fa-solid fa-user mr-1"></i>My Portal</button>
-                        <button onclick="showSection('admin')" class="px-3 py-2 rounded-md text-sm font-medium ml-2" style="background: var(--bg3); color: var(--text2);"><i class="fa-solid fa-lock mr-1"></i>Admin</button>
-                        <button id="theme-toggle" onclick="toggleTheme()">
-                            <i class="fas fa-sun"></i>
-                        </button>
-                    </div>
+                <!-- Desktop Menu Button & Dropdown -->
+                <div class="hidden md:flex items-center gap-4">
+                    <button id="theme-toggle" onclick="toggleTheme()">
+                        <i class="fas fa-sun"></i>
+                    </button>
+                    <button onclick="toggleDesktopMenu()" class="inline-flex items-center justify-center p-2 rounded-md" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text2);">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
                 </div>
 
                 <!-- Mobile Menu Button -->
                 <div class="-mr-2 flex md:hidden">
-                    <button onclick="toggleMobileMenu()" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none">
+                    <button onclick="toggleMobileMenu()" class="inline-flex items-center justify-center p-2 rounded-md" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text2);">
                         <i class="fa-solid fa-bars text-xl"></i>
                     </button>
                 </div>
             </div>
         </div>
 
+        <!-- Desktop Menu Dropdown (Hidden by default) -->
+        <div id="desktop-menu" class="hidden md:block absolute right-4 top-20 z-50" style="background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); padding: 8px;">
+            <div class="space-y-1 min-w-[200px]">
+                <button onclick="showSection('home'); toggleDesktopMenu();" class="block w-full text-left px-4 py-2 rounded-md text-sm font-medium" style="color: var(--text2);">Home</button>
+                <button onclick="showSection('farm-gallery-public'); toggleDesktopMenu();" class="block w-full text-left px-4 py-2 rounded-md text-sm font-medium" style="color: var(--text2);">Gallery</button>
+                <button onclick="showSection('poultry'); toggleDesktopMenu();" class="block w-full text-left px-4 py-2 rounded-md text-sm font-medium" style="color: var(--text2);">Shop</button>
+                <button onclick="showSection('services'); toggleDesktopMenu();" class="block w-full text-left px-4 py-2 rounded-md text-sm font-medium" style="color: var(--text2);">Services & Events</button>
+                <button onclick="showSection('equipments'); toggleDesktopMenu();" class="block w-full text-left px-4 py-2 rounded-md text-sm font-medium" style="color: var(--text2);">Equipment</button>
+                <button onclick="showSection('vet'); toggleDesktopMenu();" class="block w-full text-left px-4 py-2 rounded-md text-sm font-medium" style="color: var(--text2);">Vet Support</button>
+                <button onclick="showSection('knowledge'); toggleDesktopMenu();" class="block w-full text-left px-4 py-2 rounded-md text-sm font-medium" style="color: var(--accent4);"><i class="fa-solid fa-star mr-1"></i>Premium</button>
+                <button onclick="showSection('contact'); toggleDesktopMenu();" class="block w-full text-left px-4 py-2 rounded-md text-sm font-medium" style="color: var(--text2);">Contact</button>
+                <div style="height: 1px; background: var(--border); margin: 8px 0;"></div>
+                <button onclick="goToClientPortal(); toggleDesktopMenu();" class="block w-full text-left px-4 py-2 rounded-md text-sm font-medium" style="color: var(--accent2);"><i class="fa-solid fa-user mr-1"></i>My Portal</button>
+                <button onclick="showSection('admin'); toggleDesktopMenu();" class="block w-full text-left px-4 py-2 rounded-md text-sm font-medium" style="color: var(--text2);"><i class="fa-solid fa-lock mr-1"></i>Admin</button>
+            </div>
+        </div>
+
         <!-- Mobile Menu (Hidden by default) -->
         <div id="mobile-menu" class="hidden md:hidden pb-4" style="background: var(--card);">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <button onclick="showSection('home')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700" style="color: var(--text2);">Home</button>
-                <button onclick="showSection('farm-gallery-public')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Gallery</button>
-                <button onclick="showSection('poultry')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Shop</button>
-                <button onclick="showSection('services')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Services</button>
-                <button onclick="showSection('equipments')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Equipment</button>
-                <button onclick="showSection('vet')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Vet Support</button>
-                <button onclick="showSection('knowledge')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--accent4);"><i class="fa-solid fa-star mr-1"></i>Premium</button>
-                <button onclick="goToClientPortal()" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--accent2);"><i class="fa-solid fa-user mr-1"></i>My Portal</button>
-                <button onclick="showSection('admin')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Admin</button>
-                <button onclick="showSection('contact')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Contact</button>
+                <button onclick="showSection('home'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Home</button>
+                <button onclick="showSection('farm-gallery-public'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Gallery</button>
+                <button onclick="showSection('poultry'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Shop</button>
+                <button onclick="showSection('services'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Services</button>
+                <button onclick="showSection('equipments'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Equipment</button>
+                <button onclick="showSection('vet'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Vet Support</button>
+                <button onclick="showSection('knowledge'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--accent4);"><i class="fa-solid fa-star mr-1"></i>Premium</button>
+                <button onclick="goToClientPortal(); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--accent2);"><i class="fa-solid fa-user mr-1"></i>My Portal</button>
+                <button onclick="showSection('admin'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Admin</button>
+                <button onclick="showSection('contact'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium" style="color: var(--text2);">Contact</button>
                 <div class="pt-3 px-3">
                     <button id="theme-toggle-mobile" onclick="toggleTheme()" class="w-full flex items-center justify-center gap-2 py-2 rounded-md" style="background: var(--bg3); color: var(--text2); border: 1px solid var(--border);">
                         <i class="fas fa-sun"></i> Toggle Theme
@@ -305,7 +313,7 @@
         <!-- 1. HOME SECTION -->
         <div id="home" class="section-content active">
             <div class="text-center py-16 lg:py-24">
-                <img src="/logo.jpg" alt="Willy's Wing Farm logo" class="h-28 w-28 md:h-36 md:w-36 rounded-full object-cover mx-auto mb-6 shadow-lg" style="border: 4px solid var(--accent2);">
+                <img src="/logo.jpg" alt="Willy's Wing Farm logo" class="h-28 w-28 md:h-36 md:w-36 object-cover mx-auto mb-6 shadow-lg" style="border: 4px solid var(--accent2);">
                 <h1 class="text-4xl tracking-tight font-extrabold sm:text-5xl md:text-6xl mb-6" style="color: var(--text);">
                     <span class="block">Premium 1-Month-Old Chicks</span>
                     <span class="block" style="color: var(--accent2);">Ready for Your Farm</span>
@@ -2373,6 +2381,21 @@
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('hidden');
         }
+
+        // Toggle Desktop Menu
+        function toggleDesktopMenu() {
+            const menu = document.getElementById('desktop-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Close desktop menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('desktop-menu');
+            const menuButton = e.target.closest('button[onclick*="toggleDesktopMenu"]');
+            if (!menu.contains(e.target) && !menuButton && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+            }
+        });
 
         // Function to render the client gallery. It takes the target element ID and a flag 
         // to decide if admin controls (delete button) should be visible.
