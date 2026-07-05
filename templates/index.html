@@ -52,7 +52,30 @@
                 if (mobileBtn) mobileBtn.innerHTML = '<i class="fas fa-sun"></i> Toggle Theme';
             }
         }
+        // Initialize theme
         initTheme();
+        
+        // Initialize page from URL hash
+        function initFromHash() {
+            const hash = window.location.hash.slice(1); // Remove the #
+            let initialSection = 'home';
+            if (hash && document.getElementById(hash)) {
+                initialSection = hash;
+            }
+            showSection(initialSection, false); // Don't push yet
+            // Replace current history state
+            window.history.replaceState({ sectionId: initialSection }, '', `#${initialSection}`);
+        }
+        initFromHash();
+        
+        // Handle back/forward button clicks
+        window.addEventListener('popstate', function(e) {
+            if (e.state && e.state.sectionId) {
+                showSection(e.state.sectionId, false);
+            } else {
+                showSection('home', false);
+            }
+        });
 
         tailwind.config = {
             theme: {
@@ -2337,20 +2360,28 @@
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
         
-        // Function to switch tabs/sections (Modified for mobile menu auto-close)
-        function showSection(sectionId) {
+        // Function to switch tabs/sections (Modified for mobile menu auto-close and history)
+        function showSection(sectionId, pushToHistory = true) {
             // Hide all sections
             document.querySelectorAll('.section-content').forEach(section => {
                 section.classList.remove('active');
             });
             
             // Show target section
-            document.getElementById(sectionId).classList.add('active');
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
             
-            // Close mobile menu if open AND if it's currently visible
+            // Close both menus every time a section is shown
             const mobileMenu = document.getElementById('mobile-menu');
-            if (!mobileMenu.classList.contains('hidden')) {
-                mobileMenu.classList.add('hidden');
+            const desktopMenu = document.getElementById('desktop-menu');
+            mobileMenu.classList.add('hidden');
+            desktopMenu.classList.add('hidden');
+            
+            // Update browser history (only if not triggered by popstate)
+            if (pushToHistory) {
+                window.history.pushState({ sectionId: sectionId }, '', `#${sectionId}`);
             }
             
             // Special rendering for specific sections
