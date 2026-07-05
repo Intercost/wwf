@@ -287,7 +287,13 @@
 
         <!-- Mobile Menu (Hidden by default) -->
         <div id="mobile-menu" class="hidden md:hidden pb-4" style="background: var(--card); border-bottom: 1px solid var(--border);">
-            <div class="px-4 pt-3 pb-4 space-y-1">
+            <div class="flex items-center justify-between px-4 pt-3 pb-2">
+                <span class="text-sm font-semibold uppercase tracking-wide" style="color: var(--text3);">Menu</span>
+                <button onclick="closeMobileMenu()" aria-label="Close menu" class="inline-flex items-center justify-center w-8 h-8 rounded-md" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text2);">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="px-4 pt-1 pb-4 space-y-1">
                 <button onclick="showSection('home');" class="block w-full text-left px-4 py-2 rounded-md text-sm font-medium" style="color: var(--text2);">Home</button>
                 <button onclick="showSection('farm-gallery-public');" class="block w-full text-left px-4 py-2 rounded-md text-sm font-medium" style="color: var(--text2);">Gallery</button>
                 <button onclick="showSection('poultry');" class="block w-full text-left px-4 py-2 rounded-md text-sm font-medium" style="color: var(--text2);">Shop</button>
@@ -722,9 +728,46 @@
                 </button>
             </div>
 
+            <!-- ORDER TRACKING -->
+            <div class="mb-12">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="p-5 rounded-lg" style="background: var(--card); border: 1px solid var(--border);">
+                        <p class="text-xs uppercase tracking-wide mb-1" style="color: var(--text3);">Total Orders</p>
+                        <p class="text-3xl font-bold" id="stat-total-orders" style="color: var(--text);">0</p>
+                    </div>
+                    <div class="p-5 rounded-lg" style="background: var(--card); border: 1px solid var(--border); border-bottom: 3px solid var(--accent4);">
+                        <p class="text-xs uppercase tracking-wide mb-1" style="color: var(--text3);">Pending</p>
+                        <p class="text-3xl font-bold" id="stat-pending-orders" style="color: var(--accent4);">0</p>
+                    </div>
+                    <div class="p-5 rounded-lg" style="background: var(--card); border: 1px solid var(--border); border-bottom: 3px solid var(--accent);">
+                        <p class="text-xs uppercase tracking-wide mb-1" style="color: var(--text3);">Awaiting Payment</p>
+                        <p class="text-3xl font-bold" id="stat-processing-orders" style="color: var(--accent);">0</p>
+                    </div>
+                    <div class="p-5 rounded-lg" style="background: var(--card); border: 1px solid var(--border); border-bottom: 3px solid var(--accent3);">
+                        <p class="text-xs uppercase tracking-wide mb-1" style="color: var(--text3);">Completed</p>
+                        <p class="text-3xl font-bold" id="stat-completed-orders" style="color: var(--accent3);">0</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+                    <h3 class="text-xl font-bold pl-3" style="color: var(--text); border-left: 4px solid var(--accent2);">
+                        <i class="fa-solid fa-truck-fast mr-2" style="color: var(--accent2);"></i>My Orders
+                    </h3>
+                    <button onclick="showSection('poultry')" class="text-white px-4 py-2 rounded-md text-sm font-semibold shadow-md bg-farm-accent">
+                        <i class="fa-solid fa-store mr-1"></i> Browse Shop
+                    </button>
+                </div>
+
+                <div id="client-orders-list" class="space-y-3">
+                    <div class="p-6 rounded-lg text-center animate-pulse" style="background: var(--card); border: 1px solid var(--border); color: var(--text3);">
+                        Loading your orders…
+                    </div>
+                </div>
+            </div>
+
             <div class="pt-8" style="border-top: 1px solid var(--border);">
                 <h3 class="text-xl font-bold mb-6 pl-3" style="color: var(--text); border-left: 4px solid var(--accent2);">
-                    <i class="fa-solid fa-store mr-2" style="color: var(--accent2);"></i>Client Dashboard & Shop
+                    <i class="fa-solid fa-store mr-2" style="color: var(--accent2);"></i>Quick Order & Services
                 </h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-12">
@@ -2203,6 +2246,107 @@
             }
         }
 
+        // ── Load ONLY the logged-in client's own orders (for their dashboard) ──
+        let clientOrders = [];
+        async function loadClientOrders() {
+            if (!currentUserEmail) {
+                clientOrders = [];
+                renderClientOrders();
+                return;
+            }
+            const { data, error } = await supabase
+                .from('orders')
+                .select('*')
+                .eq('client_email', currentUserEmail)
+                .order('created_at', { ascending: false });
+            if (!error && data) {
+                clientOrders = data.map(r => ({
+                    id: r.order_number || r.id,
+                    _uuid: r.id,
+                    type: r.order_type,
+                    qty: r.quantity,
+                    desc: r.description || '',
+                    delivery: r.delivery_method,
+                    status: r.status,
+                    price: r.price,
+                    adminMessage: r.admin_message,
+                    date: new Date(r.created_at).toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric' })
+                }));
+            } else {
+                clientOrders = [];
+            }
+            renderClientOrders();
+        }
+
+        // Maps an order status to its badge color/icon for the client dashboard
+        function getOrderStatusStyle(status) {
+            switch (status) {
+                case 'Pending':
+                    return { color: 'var(--accent4)', bg: 'rgba(245, 158, 11, 0.15)', icon: 'fa-clock' };
+                case 'Processed (Awaiting Payment)':
+                    return { color: 'var(--accent)', bg: 'rgba(59, 130, 246, 0.15)', icon: 'fa-file-invoice-dollar' };
+                case 'Paid':
+                    return { color: 'var(--accent3)', bg: 'rgba(16, 185, 129, 0.15)', icon: 'fa-circle-check' };
+                case 'Dismissed':
+                    return { color: 'var(--accent5)', bg: 'rgba(239, 68, 68, 0.15)', icon: 'fa-circle-xmark' };
+                default:
+                    return { color: 'var(--text3)', bg: 'var(--bg2)', icon: 'fa-circle-question' };
+            }
+        }
+
+        // Renders the "My Orders" tracker + stat cards on the client dashboard
+        function renderClientOrders() {
+            const container = document.getElementById('client-orders-list');
+            if (!container) return;
+
+            const total = clientOrders.length;
+            const pending = clientOrders.filter(o => o.status === 'Pending').length;
+            const awaitingPayment = clientOrders.filter(o => o.status === 'Processed (Awaiting Payment)').length;
+            const completed = clientOrders.filter(o => o.status === 'Paid').length;
+
+            const totalEl = document.getElementById('stat-total-orders');
+            const pendingEl = document.getElementById('stat-pending-orders');
+            const processingEl = document.getElementById('stat-processing-orders');
+            const completedEl = document.getElementById('stat-completed-orders');
+            if (totalEl) totalEl.textContent = total;
+            if (pendingEl) pendingEl.textContent = pending;
+            if (processingEl) processingEl.textContent = awaitingPayment;
+            if (completedEl) completedEl.textContent = completed;
+
+            if (total === 0) {
+                container.innerHTML = `
+                    <div class="p-8 rounded-lg text-center" style="background: var(--card); border: 1px dashed var(--border);">
+                        <i class="fa-solid fa-box-open text-4xl mb-3" style="color: var(--text3);"></i>
+                        <p class="mb-4" style="color: var(--text3);">You haven't placed any orders yet.</p>
+                        <button onclick="showSection('poultry')" class="text-white px-5 py-2 rounded-md text-sm font-semibold bg-farm-accent">
+                            <i class="fa-solid fa-store mr-1"></i> Start Shopping
+                        </button>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = clientOrders.map(order => {
+                const s = getOrderStatusStyle(order.status);
+                return `
+                    <div class="p-4 rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3" style="background: var(--card); border: 1px solid var(--border); border-left: 4px solid ${s.color};">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
+                                <h4 class="font-bold" style="color: var(--text);">Order #${order.id} &middot; ${order.type} (${order.qty})</h4>
+                                <span class="text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap" style="background: ${s.bg}; color: ${s.color};">
+                                    <i class="fa-solid ${s.icon} mr-1"></i>${order.status}
+                                </span>
+                            </div>
+                            <p class="text-xs" style="color: var(--text3);"><i class="fa-solid fa-calendar-days mr-1"></i>Placed on ${order.date}${order.delivery ? ` &middot; ${order.delivery}` : ''}</p>
+                            ${order.adminMessage ? `<p class="text-xs mt-2 italic" style="color: var(--text2);"><i class="fa-solid fa-message mr-1"></i>${order.adminMessage}</p>` : ''}
+                        </div>
+                        <div class="text-left sm:text-right flex-shrink-0">
+                            ${order.price ? `<p class="font-bold text-lg" style="color: var(--text);">KES ${Number(order.price).toLocaleString()}</p>` : ''}
+                            ${order.status === 'Processed (Awaiting Payment)' ? `<button onclick="openClientMessages()" class="text-xs mt-1 font-semibold underline" style="color: var(--accent);">View Invoice</button>` : ''}
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
         async function loadMessagesFromSupabase() {
             if (!currentUserEmail) return;
             const { data, error } = await supabase
@@ -2352,9 +2496,8 @@
             }
             
             // Close both menus every time a section is shown
-            const mobileMenu = document.getElementById('mobile-menu');
             const desktopMenu = document.getElementById('desktop-menu');
-            mobileMenu.classList.add('hidden');
+            closeMobileMenu();
             desktopMenu.classList.add('hidden');
             
             // Update browser history (only if not triggered by popstate)
@@ -2368,6 +2511,7 @@
             }
             if (sectionId === 'client-portal') {
                 renderClientGallery('farm-gallery', false);
+                loadClientOrders();
             }
             if (sectionId === 'farm-gallery-public') {
                 renderClientGallery('public-farm-gallery', false);
@@ -2385,14 +2529,27 @@
             window.scrollTo(0, 0);
         }
 
+        // Open Mobile Menu (locks page scroll behind it)
+        function openMobileMenu() {
+            document.getElementById('desktop-menu').classList.add('hidden');
+            document.getElementById('mobile-menu').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Mobile Menu (restores page scroll)
+        function closeMobileMenu() {
+            document.getElementById('mobile-menu').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
         // Toggle Mobile Menu
         function toggleMobileMenu() {
             const mobileMenu = document.getElementById('mobile-menu');
-            const desktopMenu = document.getElementById('desktop-menu');
-            // Close desktop menu if open
-            desktopMenu.classList.add('hidden');
-            // Toggle mobile menu
-            mobileMenu.classList.toggle('hidden');
+            if (mobileMenu.classList.contains('hidden')) {
+                openMobileMenu();
+            } else {
+                closeMobileMenu();
+            }
         }
 
         // Toggle Desktop Menu
@@ -2419,7 +2576,7 @@
             const menu = document.getElementById('mobile-menu');
             const menuButton = e.target.closest('button[onclick*="toggleMobileMenu"]');
             if (!menu.contains(e.target) && !menuButton && !menu.classList.contains('hidden')) {
-                menu.classList.add('hidden');
+                closeMobileMenu();
             }
         });
 
@@ -2715,8 +2872,9 @@
             emailInput.value = '';
             passwordInput.value = '';
 
-            // Load this client's messages
+            // Load this client's messages and orders
             await loadMessagesFromSupabase();
+            loadClientOrders();
 
             // Hide Login and Show Portal
             document.getElementById('client-login').classList.remove('active');
@@ -2823,6 +2981,7 @@
                 document.getElementById('login-context-message').classList.add('hidden');
 
                 await loadMessagesFromSupabase();
+                loadClientOrders();
 
                 document.getElementById('client-login').classList.remove('active');
                 document.getElementById('client-portal').classList.add('active');
@@ -4069,6 +4228,7 @@
                         currentUserId = u.id;
                         clientIsLoggedIn = true;
                         await loadMessagesFromSupabase();
+                        loadClientOrders();
                         const unread = messages.filter(m => !m.read).length;
                         const dot = document.getElementById('msg-notification-dot');
                         if (dot && unread > 0) dot.classList.remove('hidden');
