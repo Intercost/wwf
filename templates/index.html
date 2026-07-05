@@ -1808,8 +1808,9 @@
         var supabase = window.supabaseClient; // eslint-disable-line no-var
 
         // ── Admin credentials (front-end only – move to server auth later) ──
-        const ADMIN_EMAIL = 'wwf@gmail.com';
-        const ADMIN_PASSWORD = '5316wwf';
+        // Admin is now a real Supabase Auth user, identified by UID — no
+        // password is ever stored in this front-end code or in the browser.
+        const ADMIN_UID = '50806c3e-30dc-40e9-924c-c03d03410c47';
         let isLoggedIn = false;
 
         // ── Client session state ──
@@ -2708,8 +2709,32 @@
         }
 
 
-        // Function to handle admin login attempt
-        function handleAdminLogin() {
+        // Loads all admin dashboard data and shows the dashboard view.
+        // Shared by both fresh logins and auto-restored sessions.
+        function enterAdminDashboard() {
+            isLoggedIn = true;
+            document.getElementById('admin').classList.remove('active');
+            document.getElementById('dashboard').classList.add('active');
+            window.scrollTo(0, 0);
+            Promise.all([
+                loadAllProductsAdmin(),
+                loadOrdersFromSupabase(),
+                loadGalleryFromSupabase(),
+                loadEggPricesFromSupabase(),
+                loadPdfsFromSupabase(),
+                loadEventsFromSupabase()
+            ]).then(() => {
+                renderPoultryTracking();
+                renderAdminOrders();
+                renderClientGallery('admin-gallery-view', true);
+                renderPdfLibrary('admin-uploaded-pdf-list', true);
+                renderEggPriceInputs();
+                renderAdminEvents();
+            });
+        }
+
+        // Function to handle admin login attempt — now backed by real Supabase Auth
+        async function handleAdminLogin() {
             const emailInput = document.getElementById('admin-email');
             const passwordInput = document.getElementById('admin-password');
             const errorMsg = document.getElementById('login-error');
@@ -2717,44 +2742,32 @@
             const email = emailInput.value.trim();
             const password = passwordInput.value.trim();
 
-            // FRONT-END VALIDATION CHECK
-            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-                isLoggedIn = true;
-                errorMsg.classList.add('hidden');
-                emailInput.value = '';
-                passwordInput.value = '';
-                
-                // Hide Admin Login and Show Dashboard
-                document.getElementById('admin').classList.remove('active');
-                document.getElementById('dashboard').classList.add('active');
-                
-                // Load all data from Supabase then render
-                window.scrollTo(0, 0);
-                Promise.all([
-                    loadAllProductsAdmin(),
-                    loadOrdersFromSupabase(),
-                    loadGalleryFromSupabase(),
-                    loadEggPricesFromSupabase(),
-                    loadPdfsFromSupabase(),
-                    loadEventsFromSupabase()
-                ]).then(() => {
-                    renderPoultryTracking();
-                    renderAdminOrders();
-                    renderClientGallery('admin-gallery-view', true);
-                    renderPdfLibrary('admin-uploaded-pdf-list', true);
-                    renderEggPriceInputs();
-                    renderAdminEvents();
-                });
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-                // Update Nav Menu to show Logout (Optional but good UX)
-                // You can add logic here to update the 'Admin' button to a 'Dashboard' button.
-            } else {
+            if (error || !data.user) {
+                errorMsg.textContent = 'Invalid email or password.';
                 errorMsg.classList.remove('hidden');
+                return;
             }
+
+            // Only the specific admin account may enter the dashboard, even
+            // though any Supabase Auth user could technically sign in here.
+            if (data.user.id !== ADMIN_UID) {
+                await supabase.auth.signOut();
+                errorMsg.textContent = 'This account does not have admin access.';
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            errorMsg.classList.add('hidden');
+            emailInput.value = '';
+            passwordInput.value = '';
+            enterAdminDashboard();
         }
 
         // Function to handle admin logout
-        function handleAdminLogout() {
+        async function handleAdminLogout() {
+            await supabase.auth.signOut();
             isLoggedIn = false;
             document.getElementById('dashboard').classList.remove('active');
             document.getElementById('admin').classList.add('active'); // Back to login screen
@@ -3685,17 +3698,22 @@
                 renderClientEvents();
                 renderPdfLibrary('pdf-library-display');
 
-                // Restore client session if already signed in
+                // Restore session if already signed in — works for both
+                // clients and the admin, since both now use Supabase Auth.
                 const { data: sessionData } = await supabase.auth.getSession();
                 if (sessionData?.session?.user) {
                     const u = sessionData.session.user;
-                    currentUserEmail = u.email;
-                    currentUserId = u.id;
-                    clientIsLoggedIn = true;
-                    await loadMessagesFromSupabase();
-                    const unread = messages.filter(m => !m.read).length;
-                    const dot = document.getElementById('msg-notification-dot');
-                    if (dot && unread > 0) dot.classList.remove('hidden');
+                    if (u.id === ADMIN_UID) {
+                        enterAdminDashboard();
+                    } else {
+                        currentUserEmail = u.email;
+                        currentUserId = u.id;
+                        clientIsLoggedIn = true;
+                        await loadMessagesFromSupabase();
+                        const unread = messages.filter(m => !m.read).length;
+                        const dot = document.getElementById('msg-notification-dot');
+                        if (dot && unread > 0) dot.classList.remove('hidden');
+                    }
                 }
                 // --- NEW CODE FOR CHATBOX INTEGRATION ---
                 const chatToggleBtn = document.getElementById('chat-toggle-btn');
