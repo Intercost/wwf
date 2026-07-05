@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Willy's Wing Farm</title>
+    <link rel="icon" type="image/jpeg" href="/logo.jpg">
+    <link rel="apple-touch-icon" href="/logo.jpg">
     
     <!-- Tailwind CSS for Dark Aesthetic and Layout -->
     <!-- Suppress CDN production warning BEFORE loading Tailwind so the patch is in place in time -->
@@ -134,9 +136,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <!-- Logo -->
-                <div class="flex-shrink-0 cursor-pointer" onclick="showSection('home')">
+                <div class="flex-shrink-0 cursor-pointer flex items-center" onclick="showSection('home')">
+                    <img src="/logo.jpg" alt="Willy's Wing Farm logo" class="h-12 w-12 rounded-full object-cover mr-3 border-2 border-farm-accent">
                     <span class="text-2xl font-bold text-farm-accent">
-                        <i class="fa-solid fa-feather-pointed mr-2"></i>Willy's Wing Farm
+                        Willy's Wing Farm
                     </span>
                 </div>
                 
@@ -184,21 +187,22 @@
         <!-- 1. HOME SECTION -->
         <div id="home" class="section-content active">
             <div class="text-center py-16 lg:py-24">
+                <img src="/logo.jpg" alt="Willy's Wing Farm logo" class="h-28 w-28 md:h-36 md:w-36 rounded-full object-cover mx-auto mb-6 border-4 border-farm-accent shadow-lg">
                 <h1 class="text-4xl tracking-tight font-extrabold text-white sm:text-5xl md:text-6xl mb-6">
                     <span class="block">Premium 1-Month-Old Chicks</span>
                     <span class="block text-farm-accent">Ready for Your Farm</span>
                     
                 </h1>
                 <p class="mt-3 max-w-md mx-auto text-base text-gray-300 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-                    Located in Makhonge, Bungoma County. We specialize in high-quality 1-month-old chicks raised with organic feed. From Kienyeji to Layers and Broilers, we have what you need.
+                    Located in Makhonge, Bungoma County. We specialize in high-quality 1-month-old chicks raised with organic feed. From Sasso to Layers and Broilers, we have what you need.
                 </p>
                 <div class="mt-10 max-w-sm mx-auto sm:max-w-none sm:flex sm:justify-center">
                     <div class="space-y-4 sm:space-y-0 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5">
                         <button onclick="showSection('poultry')" class="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-farm-accent bg-farm-card hover:bg-gray-700 md:py-4 md:text-lg md:px-10">
                             View Our Chicks
                         </button>
-                        <button onclick="showSection('client-login')" class="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-farm-accent hover:bg-yellow-600 md:py-4 md:text-lg md:px-10">
-                            Client Login
+                        <button onclick="showSection('poultry')" class="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-farm-accent hover:bg-yellow-600 md:py-4 md:text-lg md:px-10">
+                            <i class="fa-solid fa-basket-shopping mr-2"></i>Shop Here
                         </button>
                     </div>
                 </div>
@@ -234,10 +238,25 @@
 
         <!-- 2. VIEW POULTRY SECTION -->
         <div id="poultry" class="section-content">
-            <h2 class="text-3xl font-bold mb-8 border-b border-gray-700 pb-2">Our Poultry Selection</h2>
+            <h2 class="text-3xl font-bold mb-2 border-b border-gray-700 pb-2">Shop Our Chicks & Products</h2>
+            <p class="text-gray-400 mb-8">Browse everything we have available — no login needed. You'll only be asked to sign in when you're ready to place an order.</p>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="poultry-grid">
-                <!-- Javascript will inject poultry cards here -->
+                <!-- Javascript will inject real product cards (with photos) here -->
             </div>
+
+            <h3 class="text-2xl font-bold mt-14 mb-6 border-b border-gray-700 pb-2">Current Egg Prices</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4" id="egg-price-grid">
+                <!-- Javascript will inject egg price cards here -->
+            </div>
+        </div>
+
+        <!-- Full-screen image lightbox (Google-Photos style) -->
+        <div id="image-lightbox" class="fixed inset-0 bg-black bg-opacity-95 z-[100] hidden flex items-center justify-center">
+            <button onclick="closeLightbox()" class="absolute top-4 right-6 text-white text-4xl hover:text-farm-accent z-10" aria-label="Close">&times;</button>
+            <button onclick="lightboxNav(-1)" class="absolute left-2 md:left-6 text-white text-4xl md:text-5xl hover:text-farm-accent z-10 px-3" aria-label="Previous">&#10094;</button>
+            <img id="lightbox-image" src="" alt="" class="max-h-[85vh] max-w-[90vw] object-contain rounded shadow-2xl">
+            <button onclick="lightboxNav(1)" class="absolute right-2 md:right-6 text-white text-4xl md:text-5xl hover:text-farm-accent z-10 px-3" aria-label="Next">&#10095;</button>
+            <div id="lightbox-caption" class="absolute bottom-6 left-0 right-0 text-center text-white text-sm px-6"></div>
         </div>
 
         <!-- 3. SERVICES & EVENTS SECTION -->
@@ -577,7 +596,7 @@
                             </div>
                             <h4 class="font-bold text-white group-hover:text-farm-accent transition">Buy Poultry</h4>
                         </div>
-                        <p class="text-xs text-gray-400">Order high-quality layers, Kienyeji, ducks, and turkeys for your farm.</p>
+                        <p class="text-xs text-gray-400">Order high-quality layers, Sasso, ducks, and turkeys for your farm.</p>
                     </div>
 
                     <div onclick="handleServiceClick('buy_eggs')" class="bg-farm-card p-5 rounded-lg border border-gray-700 hover:border-farm-accent cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl group">
@@ -2328,32 +2347,47 @@
         }
 
         // Render Poultry Cards Dynamically
+        // Renders the real shop grid: actual chicks/products the admin has
+        // added, each with a photo. Clicking the photo opens a full-screen,
+        // swipeable lightbox across all product photos.
         function renderPoultry() {
             const grid = document.getElementById('poultry-grid');
-            grid.innerHTML = ''; // Clear existing
+            if (!grid) return;
+            grid.innerHTML = '';
 
-            poultryData.forEach(bird => {
+            if (!productsData || productsData.length === 0) {
+                grid.innerHTML = '<p class="text-gray-500 col-span-full">No products available right now — please check back soon!</p>';
+                return;
+            }
+
+            productsData.forEach((p, index) => {
                 const card = document.createElement('div');
                 card.className = 'bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800 transform hover:scale-105 transition duration-300';
+
+                const imageHtml = p.image_url
+                    ? `<img src="${p.image_url}" alt="${p.name}" class="w-full h-full object-cover cursor-pointer" onclick="openLightbox(${index})">`
+                    : `<i class="fa-solid fa-kiwi-bird text-6xl text-gray-500 group-hover:text-white transition"></i>`;
+
                 card.innerHTML = `
-                    <div class="h-48 bg-gray-700 flex items-center justify-center relative group">
-                        <!-- Placeholder for Image -->
-                        <i class="fa-solid ${bird.icon} text-6xl text-gray-500 group-hover:text-white transition"></i>
-                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                            <span class="text-white font-bold border border-white px-4 py-2 rounded">View Gallery</span>
-                        </div>
+                    <div class="h-48 bg-gray-700 flex items-center justify-center relative group overflow-hidden">
+                        ${imageHtml}
+                        ${p.image_url ? `
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition pointer-events-none">
+                            <span class="text-white font-bold border border-white px-4 py-2 rounded">Tap to Enlarge</span>
+                        </div>` : ''}
                     </div>
                     <div class="p-6">
                         <div class="flex justify-between items-baseline mb-2">
-                            <h3 class="text-2xl font-bold text-white">${bird.type}</h3>
+                            <h3 class="text-2xl font-bold text-white">${p.name}</h3>
                         </div>
-                        <p class="text-farm-accent font-semibold mb-2">${bird.varieties}</p>
-                        <p class="text-gray-400 text-sm mb-4 h-12">${bird.desc}</p>
+                        ${p.category ? `<p class="text-farm-accent font-semibold mb-2">${p.category}</p>` : ''}
+                        <p class="text-gray-400 text-sm mb-4">${p.description || ''}</p>
                         <div class="border-t border-gray-700 pt-4">
-                            <p class="text-sm text-gray-500">Egg Price</p>
-                            <p class="text-xl font-bold text-white">${bird.price_egg}</p>
+                            <p class="text-sm text-gray-500">Price</p>
+                            <p class="text-xl font-bold text-white">KES ${p.price} / ${p.price_unit}</p>
+                            ${p.stock_note ? `<p class="text-xs text-gray-500 mt-1">${p.stock_note}</p>` : ''}
                         </div>
-                        <button class="mt-4 w-full bg-green-700 hover:bg-green-600 text-white py-2 rounded transition" onclick="checkLoginAndOrder('buy_eggs')">
+                        <button class="mt-4 w-full bg-green-700 hover:bg-green-600 text-white py-2 rounded transition" onclick="checkLoginAndOrder('buy_poultry')">
                             Order Now
                         </button>
                     </div>
@@ -2361,6 +2395,72 @@
                 grid.appendChild(card);
             });
         }
+
+        // Renders the compact "Current Egg Prices" strip (separate from the
+        // main product shop above).
+        function renderEggPrices() {
+            const grid = document.getElementById('egg-price-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            poultryData.forEach(bird => {
+                const card = document.createElement('div');
+                card.className = 'bg-farm-card rounded-lg p-4 text-center shadow border border-gray-800';
+                card.innerHTML = `
+                    <i class="fa-solid ${bird.icon} text-3xl text-farm-accent mb-2"></i>
+                    <p class="font-semibold text-white text-sm">${bird.type}</p>
+                    <p class="text-gray-400 text-xs mb-2">${bird.price_egg}</p>
+                    <button class="w-full bg-green-700 hover:bg-green-600 text-white text-xs py-1.5 rounded transition" onclick="checkLoginAndOrder('buy_eggs')">
+                        Order Now
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // --- LIGHTBOX (full-screen, Google-Photos-style photo viewer) ---
+        let lightboxIndex = 0;
+
+        function openLightbox(index) {
+            lightboxIndex = index;
+            showLightboxImage();
+            document.getElementById('image-lightbox').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('image-lightbox').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function lightboxNav(direction) {
+            const withImages = productsData.filter(p => p.image_url);
+            if (withImages.length === 0) return;
+            lightboxIndex = (lightboxIndex + direction + productsData.length) % productsData.length;
+            // Skip over any products that have no image
+            let attempts = 0;
+            while (!productsData[lightboxIndex]?.image_url && attempts < productsData.length) {
+                lightboxIndex = (lightboxIndex + direction + productsData.length) % productsData.length;
+                attempts++;
+            }
+            showLightboxImage();
+        }
+
+        function showLightboxImage() {
+            const p = productsData[lightboxIndex];
+            if (!p) return;
+            document.getElementById('lightbox-image').src = p.image_url;
+            document.getElementById('lightbox-image').alt = p.name;
+            document.getElementById('lightbox-caption').textContent = `${p.name} — KES ${p.price} / ${p.price_unit}`;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            const lightbox = document.getElementById('image-lightbox');
+            if (!lightbox || lightbox.classList.contains('hidden')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') lightboxNav(-1);
+            if (e.key === 'ArrowRight') lightboxNav(1);
+        });
         
         // Function to handle client login attempt — uses Supabase Auth
         async function handleClientLogin() {
@@ -2700,7 +2800,7 @@
                 for (const u of updates) {
                     await supabase.from('egg_prices').update({ price: u.price }).eq('bird_type', u.type);
                 }
-                renderPoultry();
+                renderEggPrices();
                 feedback.className = 'text-sm mt-2 text-center text-green-500';
                 feedback.textContent = 'Egg prices updated and saved!';
             } else {
@@ -3696,6 +3796,7 @@
                     loadPdfsFromSupabase()
                 ]);
                 renderPoultry();
+                renderEggPrices();
                 renderClientEvents();
                 renderPdfLibrary('pdf-library-display');
 
@@ -3730,6 +3831,41 @@
                     }
                 }
 
+                // Escapes raw text for safe HTML insertion
+                function escapeHtml(str) {
+                    const div = document.createElement('div');
+                    div.textContent = str;
+                    return div.innerHTML;
+                }
+
+                // Converts the AI's lightweight markdown (**bold**, *italic*,
+                // "- " bullet lists, line breaks) into readable, styled HTML.
+                function formatAiMessage(text) {
+                    let safe = escapeHtml(text);
+
+                    // **bold**
+                    safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+                    // *italic* (single asterisks only, not leftover doubles)
+                    safe = safe.replace(/(?<!\*)\*([^*\n]+?)\*(?!\*)/g, '<em>$1</em>');
+
+                    const lines = safe.split('\n');
+                    let html = '';
+                    let inList = false;
+                    for (const rawLine of lines) {
+                        const line = rawLine.trim();
+                        const bulletMatch = line.match(/^[-*•]\s+(.*)/);
+                        if (bulletMatch) {
+                            if (!inList) { html += '<ul class="list-disc list-inside space-y-1 my-1">'; inList = true; }
+                            html += `<li>${bulletMatch[1]}</li>`;
+                        } else {
+                            if (inList) { html += '</ul>'; inList = false; }
+                            html += line === '' ? '<br>' : line + '<br>';
+                        }
+                    }
+                    if (inList) html += '</ul>';
+                    return html;
+                }
+
                 function handleSendMessage() {
                     const message = chatInput.value.trim();
                     if (message === '') return;
@@ -3738,7 +3874,7 @@
                     const userMsgHtml = `
                         <div class="flex justify-end">
                             <div class="bg-blue-600 text-white p-3 rounded-xl rounded-br-none max-w-[85%] text-sm shadow-md">
-                                ${message}
+                                ${escapeHtml(message)}
                             </div>
                         </div>
                     `;
@@ -3786,8 +3922,8 @@
                         const aiResponse = data.response || "Sorry, I couldn't process your request. Please try again.";
                         const aiMsgHtml = `
                             <div class="flex justify-start">
-                                <div class="bg-gray-700 text-white p-3 rounded-xl rounded-tl-none max-w-[85%] text-sm shadow-md">
-                                    ${aiResponse}
+                                <div class="bg-gray-700 text-white p-3 rounded-xl rounded-tl-none max-w-[85%] text-sm shadow-md leading-relaxed">
+                                    ${formatAiMessage(aiResponse)}
                                 </div>
                             </div>
                         `;

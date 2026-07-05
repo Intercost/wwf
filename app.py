@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 from groq import Groq
 import os
@@ -18,6 +18,13 @@ def home():
         supabase_url=os.getenv('SUPABASE_URL', ''),
         supabase_anon_key=os.getenv('SUPABASE_ANON_KEY', '')
     )
+
+# Serves the farm logo (used as the favicon and on-page logo). The image
+# lives in templates/ rather than a static/ folder, so it needs an explicit
+# route — Flask doesn't auto-serve files out of templates/.
+@app.route('/logo.jpg')
+def logo():
+    return send_from_directory('templates', 'logo.jpg', mimetype='image/jpeg')
 
 # Initialize Groq client lazily so a missing/invalid API key doesn't crash
 # the whole serverless function on import (which would 500 every route,
@@ -51,7 +58,7 @@ Your primary goal is to answer customer queries concisely and professionally, us
     -   For up-to-date news and community: Direct clients to the WhatsApp group link: https://chat.whatsapp.com/KUDjHkQxhkvIkbwFOzKZZp?mode=hqrc
 
 2.  **Products & Services:**
-    -   The farm's primary product is 1-month-old chicks (Kienyeji, Layers, Broilers - subject to availability set by admin).
+    -   The farm's primary product is 1-month-old chicks (Sasso, Layers, Broilers - subject to availability set by admin).
     -   The farm also sells: Eggs, Meat, Live Birds, Poultry Manure, Organic Fertiliser Bags, Feed Supply, Poultry Equipment (drinkers, feeders, brooders), Portable Structures, and Poultry Medicines.
     -   Special Services: Farm tours, Educational programs, Local delivery, Online courses, and Poultry events.
     -   Pricing for chicks is set dynamically by the admin - tell customers to check the website's poultry listing for current chick prices or ask the admin directly.
