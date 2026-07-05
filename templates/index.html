@@ -715,8 +715,7 @@
     
             <div class="flex justify-between items-center pb-4 mb-8" style="border-bottom: 1px solid var(--border);">
                 <div>
-                    <h2 class="text-3xl font-bold" style="color: var(--text);"><i class="fa-solid fa-camera-retro mr-2" style="color: var(--accent2);"></i>Willy's Farm Portal</h2>
-                    <p class="text-sm mt-1" style="color: var(--text3);">Welcome back! Manage your farm orders and view the gallery.</p>
+                    <h2 class="text-2xl font-bold" style="color: var(--text);"><i class="fa-solid fa-camera-retro mr-2" style="color: var(--accent2);"></i>Welcome back, <span id="client-portal-name">Guest</span>!</h2>
                 </div>
                 <button onclick="openClientMessages()" class="relative p-2 transition" style="color: var(--text2);">
                     <i class="fa-solid fa-envelope text-2xl"></i>
@@ -753,9 +752,14 @@
                     <h3 class="text-xl font-bold pl-3" style="color: var(--text); border-left: 4px solid var(--accent2);">
                         <i class="fa-solid fa-truck-fast mr-2" style="color: var(--accent2);"></i>My Orders
                     </h3>
-                    <button onclick="showSection('poultry')" class="text-white px-4 py-2 rounded-md text-sm font-semibold shadow-md bg-farm-accent">
-                        <i class="fa-solid fa-store mr-1"></i> Browse Shop
-                    </button>
+                    <div class="flex flex-col items-stretch sm:items-end gap-2">
+                        <button onclick="showSection('poultry')" class="text-white px-4 py-2 rounded-md text-sm font-semibold shadow-md bg-farm-accent">
+                            <i class="fa-solid fa-store mr-1"></i> Browse Shop
+                        </button>
+                        <button id="toggle-quick-order-btn" onclick="toggleQuickOrderServices()" class="px-4 py-2 rounded-md text-sm font-semibold" style="background: var(--bg2); border: 1px solid var(--border); color: var(--text2);">
+                            <i class="fa-solid fa-layer-group mr-1"></i> Quick Order & Services
+                        </button>
+                    </div>
                 </div>
 
                 <div id="client-orders-list" class="space-y-3">
@@ -765,7 +769,7 @@
                 </div>
             </div>
 
-            <div class="pt-8" style="border-top: 1px solid var(--border);">
+            <div id="quick-order-services" class="hidden pt-8" style="border-top: 1px solid var(--border);">
                 <h3 class="text-xl font-bold mb-6 pl-3" style="color: var(--text); border-left: 4px solid var(--accent2);">
                     <i class="fa-solid fa-store mr-2" style="color: var(--accent2);"></i>Quick Order & Services
                 </h3>
@@ -2246,6 +2250,28 @@
             }
         }
 
+        // ── Load the logged-in client's display name (for the dashboard greeting) ──
+        let currentUserName = '';
+        async function loadClientProfile() {
+            const nameEl = document.getElementById('client-portal-name');
+            if (!currentUserId) {
+                currentUserName = '';
+                if (nameEl) nameEl.textContent = 'Guest';
+                return;
+            }
+            const { data, error } = await supabase
+                .from('clients')
+                .select('full_name')
+                .eq('id', currentUserId)
+                .single();
+            if (!error && data && data.full_name) {
+                currentUserName = data.full_name;
+            } else {
+                currentUserName = currentUserEmail ? currentUserEmail.split('@')[0] : 'Friend';
+            }
+            if (nameEl) nameEl.textContent = currentUserName;
+        }
+
         // ── Load ONLY the logged-in client's own orders (for their dashboard) ──
         let clientOrders = [];
         async function loadClientOrders() {
@@ -2512,6 +2538,7 @@
             if (sectionId === 'client-portal') {
                 renderClientGallery('farm-gallery', false);
                 loadClientOrders();
+                loadClientProfile();
             }
             if (sectionId === 'farm-gallery-public') {
                 renderClientGallery('public-farm-gallery', false);
@@ -2549,6 +2576,22 @@
                 openMobileMenu();
             } else {
                 closeMobileMenu();
+            }
+        }
+
+        // Show/hide the "Quick Order & Services" panel on the client dashboard
+        function toggleQuickOrderServices() {
+            const panel = document.getElementById('quick-order-services');
+            const btn = document.getElementById('toggle-quick-order-btn');
+            if (!panel) return;
+            const isHidden = panel.classList.toggle('hidden');
+            if (btn) {
+                btn.innerHTML = isHidden
+                    ? `<i class="fa-solid fa-layer-group mr-1"></i> Quick Order & Services`
+                    : `<i class="fa-solid fa-chevron-up mr-1"></i> Hide Quick Order & Services`;
+            }
+            if (!isHidden) {
+                panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
@@ -2872,9 +2915,10 @@
             emailInput.value = '';
             passwordInput.value = '';
 
-            // Load this client's messages and orders
+            // Load this client's messages, orders, and profile
             await loadMessagesFromSupabase();
             loadClientOrders();
+            loadClientProfile();
 
             // Hide Login and Show Portal
             document.getElementById('client-login').classList.remove('active');
@@ -2982,6 +3026,7 @@
 
                 await loadMessagesFromSupabase();
                 loadClientOrders();
+                loadClientProfile();
 
                 document.getElementById('client-login').classList.remove('active');
                 document.getElementById('client-portal').classList.add('active');
@@ -4229,6 +4274,7 @@
                         clientIsLoggedIn = true;
                         await loadMessagesFromSupabase();
                         loadClientOrders();
+                        loadClientProfile();
                         const unread = messages.filter(m => !m.read).length;
                         const dot = document.getElementById('msg-notification-dot');
                         if (dot && unread > 0) dot.classList.remove('hidden');
