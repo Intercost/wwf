@@ -147,13 +147,15 @@
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
                         <button onclick="showSection('home')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Home</button>
-                        <button onclick="showSection('poultry')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">View Poultry</button>
+                        <button onclick="showSection('farm-gallery-public')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Gallery</button>
+                        <button onclick="showSection('poultry')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Shop</button>
                         <button onclick="showSection('services')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Services & Events</button>
                         <button onclick="showSection('equipments')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Equipment</button>
                         <button onclick="showSection('vet')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Vet Support</button>
                         <button onclick="showSection('knowledge')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent text-yellow-200"><i class="fa-solid fa-star mr-1"></i>Premium</button>
                         <button onclick="showSection('contact')" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-farm-accent">Contact</button>
-                        <button onclick="showSection('admin')" class="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md text-sm font-medium ml-4"><i class="fa-solid fa-lock mr-1"></i>Admin</button>
+                        <button onclick="goToClientPortal()" class="bg-farm-accent hover:bg-yellow-600 text-white px-3 py-2 rounded-md text-sm font-medium ml-2"><i class="fa-solid fa-user mr-1"></i>My Portal</button>
+                        <button onclick="showSection('admin')" class="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-md text-sm font-medium ml-2"><i class="fa-solid fa-lock mr-1"></i>Admin</button>
                     </div>
                 </div>
 
@@ -170,11 +172,13 @@
         <div id="mobile-menu" class="hidden md:hidden bg-farm-card pb-4">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <button onclick="showSection('home')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Home</button>
-                <button onclick="showSection('poultry')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">View Poultry</button>
+                <button onclick="showSection('farm-gallery-public')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Gallery</button>
+                <button onclick="showSection('poultry')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Shop</button>
                 <button onclick="showSection('services')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Services</button>
                 <button onclick="showSection('equipments')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Equipment</button>
                 <button onclick="showSection('vet')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Vet Support</button>
                 <button onclick="showSection('knowledge')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 text-yellow-200">Premium</button>
+                <button onclick="goToClientPortal()" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 text-farm-accent"><i class="fa-solid fa-user mr-1"></i>My Portal</button>
                 <button onclick="showSection('admin')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Admin</button>
                 <button onclick="showSection('contact')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700">Contact</button>
             </div>
@@ -198,7 +202,7 @@
                 </p>
                 <div class="mt-10 max-w-sm mx-auto sm:max-w-none sm:flex sm:justify-center">
                     <div class="space-y-4 sm:space-y-0 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5">
-                        <button onclick="showSection('poultry')" class="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-farm-accent bg-farm-card hover:bg-gray-700 md:py-4 md:text-lg md:px-10">
+                        <button onclick="showSection('farm-gallery-public')" class="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-farm-accent bg-farm-card hover:bg-gray-700 md:py-4 md:text-lg md:px-10">
                             View Our Chicks
                         </button>
                         <button onclick="showSection('poultry')" class="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-farm-accent hover:bg-yellow-600 md:py-4 md:text-lg md:px-10">
@@ -257,6 +261,15 @@
             <img id="lightbox-image" src="" alt="" class="max-h-[85vh] max-w-[90vw] object-contain rounded shadow-2xl">
             <button onclick="lightboxNav(1)" class="absolute right-2 md:right-6 text-white text-4xl md:text-5xl hover:text-farm-accent z-10 px-3" aria-label="Next">&#10095;</button>
             <div id="lightbox-caption" class="absolute bottom-6 left-0 right-0 text-center text-white text-sm px-6"></div>
+        </div>
+
+        <!-- PUBLIC FARM GALLERY (photos the admin posts — open to everyone, no login) -->
+        <div id="farm-gallery-public" class="section-content">
+            <h2 class="text-3xl font-bold mb-2 border-b border-gray-700 pb-2">Our Chicks & Farm Gallery</h2>
+            <p class="text-gray-400 mb-8">A look at our chicks and life on the farm. Tap any photo to view it full-screen.</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="public-farm-gallery">
+                <!-- Javascript will inject gallery photos here -->
+            </div>
         </div>
 
         <!-- 3. SERVICES & EVENTS SECTION -->
@@ -505,7 +518,11 @@
         <div id="client-login" class="section-content">
             <div class="flex justify-center items-center h-96">
                 <div class="bg-farm-card p-8 rounded-lg shadow-lg w-full max-w-md border border-gray-700">
-                    
+
+                    <div id="login-context-message" class="hidden bg-farm-accent bg-opacity-20 border border-farm-accent text-sm text-white rounded p-3 mb-5">
+                        <i class="fa-solid fa-circle-info mr-1"></i> Almost there! Please log in or create a free account so we know where to send updates about your order.
+                    </div>
+
                     <div id="login-form-container">
                         <h2 class="text-2xl font-bold mb-6 text-center"><i class="fa-solid fa-user-lock text-farm-accent mr-2"></i>Client Portal Access</h2>
                         <p class="text-sm text-gray-400 mb-6 text-center">Login to access exclusive farm updates, images, and track your orders.</p>
@@ -1657,7 +1674,7 @@
                 </a>
             </div>
 
-            <button onclick="closeModal('order-success-modal')" class="bg-gray-600 hover:bg-gray-500 text-white py-2 px-6 rounded">Close</button>
+            <button onclick="closeOrderSuccessAndGoToPortal()" class="bg-gray-600 hover:bg-gray-500 text-white py-2 px-6 rounded">Close</button>
         </div>
     </div>
 
@@ -2221,6 +2238,9 @@
             if (sectionId === 'client-portal') {
                 renderClientGallery('farm-gallery', false);
             }
+            if (sectionId === 'farm-gallery-public') {
+                renderClientGallery('public-farm-gallery', false);
+            }
             if (sectionId === 'dashboard') {
                 renderPoultryTracking();
                 renderAdminOrders();
@@ -2253,7 +2273,7 @@
                 return;
             }
 
-            galleryData.forEach(photo => {
+            galleryData.forEach((photo, index) => {
                 const card = document.createElement('div');
                 card.className = 'bg-gray-800 rounded-lg overflow-hidden shadow-md';
                 
@@ -2268,8 +2288,11 @@
                 }
                 
                 card.innerHTML = `
-                    <div class="relative">
-                        <img src="${photo.url}" alt="${photo.description}" class="w-full h-48 object-cover">
+                    <div class="relative group">
+                        <img src="${photo.url}" alt="${photo.description}" class="w-full h-48 object-cover cursor-pointer" onclick="openLightbox(${index}, 'gallery')">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition pointer-events-none">
+                            <span class="text-white font-bold border border-white px-3 py-1.5 rounded text-sm">Tap to Enlarge</span>
+                        </div>
                         ${adminControls}
                     </div>
                     <div class="p-3">
@@ -2328,6 +2351,9 @@
             if (document.getElementById('client-portal').classList.contains('active')) {
                 renderClientGallery('farm-gallery', false);
             }
+            if (document.getElementById('farm-gallery-public').classList.contains('active')) {
+                renderClientGallery('public-farm-gallery', false);
+            }
 
             alert('Photo added successfully! Client Portal has been updated.');
         }
@@ -2342,6 +2368,9 @@
                 renderClientGallery('admin-gallery-view', true);
                 if (document.getElementById('client-portal').classList.contains('active')) {
                     renderClientGallery('farm-gallery', false);
+                }
+                if (document.getElementById('farm-gallery-public').classList.contains('active')) {
+                    renderClientGallery('public-farm-gallery', false);
                 }
             }
         }
@@ -2365,7 +2394,7 @@
                 card.className = 'bg-farm-card rounded-lg overflow-hidden shadow-lg border border-gray-800 transform hover:scale-105 transition duration-300';
 
                 const imageHtml = p.image_url
-                    ? `<img src="${p.image_url}" alt="${p.name}" class="w-full h-full object-cover cursor-pointer" onclick="openLightbox(${index})">`
+                    ? `<img src="${p.image_url}" alt="${p.name}" class="w-full h-full object-cover cursor-pointer" onclick="openLightbox(${index}, 'products')">`
                     : `<i class="fa-solid fa-kiwi-bird text-6xl text-gray-500 group-hover:text-white transition"></i>`;
 
                 card.innerHTML = `
@@ -2419,9 +2448,21 @@
         }
 
         // --- LIGHTBOX (full-screen, Google-Photos-style photo viewer) ---
+        // Works across two possible photo sources: farm 'gallery' photos and
+        // 'products' photos, since both live in different arrays/fields.
         let lightboxIndex = 0;
+        let lightboxSource = 'products'; // 'products' | 'gallery'
 
-        function openLightbox(index) {
+        function getLightboxDataset() {
+            return lightboxSource === 'gallery' ? galleryData : productsData;
+        }
+
+        function getLightboxImageUrl(item) {
+            return lightboxSource === 'gallery' ? item?.url : item?.image_url;
+        }
+
+        function openLightbox(index, source = 'products') {
+            lightboxSource = source;
             lightboxIndex = index;
             showLightboxImage();
             document.getElementById('image-lightbox').classList.remove('hidden');
@@ -2434,24 +2475,31 @@
         }
 
         function lightboxNav(direction) {
-            const withImages = productsData.filter(p => p.image_url);
-            if (withImages.length === 0) return;
-            lightboxIndex = (lightboxIndex + direction + productsData.length) % productsData.length;
-            // Skip over any products that have no image
+            const dataset = getLightboxDataset();
+            if (!dataset || dataset.length === 0) return;
+            let next = (lightboxIndex + direction + dataset.length) % dataset.length;
             let attempts = 0;
-            while (!productsData[lightboxIndex]?.image_url && attempts < productsData.length) {
-                lightboxIndex = (lightboxIndex + direction + productsData.length) % productsData.length;
+            while (!getLightboxImageUrl(dataset[next]) && attempts < dataset.length) {
+                next = (next + direction + dataset.length) % dataset.length;
                 attempts++;
             }
+            lightboxIndex = next;
             showLightboxImage();
         }
 
         function showLightboxImage() {
-            const p = productsData[lightboxIndex];
-            if (!p) return;
-            document.getElementById('lightbox-image').src = p.image_url;
-            document.getElementById('lightbox-image').alt = p.name;
-            document.getElementById('lightbox-caption').textContent = `${p.name} — KES ${p.price} / ${p.price_unit}`;
+            const dataset = getLightboxDataset();
+            const item = dataset[lightboxIndex];
+            if (!item) return;
+            document.getElementById('lightbox-image').src = getLightboxImageUrl(item);
+            if (lightboxSource === 'gallery') {
+                document.getElementById('lightbox-image').alt = item.product || '';
+                document.getElementById('lightbox-caption').textContent =
+                    item.product ? (item.description ? `${item.product} — ${item.description}` : item.product) : (item.description || '');
+            } else {
+                document.getElementById('lightbox-image').alt = item.name || '';
+                document.getElementById('lightbox-caption').textContent = `${item.name} — KES ${item.price} / ${item.price_unit}`;
+            }
         }
 
         document.addEventListener('keydown', (e) => {
@@ -2499,6 +2547,7 @@
             currentUserId = data.user.id;
             clientIsLoggedIn = true;
             errorMsg.classList.add('hidden');
+            document.getElementById('login-context-message').classList.add('hidden');
             forgotPwdLink.classList.remove('hidden');
             emailInput.value = '';
             passwordInput.value = '';
@@ -2534,6 +2583,7 @@
             currentUserId = null;
             messages = [];
             pendingOrderType = null;
+            document.getElementById('login-context-message').classList.add('hidden');
             document.getElementById('client-portal').classList.remove('active');
             document.getElementById('client-login').classList.add('active');
         }
@@ -2607,6 +2657,7 @@
                 currentUserEmail = data.user.email;
                 currentUserId = data.user.id;
                 clientIsLoggedIn = true;
+                document.getElementById('login-context-message').classList.add('hidden');
 
                 await loadMessagesFromSupabase();
 
@@ -2880,10 +2931,30 @@
         function checkLoginAndOrder(serviceType) {
             if (!clientIsLoggedIn) {
                 pendingOrderType = serviceType; // Store the desired service
+                document.getElementById('login-context-message').classList.remove('hidden');
                 showSection('client-login');
-                alert('Please log in to place an order.');
             } else {
                 handleServiceClick(serviceType);
+            }
+        }
+
+        // Persistent entry point (nav bar) so clients can always reach their
+        // portal to follow up on an order — not just right after ordering.
+        function goToClientPortal() {
+            document.getElementById('login-context-message').classList.add('hidden');
+            if (clientIsLoggedIn) {
+                showSection('client-portal');
+            } else {
+                showSection('client-login');
+            }
+        }
+
+        // Closes the order-success popup and lands the client in their
+        // portal, where they can follow up on the order via Messages.
+        function closeOrderSuccessAndGoToPortal() {
+            closeModal('order-success-modal');
+            if (clientIsLoggedIn) {
+                showSection('client-portal');
             }
         }
 
@@ -3797,6 +3868,7 @@
                 ]);
                 renderPoultry();
                 renderEggPrices();
+                renderClientGallery('public-farm-gallery', false);
                 renderClientEvents();
                 renderPdfLibrary('pdf-library-display');
 
