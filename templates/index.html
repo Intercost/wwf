@@ -52,30 +52,8 @@
                 if (mobileBtn) mobileBtn.innerHTML = '<i class="fas fa-sun"></i> Toggle Theme';
             }
         }
-        // Initialize theme
+        // Initialize theme (keep this here - theme functions don't depend on anything)
         initTheme();
-        
-        // Initialize page from URL hash
-        function initFromHash() {
-            const hash = window.location.hash.slice(1); // Remove the #
-            let initialSection = 'home';
-            if (hash && document.getElementById(hash)) {
-                initialSection = hash;
-            }
-            showSection(initialSection, false); // Don't push yet
-            // Replace current history state
-            window.history.replaceState({ sectionId: initialSection }, '', `#${initialSection}`);
-        }
-        initFromHash();
-        
-        // Handle back/forward button clicks
-        window.addEventListener('popstate', function(e) {
-            if (e.state && e.state.sectionId) {
-                showSection(e.state.sectionId, false);
-            } else {
-                showSection('home', false);
-            }
-        });
 
         tailwind.config = {
             theme: {
@@ -4043,6 +4021,28 @@
 
             // Initialize
             document.addEventListener('DOMContentLoaded', async () => {
+                // Initialize page from URL hash (has to be after showSection is defined)
+                function initFromHash() {
+                    const hash = window.location.hash.slice(1); // Remove the #
+                    let initialSection = 'home';
+                    if (hash && document.getElementById(hash)) {
+                        initialSection = hash;
+                    }
+                    showSection(initialSection, false); // Don't push yet
+                    // Replace current history state
+                    window.history.replaceState({ sectionId: initialSection }, '', `#${initialSection}`);
+                }
+                initFromHash();
+                
+                // Handle back/forward button clicks
+                window.addEventListener('popstate', function(e) {
+                    if (e.state && e.state.sectionId) {
+                        showSection(e.state.sectionId, false);
+                    } else {
+                        showSection('home', false);
+                    }
+                });
+                
                 // Load public-facing data from Supabase on startup
                 await Promise.all([
                     loadProductsFromSupabase(),
