@@ -2378,20 +2378,37 @@
 
         // Toggle Mobile Menu
         function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const desktopMenu = document.getElementById('desktop-menu');
+            // Close desktop menu if open
+            desktopMenu.classList.add('hidden');
+            // Toggle mobile menu
+            mobileMenu.classList.toggle('hidden');
         }
 
         // Toggle Desktop Menu
         function toggleDesktopMenu() {
-            const menu = document.getElementById('desktop-menu');
-            menu.classList.toggle('hidden');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const desktopMenu = document.getElementById('desktop-menu');
+            // Close mobile menu if open
+            mobileMenu.classList.add('hidden');
+            // Toggle desktop menu
+            desktopMenu.classList.toggle('hidden');
         }
 
         // Close desktop menu when clicking outside
         document.addEventListener('click', function(e) {
             const menu = document.getElementById('desktop-menu');
             const menuButton = e.target.closest('button[onclick*="toggleDesktopMenu"]');
+            if (!menu.contains(e.target) && !menuButton && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('mobile-menu');
+            const menuButton = e.target.closest('button[onclick*="toggleMobileMenu"]');
             if (!menu.contains(e.target) && !menuButton && !menu.classList.contains('hidden')) {
                 menu.classList.add('hidden');
             }
