@@ -2319,7 +2319,7 @@
             switch (status) {
                 case 'Pending':
                     return { color: 'var(--accent4)', bg: 'rgba(245, 158, 11, 0.15)', icon: 'fa-clock' };
-                case 'Processed (Awaiting Payment)':
+                case 'Processed':
                     return { color: 'var(--accent)', bg: 'rgba(59, 130, 246, 0.15)', icon: 'fa-file-invoice-dollar' };
                 case 'Paid':
                     return { color: 'var(--accent3)', bg: 'rgba(16, 185, 129, 0.15)', icon: 'fa-circle-check' };
@@ -2330,6 +2330,11 @@
             }
         }
 
+        // Escapes a value for safe use inside a single-quoted inline JS string
+        function escapeJsAttr(value) {
+            return String(value).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        }
+
         // Renders the "My Orders" tracker + stat cards on the client dashboard
         function renderClientOrders() {
             const container = document.getElementById('client-orders-list');
@@ -2337,7 +2342,7 @@
 
             const total = clientOrders.length;
             const pending = clientOrders.filter(o => o.status === 'Pending').length;
-            const awaitingPayment = clientOrders.filter(o => o.status === 'Processed (Awaiting Payment)').length;
+            const awaitingPayment = clientOrders.filter(o => o.status === 'Processed').length;
             const completed = clientOrders.filter(o => o.status === 'Paid').length;
 
             const totalEl = document.getElementById('stat-total-orders');
@@ -2363,8 +2368,15 @@
 
             container.innerHTML = clientOrders.map(order => {
                 const s = getOrderStatusStyle(order.status);
+                // Payable orders (processed + priced) can be tapped anywhere on the card to pay —
+                // opening Messages is still available too, this is just a faster shortcut (hybrid).
+                const isPayable = order.status === 'Processed' && order.price;
+                const itemLabel = `${order.qty} x ${order.type}`;
+                const clickAttr = isPayable
+                    ? `onclick="payForService('order_payment_${order._uuid || order.id}', '${escapeJsAttr(itemLabel)}', ${Number(order.price)})"`
+                    : '';
                 return `
-                    <div class="p-4 rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3" style="background: var(--card); border: 1px solid var(--border); border-left: 4px solid ${s.color};">
+                    <div class="p-4 rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${isPayable ? 'cursor-pointer transition hover:-translate-y-0.5 hover:shadow-lg' : ''}" ${clickAttr} style="background: var(--card); border: 1px solid var(--border); border-left: 4px solid ${s.color};">
                         <div class="flex-1 min-w-0">
                             <div class="flex flex-wrap items-center gap-2 mb-1">
                                 <h4 class="font-bold" style="color: var(--text);">Order #${order.id} &middot; ${order.type} (${order.qty})</h4>
@@ -2377,7 +2389,7 @@
                         </div>
                         <div class="text-left sm:text-right flex-shrink-0">
                             ${order.price ? `<p class="font-bold text-lg" style="color: var(--text);">KES ${Number(order.price).toLocaleString()}</p>` : ''}
-                            ${order.status === 'Processed (Awaiting Payment)' ? `<button onclick="openClientMessages()" class="text-xs mt-1 font-semibold underline" style="color: var(--accent);">View Invoice</button>` : ''}
+                            ${isPayable ? `<span class="text-xs mt-1 font-semibold inline-flex items-center gap-1" style="color: var(--accent);"><i class="fa-solid fa-hand-pointer"></i>Tap to Pay</span>` : ''}
                         </div>
                     </div>`;
             }).join('');
