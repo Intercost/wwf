@@ -976,8 +976,8 @@
                 <div class="p-4 rounded-md mb-6" style="background: var(--bg2);">
                     <h4 class="font-semibold mb-3" style="color: var(--text);">Add New Product</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <input type="text" id="new-product-name" placeholder="Product Name" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
-                        <select id="new-product-category" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
+                        <input type="text" id="new-product-name" placeholder="Product Name" class="w-full rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
+                        <select id="new-product-category" class="w-full rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
                             <option value="Chicks">Chicks</option>
                             <option value="Layers">Layers</option>
                             <option value="Broilers">Broilers</option>
@@ -985,17 +985,17 @@
                             <option value="Turkeys">Turkeys</option>
                             <option value="Other">Other</option>
                         </select>
-                        <div class="flex gap-2">
-                            <input type="number" id="new-product-price" placeholder="Price (KES)" class="rounded px-3 py-2 text-sm flex-1" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
-                            <input type="text" id="new-product-unit" placeholder="Unit (e.g., per chick)" class="rounded px-3 py-2 text-sm flex-1" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input type="number" id="new-product-price" placeholder="Price (KES)" class="w-full sm:flex-1 min-w-0 rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
+                            <input type="text" id="new-product-unit" placeholder="Unit (e.g., per chick)" class="w-full sm:flex-1 min-w-0 rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
                         </div>
-                        <input type="number" id="new-product-stock" placeholder="Available Stock" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
+                        <input type="number" id="new-product-stock" placeholder="Available Stock" class="w-full rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
                         <div class="col-span-1 md:col-span-2">
                             <input type="text" id="new-product-description" placeholder="Description" class="w-full rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
                         </div>
-                        <div class="col-span-1 md:col-span-2 flex items-center gap-2">
-                            <input type="file" id="new-product-image" accept="image/*" class="rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
-                            <label class="flex items-center gap-2" style="color: var(--text2);">
+                        <div class="col-span-1 md:col-span-2 flex flex-col sm:flex-row sm:items-center gap-3">
+                            <input type="file" id="new-product-image" accept="image/*" class="w-full sm:flex-1 min-w-0 max-w-full rounded px-3 py-2 text-sm" style="background: var(--bg3); border: 1px solid var(--border); color: var(--text);">
+                            <label class="flex items-center gap-2 shrink-0" style="color: var(--text2);">
                                 <input type="checkbox" id="new-product-available" class="form-checkbox" checked style="accent-color: var(--accent2);">
                                 Is Available
                             </label>
@@ -1868,16 +1868,24 @@
                 <h3 class="text-2xl font-bold text-white">How to Pay</h3>
             </div>
             <div class="space-y-4 text-gray-300">
-                <p>Once your order has been confirmed by our team, send the exact amount via M-Pesa to:</p>
+                <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 text-center">
+                    <p class="text-sm text-gray-400">You're paying for</p>
+                    <p class="text-lg font-bold text-white" id="pay-instructions-item">-</p>
+                    <p class="text-3xl font-bold text-farm-accent mt-1" id="pay-instructions-amount">KES 0</p>
+                </div>
+                <p>Send the exact amount via M-Pesa to:</p>
                 <div class="bg-gray-800 p-4 rounded-lg text-center border border-gray-700">
                     <p class="text-sm text-gray-400">Paybill / Till / Number</p>
-                    <p class="text-2xl font-bold text-farm-accent">0706809000</p>
+                    <p class="text-2xl font-bold text-farm-accent" id="pay-instructions-number">0706809000</p>
                     <p class="text-sm text-gray-400 mt-1">Account Name: Willy's Wing Farm</p>
+                    <button id="copy-mpesa-btn" onclick="copyMpesaNumber()" class="mt-3 text-xs font-semibold px-3 py-1.5 rounded-md bg-gray-700 hover:bg-gray-600 text-white transition">
+                        <i class="fa-regular fa-copy mr-1"></i> Copy Number
+                    </button>
                 </div>
-                <p>After sending the payment, send us your M-Pesa confirmation message via WhatsApp to:</p>
-                <a href="https://wa.me/254706809000" target="_blank" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 w-full">
-                    <i class="fa-brands fa-whatsapp text-xl"></i> WhatsApp: +254 706 809 000
-                </a>
+                <p>After sending the payment, confirm with us via WhatsApp so we can process your order:</p>
+                <button onclick="confirmManualPayment()" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 w-full">
+                    <i class="fa-brands fa-whatsapp text-xl"></i> I've Sent the Payment
+                </button>
                 <p class="text-sm text-gray-500 mt-4">Your order will be processed once payment is confirmed.</p>
             </div>
         </div>
@@ -2090,7 +2098,7 @@
 
             productsData.forEach(p => {
                 const card = document.createElement('div');
-                card.className = 'bg-gray-800 p-4 rounded border-l-4 border-farm-accent shadow-md flex items-start gap-4';
+                card.className = 'bg-gray-800 p-4 rounded border-l-4 border-farm-accent shadow-md flex flex-col sm:flex-row items-start gap-4';
 
                 const imgHtml = p.image_url
                     ? `<img src="${p.image_url}" alt="${p.name}" class="w-20 h-20 object-cover rounded flex-shrink-0">`
@@ -2101,24 +2109,26 @@
                     : `<span class="text-xs bg-gray-600 text-gray-300 px-2 py-0.5 rounded">Hidden</span>`;
 
                 card.innerHTML = `
-                    ${imgHtml}
-                    <div class="flex-grow">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <h4 class="font-bold text-white">${p.name}</h4>
-                            ${availBadge}
-                            <span class="text-xs bg-gray-700 text-gray-300 px-2 py-0.5 rounded">${p.category}</span>
+                    <div class="flex items-start gap-4 w-full sm:w-auto sm:contents">
+                        ${imgHtml}
+                        <div class="flex-grow min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h4 class="font-bold text-white">${p.name}</h4>
+                                ${availBadge}
+                                <span class="text-xs bg-gray-700 text-gray-300 px-2 py-0.5 rounded">${p.category}</span>
+                            </div>
+                            <p class="text-farm-accent font-semibold text-sm mt-1">KES ${p.price} / ${p.price_unit}</p>
+                            <p class="text-gray-400 text-sm break-words">${p.description || ''}</p>
+                            ${p.stock_note ? `<p class="text-xs text-gray-500 mt-1">${p.stock_note}</p>` : ''}
                         </div>
-                        <p class="text-farm-accent font-semibold text-sm mt-1">KES ${p.price} / ${p.price_unit}</p>
-                        <p class="text-gray-400 text-sm">${p.description || ''}</p>
-                        ${p.stock_note ? `<p class="text-xs text-gray-500 mt-1">${p.stock_note}</p>` : ''}
                     </div>
-                    <div class="flex flex-col gap-2 flex-shrink-0">
+                    <div class="flex flex-row sm:flex-col gap-2 flex-shrink-0 w-full sm:w-auto">
                         <button onclick="toggleProductAvailability('${p.id}', ${p.is_available})"
-                            class="text-xs ${p.is_available ? 'bg-gray-600 hover:bg-gray-500' : 'bg-green-700 hover:bg-green-600'} text-white px-3 py-1 rounded">
+                            class="text-xs ${p.is_available ? 'bg-gray-600 hover:bg-gray-500' : 'bg-green-700 hover:bg-green-600'} text-white px-3 py-1 rounded flex-1 sm:flex-none">
                             ${p.is_available ? 'Hide' : 'Show'}
                         </button>
                         <button onclick="deleteProduct('${p.id}')"
-                            class="text-xs bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded">
+                            class="text-xs bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded flex-1 sm:flex-none">
                             <i class="fa-solid fa-trash"></i> Delete
                         </button>
                     </div>
@@ -3843,6 +3853,7 @@
 
         // --- PAYMENT LOGIC ---
         // New generic function to open Mpesa modal
+        // Opens the manual M-Pesa payment instructions modal for any payable item/order
         function payForService(serviceKey, itemDescription, amount) {
             if (!clientIsLoggedIn) {
                 alert('Please log in to proceed with this payment.');
@@ -3854,104 +3865,76 @@
             }
             currentMpesaService = serviceKey; // Store the service key
             currentMpesaAmount = amount; // Store the amount
-            document.getElementById('pay-item').value = itemDescription;
-            document.getElementById('pay-amount').value = `KES ${amount}`;
-            
+
+            const itemEl = document.getElementById('pay-instructions-item');
+            const amountEl = document.getElementById('pay-instructions-amount');
+            if (itemEl) itemEl.textContent = itemDescription;
+            if (amountEl) amountEl.textContent = `KES ${Number(amount).toLocaleString()}`;
+
             closeModal('membership-modal'); // Close source modal if open
             closeModal('online-course-modal'); // Close source modal if open
             closeModal('client-messages-modal'); // Close messages if coming from an invoice
             closeModal('events-workshop-modal'); // Close events modal if open
-            
-            openModal('mpesa-checkout-modal');
+
+            openModal('payment-instructions-modal');
         }
 
-        function initiateMpesaPayment() {
-            const mpesaPhoneNumber = document.querySelector('#mpesa-checkout-modal input[type="tel"]').value;
-            if (!mpesaPhoneNumber) {
-                alert('Please enter your M-Pesa phone number.');
-                return;
+        // Copies the M-Pesa number to the clipboard, with a fallback for older browsers
+        function copyMpesaNumber() {
+            const numberEl = document.getElementById('pay-instructions-number');
+            const btn = document.getElementById('copy-mpesa-btn');
+            if (!numberEl) return;
+            const number = numberEl.textContent.trim();
+
+            const showCopied = () => {
+                if (!btn) return;
+                const original = `<i class="fa-regular fa-copy mr-1"></i> Copy Number`;
+                btn.innerHTML = `<i class="fa-solid fa-check mr-1"></i> Copied!`;
+                setTimeout(() => { btn.innerHTML = original; }, 2000);
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(number).then(showCopied).catch(() => fallbackCopyText(number, showCopied));
+            } else {
+                fallbackCopyText(number, showCopied);
             }
+        }
 
-            alert(`MPESA STK Push initiated for KES ${currentMpesaAmount} for "${document.getElementById('pay-item').value}" to ${mpesaPhoneNumber}! (Backend Integration Pending)`);
-            closeModal('mpesa-checkout-modal');
-
-            // --- Post-payment logic based on currentMpesaService ---
-            if (currentMpesaService === 'online_course') {
-                // Admin WhatsApp redirect
-                const adminWhatsappNumber = '254706809000'; // Admin WhatsApp number
-                const message = encodeURIComponent('Hello, I have successfully applied for the next online course');
-                window.open(`https://wa.me/${adminWhatsappNumber}?text=${message}`, '_blank');
-                
-                // Simulate admin notification (add to admin orders or a specific notification array)
-                const adminNotification = {
-                    id: nextOrderId++, 
-                    clientName: currentUserEmail ? currentUserEmail.split('@')[0] : 'Guest User',
-                    clientEmail: currentUserEmail || 'guest@example.com',
-                    clientPhone: mpesaPhoneNumber,
-                    location: 'N/A',
-                    type: 'Online Course Application',
-                    qty: '1 week',
-                    desc: 'User paid for online course. Redirected to WhatsApp.',
-                    delivery: 'Online',
-                    status: 'Paid',
-                    date: new Date().toLocaleString()
-                };
-                orders.unshift(adminNotification); // Add to admin orders for visibility
-                if(document.getElementById('dashboard').classList.contains('active')) {
-                    renderAdminOrders();
-                }
-
-                alert("Payment successful! You are being redirected to admin's WhatsApp.");
-            } else if (currentMpesaService.startsWith('pdf_')) {
-                const pdfId = parseInt(currentMpesaService.split('_')[1]);
-                const paidPdf = pdfLibrary.find(p => p.id === pdfId);
-                if (paidPdf) {
-                    alert('Payment successful! Opening your PDF now.');
-                    window.open(paidPdf.url, '_blank');
-                }
-            } else if (currentMpesaService === 'membership') {
-                alert('Payment for Premium Membership successful! Your benefits are now active.');
-                // Here, you would typically update user's premium status in Supabase/backend.
-                // For now, a simple alert is sufficient.
-            } else if (currentMpesaService.startsWith('order_payment_')) {
-                // Update the specific order's status after payment
-                const orderId = parseInt(currentMpesaService.split('_')[2]);
-                const orderIndex = orders.findIndex(o => o.id === orderId);
-                if (orderIndex !== -1) {
-                    orders[orderIndex].status = 'Paid (Awaiting Fulfilment)';
-                    renderAdminOrders(); // Refresh admin view
-                }
-                alert('Payment for your order successful!');
-            } else if (currentMpesaService.startsWith('event_booking_')) {
-                const eventId = parseInt(currentMpesaService.split('_')[2]);
-                const bookedEvent = eventsData.find(e => e.id === eventId);
-                if (bookedEvent) {
-                    // Simulate admin notification (add to admin orders for visibility)
-                    const adminNotification = {
-                        id: nextOrderId++, 
-                        clientName: currentUserEmail ? currentUserEmail.split('@')[0] : 'Guest User',
-                        clientEmail: currentUserEmail || 'guest@example.com',
-                        clientPhone: mpesaPhoneNumber,
-                        location: bookedEvent.location, 
-                        type: `Event Booking: ${bookedEvent.title}`,
-                        qty: '1 slot',
-                        desc: `User paid KES ${currentMpesaAmount} for event booking.`,
-                        delivery: 'N/A',
-                        status: 'Paid',
-                        date: new Date().toLocaleString()
-                    };
-                    orders.unshift(adminNotification); // Add to admin orders for visibility
-                    if(document.getElementById('dashboard').classList.contains('active')) {
-                        renderAdminOrders();
-                    }
-                    alert(`Payment successful for "${bookedEvent.title}"! You have booked your spot.`);
-                }
+        // Fallback copy-to-clipboard for browsers without the Clipboard API
+        function fallbackCopyText(text, onSuccess) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                onSuccess();
+            } catch (err) {
+                alert(`Could not copy automatically. Please copy this number manually: ${text}`);
             }
+            document.body.removeChild(textarea);
+        }
+
+        // Client confirms they've sent the manual M-Pesa payment; hands off to WhatsApp for verification
+        function confirmManualPayment() {
+            const adminWhatsappNumber = '254706809000';
+            const itemDescription = document.getElementById('pay-instructions-item')?.textContent || 'my order';
+            const amountText = document.getElementById('pay-instructions-amount')?.textContent || `KES ${currentMpesaAmount}`;
+            const clientLabel = currentUserName || (currentUserEmail ? currentUserEmail.split('@')[0] : 'a client');
+            const message = encodeURIComponent(
+                `Hello, I am ${clientLabel}. I have just sent ${amountText} for "${itemDescription}" via M-Pesa. Here is my confirmation message: `
+            );
+
+            closeModal('payment-instructions-modal');
+            window.open(`https://wa.me/${adminWhatsappNumber}?text=${message}`, '_blank');
+            alert("Thanks! Please paste your M-Pesa confirmation message in WhatsApp so we can verify and process your order.");
 
             // Reset service tracker
             currentMpesaService = '';
             currentMpesaAmount = 0;
-            document.querySelector('#mpesa-checkout-modal input[type="tel"]').value = ''; // Clear phone number
         }
 
         // --- PDF LIBRARY LOGIC (for Diseases & Management) ---
