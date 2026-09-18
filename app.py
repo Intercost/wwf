@@ -26,6 +26,33 @@ def home():
 def logo():
     return send_from_directory('templates', 'logo.jpg', mimetype='image/jpeg')
 
+@app.route('/robots.txt')
+def robots():
+    """Serves robots.txt for search engine crawlers."""
+    return send_from_directory('templates', 'robots.txt', mimetype='text/plain')
+
+@app.route('/sitemap.xml')
+def sitemap():
+    """Serves a dynamic sitemap.xml for Google and other search engines."""
+    from flask import Response
+    sitemap_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://willyswingfarm.vercel.app/</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://willyswingfarm.vercel.app/logo.jpg</image:loc>
+      <image:title>Willy's Wing Farm - Bungoma's Biggest Chick Seller</image:title>
+      <image:caption>Buy 1-day-old chicks from KES 150 and 1-month-old chicks. Nationwide delivery across Kenya.</image:caption>
+    </image:image>
+  </url>
+</urlset>"""
+    return Response(sitemap_xml, mimetype='application/xml')
+
+
 # Initialize Groq client lazily so a missing/invalid API key doesn't crash
 # the whole serverless function on import (which would 500 every route,
 # not just /api/chat).
